@@ -1,4 +1,3 @@
-index.html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,10 +37,17 @@ index.html
     <div class="hard">Thank You <small>Castle Fine Art</small></div>
   </div>
 
-  <script src="jquery.js"></script>
+  <!-- Include jQuery from a CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Include turn.js (local or from a CDN if available) -->
   <script src="turn.js"></script>
+
+  <!-- Initialize the flipbook -->
   <script>
-    $(".flipbook").turn();
+    $(document).ready(function() {
+      $(".flipbook").turn();
+    });
   </script>
 </body>
 
