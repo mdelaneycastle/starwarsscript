@@ -50,27 +50,7 @@ document.addEventListener("touchend", () => {
 // Mouse-based swipe gestures
 let isDragging = false;
 
-document.addEventListener("mousedown", (e) => {
-  startX = e.clientX;
-  isDragging = true;
-});
 
-document.addEventListener("mousemove", (e) => {
-  if (isDragging) {
-    endX = e.clientX;
-  }
-});
-
-document.addEventListener("mouseup", () => {
-  isDragging = false;
-  if (endX < startX - 50) {
-    // Swipe left (next page)
-    nextPage();
-  } else if (endX > startX + 50) {
-    // Swipe right (previous page)
-    prevPage();
-  }
-});
 
 // Page navigation functions
 function nextPage() {
