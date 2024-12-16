@@ -6,6 +6,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   height: 100vh;
 }
 
@@ -28,11 +29,28 @@ body {
   backface-visibility: hidden;
   transition: transform 0.8s ease;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  background-size: cover;
-  background-position: center;
 }
 
 .page.hidden {
   transform: rotateY(-180deg);
   z-index: 1;
+}
+
+.navigation {
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
