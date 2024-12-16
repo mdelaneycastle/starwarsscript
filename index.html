@@ -3,22 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Page Viewer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Dynamic Image Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            overflow: hidden;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+        img.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <div class="book-container">
-        <!-- Page Viewer -->
-        <div id="page-container" class="page-container">
-            <img id="page" src="page1.jpg" alt="Page">
-        </div>
+    <script>
+        // Configuration
+        const totalPages = 10; // Change this to the total number of pages
+        const imagePath = "page"; // Prefix for the images (e.g., 'page1.jpg', 'page2.jpg')
 
-        <!-- Navigation Buttons -->
-        <div class="navigation">
-            <button id="prev-btn">⟵ Previous</button>
-            <button id="next-btn">Next ⟶</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+        // Generate and append images dynamically
+        const body = document.body;
+        for (let i = 1; i <= totalPages; i++) {
+            const img = document.createElement('img');
+            img.src = `${imagePath}${i}.jpg`;
+            img.alt = `Page ${i}`;
+            if (i === 1) img.classList.add('active'); // Make the first image visible initially
+            body.appendChild(img);
+        }
+
+        // Handle navigation with arrow keys
+        let currentIndex = 1;
+        document.addEventListener('keydown', (e) => {
+            const images = document.querySelectorAll('img');
+            images[currentIndex - 1].classList.remove('active'); // Hide current image
+
+            if (e.key === 'ArrowRight') {
+                currentIndex = (currentIndex % totalPages) + 1; // Next image
+            } else if (e.key === 'ArrowLeft') {
+                currentIndex = (currentIndex - 2 + totalPages) % totalPages + 1; // Previous image
+            }
+
+            images[currentIndex - 1].classList.add('active'); // Show new image
+        });
+    </script>
 </body>
 </html>
