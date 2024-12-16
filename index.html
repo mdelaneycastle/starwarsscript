@@ -1,59 +1,51 @@
+index.html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Image Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
-            overflow: hidden;
-        }
-        img {
-            max-width: 100%;
-            max-height: 100%;
-            display: none;
-        }
-        img.active {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Star Wars Script</title>
 </head>
+
 <body>
-    <script>
-        // Configuration
-        const totalPages = 10; // Change this to the total number of pages
-        const imagePath = "page"; // Prefix for the images (e.g., 'page1.jpg', 'page2.jpg')
+  <div class="flipbook">
+    <div class="hard">Star Wars Script <small> - Robert Bailey</small></div>
+    <div class="hard"></div>
+    <div>
+      <small>Empire Strikes Back</small>
+      <small>May the force be with you!</small>
+    </div>
+    <div>
+      <img src="images/img-1.png" alt="" />
+      <small> Charmandar </small>
+    </div>
+    <div>
+      <img src="images/img-2.png" alt="" />
+      <small> Arbok </small>
+    </div>
+    <div>
+      <img src="images/img-3.png" alt="" />
+      <small> Pikachu </small>
+    </div>
+    <div>
+      <img src="images/img-4.png" alt="" />
+      <small> Mew </small>
+    </div>
+    <div>
+      <img src="images/img-5.png" alt="" />
+      <small> Darkrai </small>
+    </div>
+    <div class="hard"></div>
+    <div class="hard">Thank You <small>~ HankTheTank</small></div>
+  </div>
 
-        // Generate and append images dynamically
-        const body = document.body;
-        for (let i = 1; i <= totalPages; i++) {
-            const img = document.createElement('img');
-            img.src = `${imagePath}${i}.jpg`;
-            img.alt = `Page ${i}`;
-            if (i === 1) img.classList.add('active'); // Make the first image visible initially
-            body.appendChild(img);
-        }
-
-        // Handle navigation with arrow keys
-        let currentIndex = 1;
-        document.addEventListener('keydown', (e) => {
-            const images = document.querySelectorAll('img');
-            images[currentIndex - 1].classList.remove('active'); // Hide current image
-
-            if (e.key === 'ArrowRight') {
-                currentIndex = (currentIndex % totalPages) + 1; // Next image
-            } else if (e.key === 'ArrowLeft') {
-                currentIndex = (currentIndex - 2 + totalPages) % totalPages + 1; // Previous image
-            }
-
-            images[currentIndex - 1].classList.add('active'); // Show new image
-        });
-    </script>
+  <script src="jquery.js"></script>
+  <script src="turn.js"></script>
+  <script>
+    $(".flipbook").turn();
+  </script>
 </body>
+
 </html>
