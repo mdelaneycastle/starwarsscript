@@ -19,7 +19,16 @@ const pages = document.querySelectorAll(".page");
 let startX = 0;
 let endX = 0;
 
-// Handle swipe gestures
+// Add navigation button functionality
+document.getElementById("prev").addEventListener("click", () => {
+  prevPage();
+});
+
+document.getElementById("next").addEventListener("click", () => {
+  nextPage();
+});
+
+// Handle swipe gestures for touchscreens
 document.addEventListener("touchstart", (e) => {
   startX = e.touches[0].clientX;
 });
@@ -38,17 +47,22 @@ document.addEventListener("touchend", () => {
   }
 });
 
+// Mouse-based swipe gestures
+let isDragging = false;
+
 document.addEventListener("mousedown", (e) => {
   startX = e.clientX;
+  isDragging = true;
 });
 
 document.addEventListener("mousemove", (e) => {
-  if (e.buttons === 1) {
+  if (isDragging) {
     endX = e.clientX;
   }
 });
 
 document.addEventListener("mouseup", () => {
+  isDragging = false;
   if (endX < startX - 50) {
     // Swipe left (next page)
     nextPage();
