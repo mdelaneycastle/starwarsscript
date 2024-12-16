@@ -36,19 +36,30 @@
     <div class="hard">Thank You <small> - Castle Fine Art</small></div>
   </div>
 
-  <script src="jquery-1.9.1.min.js"></script>
-<script src="turn.js"></script>
+  <!-- Load jQuery (compatible version) -->
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <!-- Load Turn.js -->
+  <script src="turn.js"></script>
 
-
-  <!-- Initialize Turn.js -->
+  <!-- Initialization Script -->
   <script>
-    $(document).ready(function() {
-      $(".flipbook").turn({
-        width: 800,
-        height: 600,
-        autoCenter: true
+    jQuery.noConflict(); // Prevent conflicts with other jQuery versions
+    (function($) {
+      $(document).ready(function() {
+        console.log("jQuery and Turn.js are ready.");
+        console.log("Testing Turn.js method:", $.fn.turn);
+
+        if ($.fn.turn) {
+          $(".flipbook").turn({
+            width: 800,
+            height: 600,
+            autoCenter: true
+          });
+        } else {
+          console.error("Turn.js failed to load or initialize.");
+        }
       });
-    });
+    })(jQuery);
   </script>
 </body>
 
