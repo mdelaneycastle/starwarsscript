@@ -1,4 +1,6 @@
 const pagesContainer = document.getElementById("pages");
+const prevButton = document.getElementById("prev");
+const nextButton = document.getElementById("next");
 
 // Number of pages
 const totalPages = 5; // Change to your total number of images
@@ -19,14 +21,7 @@ const pages = document.querySelectorAll(".page");
 let startX = 0;
 let endX = 0;
 
-// Add navigation button functionality
-document.getElementById("prev").addEventListener("click", () => {
-  prevPage();
-});
 
-document.getElementById("next").addEventListener("click", () => {
-  nextPage();
-});
 
 // Handle swipe gestures for touchscreens
 document.addEventListener("touchstart", (e) => {
@@ -47,24 +42,22 @@ document.addEventListener("touchend", () => {
   }
 });
 
-// Mouse-based swipe gestures
-let isDragging = false;
 
 
+const pages = document.querySelectorAll(".page");
 
-// Page navigation functions
-function nextPage() {
-  if (currentPage < pages.length - 1) {
-    pages[currentPage].classList.add("hidden");
-    currentPage++;
-    pages[currentPage].classList.remove("hidden");
-  }
-}
-
-function prevPage() {
+prevButton.addEventListener("click", () => {
   if (currentPage > 0) {
     pages[currentPage].classList.add("hidden");
     currentPage--;
     pages[currentPage].classList.remove("hidden");
   }
-}
+});
+
+nextButton.addEventListener("click", () => {
+  if (currentPage < totalPages - 1) {
+    pages[currentPage].classList.add("hidden");
+    currentPage++;
+    pages[currentPage].classList.remove("hidden");
+  }
+});
