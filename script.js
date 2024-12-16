@@ -1,63 +1,52 @@
-const pagesContainer = document.getElementById("pages");
-const prevButton = document.getElementById("prev");
-const nextButton = document.getElementById("next");
+// JavaScript for Page Viewer
+const pages = ["page1.jpg", "page2.jpg", "page3.jpg", "page4.jpg"];
+let currentPageIndex = 0;
 
-// Number of pages
-const totalPages = 5; // Change to your total number of images
-let currentPage = 0;
+const pageElement = document.getElementById("page");
+const prevButton = document.getElementById("prev-btn");
+const nextButton = document.getElementById("next-btn");
+const pageContainer = document.getElementById("page-container");
 
-// Create pages dynamically
-for (let i = 0; i < totalPages; i++) {
-  const page = document.createElement("div");
-  page.className = "page";
-  page.style.backgroundImage = `url('pages/page${i + 1}.jpg')`;
-  if (i > 0) page.classList.add("hidden");
-  pagesContainer.appendChild(page);
+// Function to Update Page
+function updatePage(direction) {
+    if (direction === "next" && currentPageIndex < pages.length - 1) {
+        pageElement.classList.add("turn-next");
+        setTimeout(() => {
+            currentPageIndex++;
+            pageElement.src = pages[currentPageIndex];
+            pageElement.classList.remove("turn-next");
+        }, 600);
+    } else if (direction === "prev" && currentPageIndex > 0) {
+        pageElement.classList.add("turn-prev");
+        setTimeout(() => {
+            currentPageIndex--;
+            pageElement.src = pages[currentPageIndex];
+            pageElement.classList.remove("turn-prev");
+        }, 600);
+    }
 }
 
-const pages = document.querySelectorAll(".page");
+// Button Event Listeners
+prevButton.addEventListener("click", () => updatePage("prev"));
+nextButton.addEventListener("click", () => updatePage("next"));
 
-// Swipe gesture variables
-let startX = 0;
-let endX = 0;
+// Swipe Detection for Touch Screens
+let touchStartX = 0;
+let touchEndX = 0;
 
-
-
-// Handle swipe gestures for touchscreens
-document.addEventListener("touchstart", (e) => {
-  startX = e.touches[0].clientX;
+pageContainer.addEventListener("touchstart", (e) => {
+    touchStartX = e.changedTouches[0].screenX;
 });
 
-document.addEventListener("touchmove", (e) => {
-  endX = e.touches[0].clientX;
+pageContainer.addEventListener("touchend", (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
 });
 
-document.addEventListener("touchend", () => {
-  if (endX < startX - 50) {
-    // Swipe left (next page)
-    nextPage();
-  } else if (endX > startX + 50) {
-    // Swipe right (previous page)
-    prevPage();
-  }
-});
-
-
-
-const pages = document.querySelectorAll(".page");
-
-prevButton.addEventListener("click", () => {
-  if (currentPage > 0) {
-    pages[currentPage].classList.add("hidden");
-    currentPage--;
-    pages[currentPage].classList.remove("hidden");
-  }
-});
-
-nextButton.addEventListener("click", () => {
-  if (currentPage < totalPages - 1) {
-    pages[currentPage].classList.add("hidden");
-    currentPage++;
-    pages[currentPage].classList.remove("hidden");
-  }
-});
+function handleSwipe() {
+    if (touchStartX - touchEndX > 50) {
+        updatePage("next"); // Swipe Left
+    } else if (touchEndX - touchStartX > 50) {
+        updatePage("prev"); // Swipe Right
+    }
+}
