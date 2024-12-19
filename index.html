@@ -22,28 +22,13 @@
       display: flex;
       height: 90%;
       justify-content: center;
-      margin: 5%;
-      width: 90%;
-    }
-
-    .aspect {
-      padding-bottom: 70%;
-      position: relative;
-      width: 100%;
-    }
-
-    .aspect-inner {
-      bottom: 0;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
+      margin: auto;
     }
 
     .flipbook {
       height: 100%;
-      transition: margin-left 0.25s ease-out;
       width: 100%;
+      max-width: 800px; /* Set a maximum width for PC browsers */
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       -khtml-user-select: none;
@@ -64,49 +49,57 @@
 
     /* Media queries for resizing */
     @media (min-width: 1024px) { /* PC browsers */
-      .wrapper {
-        transform: scale(0.8); /* 20% smaller */
+      .flipbook {
+        width: 80%; /* Reduce size for PC browsers */
+        height: auto;
       }
     }
 
     @media (max-width: 768px) { /* Mobile browsers */
-      .wrapper {
-        transform: scale(1.5); /* 50% larger */
+      .flipbook {
+        width: 150%; /* Increase size for mobile browsers */
+        height: auto;
       }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <div class="aspect">
-      <div class="aspect-inner">
-        <div class="flipbook" id="flipbook">
-          <div class="page"><img src="1.jpg" draggable="false" alt="" /></div>
-          <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
-          <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
-          <div class="page"><img src="4.jpg" draggable="false" alt="" /></div>
-          <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
-          <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
-        </div>
-      </div>
+    <div class="flipbook" id="flipbook">
+      <div class="page"><img src="1.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="4.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
     </div>
   </div>
 
   <script>
-    var flipbookEL = document.getElementById('flipbook');
-
-    // Initialize turn.js on the flipbook
     $(document).ready(function () {
-      $(flipbookEL).turn({
+      var flipbookEL = $('#flipbook');
+
+      // Initialize Turn.js on the flipbook
+      flipbookEL.turn({
         autoCenter: true
       });
 
       // Resize event listener
-      window.addEventListener('resize', function () {
-        flipbookEL.style.width = '';
-        flipbookEL.style.height = '';
-        $(flipbookEL).turn('size', flipbookEL.clientWidth, flipbookEL.clientHeight);
-      });
+      function updateFlipbookSize() {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const isPC = window.matchMedia("(min-width: 1024px)").matches;
+
+        if (isMobile) {
+          flipbookEL.turn('size', window.innerWidth * 1.5, window.innerHeight); // 50% larger for mobile
+        } else if (isPC) {
+          flipbookEL.turn('size', window.innerWidth * 0.8, window.innerHeight); // 20% smaller for PC
+        } else {
+          flipbookEL.turn('size', window.innerWidth, window.innerHeight); // Default size
+        }
+      }
+
+      updateFlipbookSize(); // Initial size update
+      window.addEventListener('resize', updateFlipbookSize); // Handle window resize
     });
   </script>
 </body>
