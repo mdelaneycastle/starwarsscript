@@ -145,6 +145,12 @@
         var page = $(this).data('page');
         flipbookEL.turn('page', page);
       });
+
+      // Play sound on page turn
+      var pageFlipAudio = new Audio('page-flip-4.mp3');
+      flipbookEL.on('turning', function () {
+        pageFlipAudio.play();
+      });
     });
   </script>
 </body>
