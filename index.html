@@ -26,9 +26,9 @@
     .flipbook {
       width: 100%;
       max-width: 1002px; /* Match the image width */
-      aspect-ratio: 1002 / 128; /* Maintain 1002:128 ratio */
-      height: auto;
-      overflow: hidden;
+      aspect-ratio: 1002 / 128; /* Maintain the correct aspect ratio */
+      overflow: hidden; /* Prevent content overflow */
+      position: relative; /* Ensure proper alignment */
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
@@ -37,12 +37,15 @@
     .flipbook .page {
       width: 100%;
       height: 100%;
+      display: flex; /* Ensure content alignment */
+      justify-content: center;
+      align-items: center;
     }
 
     .flipbook .page img {
       width: 100%;
-      height: 100%;
-      object-fit: cover; /* Ensure the image fits while keeping the aspect ratio */
+      height: auto; /* Maintain the aspect ratio */
+      object-fit: contain; /* Ensure the entire image fits within the page */
     }
   </style>
 </head>
@@ -62,14 +65,14 @@
 
       // Initialize Turn.js
       flipbookEL.turn({
-        width: 1002, // Use the exact image width
-        height: 128, // Use the exact image height
+        width: 1002, // Match the image width
+        height: 128, // Match the image height
         autoCenter: true
       });
 
       // Resize event listener
       function updateFlipbookSize() {
-        const ratio = 1002 / 128; // Aspect ratio of the image
+        const ratio = 1002 / 128; // Desired aspect ratio
         const wrapperWidth = $(".wrapper").width();
         const wrapperHeight = $(".wrapper").height();
 
@@ -81,7 +84,7 @@
           flipbookWidth = flipbookHeight * ratio;
         }
 
-        flipbookEL.turn('size', flipbookWidth, flipbookHeight);
+        $('#flipbook').turn('size', flipbookWidth, flipbookHeight);
       }
 
       updateFlipbookSize(); // Initial size update
