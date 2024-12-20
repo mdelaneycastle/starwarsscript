@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flipbook Demo</title>
+  <!-- jQuery for Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Turn.js Library -->
   <script src="https://rkei0.csb.app/turn.min.js"></script>
   <style>
     html,
@@ -16,43 +18,60 @@
     }
 
     .wrapper {
-      display: flex;
       align-items: center;
+      display: flex;
+      height: 90%;
       justify-content: center;
-      height: 100%;
       margin: auto;
     }
 
     .flipbook {
-      width: 100%;
-      max-width: 1002px; /* Match the image width */
-      aspect-ratio: 1002 / 128; /* Maintain 1002:128 ratio */
       height: 100%;
-      
+      width: auto;
+      max-width: 800px; /* Set a maximum width for PC browsers */
       -webkit-touch-callout: none;
       -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
       user-select: none;
     }
 
     .flipbook .page {
-      width: 100%;
       height: 100%;
+      width: auto%;
     }
 
     .flipbook .page img {
-      width: 100%;
+      max-width: 100%;
       height: 100%;
-      object-fit: cover; /* Ensure the image fits while keeping the aspect ratio */
+    }
+
+    /* Media queries for resizing */
+    @media (min-width: 1024px) { /* PC browsers */
+      .flipbook {
+        width: 80%; /* Reduce size for PC browsers */
+        height: auto;
+      }
+    }
+
+    @media (max-width: 768px) { /* Mobile browsers */
+      .flipbook {
+        width: 150%; /* Increase size for mobile browsers */
+        height: auto;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
     <div class="flipbook" id="flipbook">
-      <div class="page"><img src="1.jpg" draggable="false" alt="Page 1" /></div>
-      <div class="page"><img src="2.jpg" draggable="false" alt="Page 2" /></div>
-      <div class="page"><img src="3.jpg" draggable="false" alt="Page 3" /></div>
-      <div class="page"><img src="4.jpg" draggable="false" alt="Page 4" /></div>
+      <div class="page"><img src="1.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="4.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="2.jpg" draggable="false" alt="" /></div>
+      <div class="page"><img src="3.jpg" draggable="false" alt="" /></div>
     </div>
   </div>
 
@@ -60,32 +79,27 @@
     $(document).ready(function () {
       var flipbookEL = $('#flipbook');
 
-      // Initialize Turn.js
+      // Initialize Turn.js on the flipbook
       flipbookEL.turn({
-        width: 1002, // Use the exact image width
-        height: 128, // Use the exact image height
         autoCenter: true
       });
 
       // Resize event listener
       function updateFlipbookSize() {
-        const ratio = 1002 / 128; // Aspect ratio of the image
-        const wrapperWidth = $(".wrapper").width();
-        const wrapperHeight = $(".wrapper").height();
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        const isPC = window.matchMedia("(min-width: 1024px)").matches;
 
-        let flipbookWidth = wrapperWidth;
-        let flipbookHeight = flipbookWidth / ratio;
-
-        if (flipbookHeight > wrapperHeight) {
-          flipbookHeight = wrapperHeight;
-          flipbookWidth = flipbookHeight * ratio;
+        if (isMobile) {
+          flipbookEL.turn('size', window.innerWidth * 1.5, window.innerHeight); // 50% larger for mobile
+        } else if (isPC) {
+          flipbookEL.turn('size', window.innerWidth * 0.8, window.innerHeight); // 20% smaller for PC
+        } else {
+          flipbookEL.turn('size', window.innerWidth, window.innerHeight); // Default size
         }
-
-        flipbookEL.turn('size', flipbookWidth, flipbookHeight);
       }
 
       updateFlipbookSize(); // Initial size update
-      window.addEventListener('resize', updateFlipbookSize); // Handle window resizing
+      window.addEventListener('resize', updateFlipbookSize); // Handle window resize
     });
   </script>
 </body>
