@@ -20,8 +20,8 @@
     .wrapper {
       align-items: center;
       display: flex;
-      height: calc(90% - 100px); /* Adjusted height to accommodate thumbnails */
       justify-content: center;
+      height: 90%; /* Ensures flipbook takes most of the screen */
       margin: auto;
     }
 
@@ -55,7 +55,7 @@
       padding: 10px;
       background-color: #fff;
       overflow-x: auto;
-      height: 100px;
+      height: auto;
     }
 
     .thumbnail {
@@ -124,15 +124,16 @@
 
       // Resize event listener
       function updateFlipbookSize() {
+        const thumbnailHeight = document.querySelector('.thumbnails').offsetHeight || 100; // Dynamically calculate thumbnail height
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
         const isPC = window.matchMedia("(min-width: 1024px)").matches;
 
         if (isMobile) {
-          flipbookEL.turn('size', window.innerWidth * 1.5, window.innerHeight - 100);
+          flipbookEL.turn('size', window.innerWidth * 1.5, window.innerHeight - thumbnailHeight);
         } else if (isPC) {
-          flipbookEL.turn('size', window.innerWidth * 0.8, window.innerHeight - 100);
+          flipbookEL.turn('size', window.innerWidth * 0.8, window.innerHeight - thumbnailHeight);
         } else {
-          flipbookEL.turn('size', window.innerWidth, window.innerHeight - 100);
+          flipbookEL.turn('size', window.innerWidth, window.innerHeight - thumbnailHeight);
         }
       }
 
