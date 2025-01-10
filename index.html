@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Swipe Gallery</title>
+    <title>Flickity Swipe Gallery</title>
+    <!-- Flickity CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden;
             background-color: #000;
             color: #fff;
         }
         .gallery-container {
-            position: relative;
             width: 100%;
             height: 100vh;
             display: flex;
             flex-direction: column;
         }
-        .main-display {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
+        .carousel {
+            height: 80%;
+            background: #111;
         }
-        .image-wrapper {
-            position: absolute;
-            width: 100%;
+        .carousel-cell {
+            width: 100%; /* Full width */
             height: 100%;
+            margin-right: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.3s ease;
+            overflow: hidden;
         }
-        .image-wrapper img {
+        .carousel-cell img {
             max-width: 100%;
             max-height: 100%;
         }
         .thumbnail-bar {
             display: flex;
-            overflow-x: auto;
+            justify-content: center;
+            align-items: center;
             background-color: #222;
             padding: 10px;
         }
@@ -57,163 +57,50 @@
 </head>
 <body>
     <div class="gallery-container">
-        <div class="main-display" id="mainDisplay"></div>
+        <div class="carousel">
+            <div class="carousel-cell"><img src="1.jpg" alt="Image 1"></div>
+            <div class="carousel-cell"><img src="2.jpg" alt="Image 2"></div>
+            <div class="carousel-cell"><img src="3.jpg" alt="Image 3"></div>
+            <div class="carousel-cell"><img src="4.jpg" alt="Image 4"></div>
+        </div>
         <div class="thumbnail-bar" id="thumbnailBar">
-            <img src="1.jpg" alt="Thumbnail 1" data-index="0" class="active">
+            <img src="1.jpg" alt="Thumbnail 1" data-index="0">
             <img src="2.jpg" alt="Thumbnail 2" data-index="1">
             <img src="3.jpg" alt="Thumbnail 3" data-index="2">
             <img src="4.jpg" alt="Thumbnail 4" data-index="3">
         </div>
     </div>
 
-    <audio id="swipeSound" src="saber.mp3"></audio>
-
+    <!-- Flickity JavaScript -->
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script>
-        const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg'];
-        const mainDisplay = document.getElementById('mainDisplay');
+        // Initialize Flickity
+        const flkty = new Flickity('.carousel', {
+            cellAlign: 'center',
+            contain: true,
+            wrapAround: true,
+            autoPlay: 3000, // Auto-advance every 3 seconds
+            prevNextButtons: true,
+            pageDots: false,
+            draggable: true
+        });
+
         const thumbnailBar = document.getElementById('thumbnailBar');
-        const swipeSound = document.getElementById('swipeSound');
+        const thumbnails = Array.from(thumbnailBar.children);
 
-        let currentIndex = 0;
-        let startX = 0;
-        let isSwiping = false;
-        let mainImage, nextImage, prevImage;
-
-        function createImageWrapper(src, position = 0) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('image-wrapper');
-            wrapper.style.transform = `translateX(${position}%)`;
-            const img = document.createElement('img');
-            img.src = src;
-            wrapper.appendChild(img);
-            return wrapper;
-        }
-
-        function updateThumbnails() {
-            Array.from(thumbnailBar.children).forEach((img, i) => {
-                img.classList.toggle('active', i === currentIndex);
+        // Update active thumbnail when the slider changes
+        flkty.on('select', () => {
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.classList.toggle('active', index === flkty.selectedIndex);
             });
-        }
-
-        function setupImages() {
-            mainDisplay.innerHTML = '';
-
-            const mainImageSrc = images[currentIndex];
-            const nextImageSrc = images[(currentIndex + 1) % images.length];
-            const prevImageSrc = images[(currentIndex - 1 + images.length) % images.length];
-
-            mainImage = createImageWrapper(mainImageSrc, 0);
-            nextImage = createImageWrapper(nextImageSrc, 100);
-            prevImage = createImageWrapper(prevImageSrc, -100);
-
-            mainDisplay.appendChild(prevImage);
-            mainDisplay.appendChild(mainImage);
-            mainDisplay.appendChild(nextImage);
-        }
-
-        function handleSwipeEnd(deltaX) {
-            const threshold = window.innerWidth / 4;
-            let direction = 0; // Default to no movement
-
-            if (deltaX > threshold && currentIndex > 0) {
-                direction = -1; // Swipe right
-            } else if (deltaX < -threshold && currentIndex < images.length - 1) {
-                direction = 1; // Swipe left
-            }
-
-            if (direction !== 0) {
-                currentIndex = (currentIndex + direction + images.length) % images.length;
-            }
-
-            mainImage.style.transition = 'transform 0.3s';
-            nextImage.style.transition = 'transform 0.3s';
-            prevImage.style.transition = 'transform 0.3s';
-
-            mainImage.style.transform = 'translateX(0%)';
-            nextImage.style.transform = 'translateX(100%)';
-            prevImage.style.transform = 'translateX(-100%)';
-
-            updateThumbnails();
-
-            swipeSound.currentTime = 0;
-            swipeSound.play();
-
-            setTimeout(setupImages, 300);
-        }
-
-        function handleTouchStart(e) {
-            startX = e.touches[0].clientX;
-            isSwiping = true;
-
-            mainImage.style.transition = 'none';
-            nextImage.style.transition = 'none';
-            prevImage.style.transition = 'none';
-        }
-
-        function handleTouchMove(e) {
-            if (!isSwiping) return;
-
-            const deltaX = e.touches[0].clientX - startX;
-
-            mainImage.style.transform = `translateX(${deltaX}px)`;
-            nextImage.style.transform = `translateX(${100 + deltaX / window.innerWidth * 100}%)`;
-            prevImage.style.transform = `translateX(${-100 + deltaX / window.innerWidth * 100}%)`;
-        }
-
-        function handleTouchEnd(e) {
-            if (!isSwiping) return;
-            isSwiping = false;
-
-            const deltaX = e.changedTouches[0].clientX - startX;
-            handleSwipeEnd(deltaX);
-        }
-
-        function handleThumbnailClick(e) {
-            const index = parseInt(e.target.dataset.index, 10);
-            if (!isNaN(index)) {
-                currentIndex = index;
-                setupImages();
-                updateThumbnails();
-                swipeSound.currentTime = 0;
-                swipeSound.play();
-            }
-        }
-
-        mainDisplay.addEventListener('touchstart', handleTouchStart);
-        mainDisplay.addEventListener('touchmove', handleTouchMove);
-        mainDisplay.addEventListener('touchend', handleTouchEnd);
-
-        mainDisplay.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            startX = e.clientX;
-            isSwiping = true;
-
-            mainImage.style.transition = 'none';
-            nextImage.style.transition = 'none';
-            prevImage.style.transition = 'none';
         });
 
-        mainDisplay.addEventListener('mousemove', (e) => {
-            if (!isSwiping) return;
-
-            const deltaX = e.clientX - startX;
-
-            mainImage.style.transform = `translateX(${deltaX}px)`;
-            nextImage.style.transform = `translateX(${100 + deltaX / window.innerWidth * 100}%)`;
-            prevImage.style.transform = `translateX(${-100 + deltaX / window.innerWidth * 100}%)`;
+        // Add click event to thumbnails
+        thumbnails.forEach((thumbnail, index) => {
+            thumbnail.addEventListener('click', () => {
+                flkty.select(index);
+            });
         });
-
-        mainDisplay.addEventListener('mouseup', (e) => {
-            if (!isSwiping) return;
-            isSwiping = false;
-
-            const deltaX = e.clientX - startX;
-            handleSwipeEnd(deltaX);
-        });
-
-        thumbnailBar.addEventListener('click', handleThumbnailClick);
-
-        setupImages();
     </script>
 </body>
 </html>
