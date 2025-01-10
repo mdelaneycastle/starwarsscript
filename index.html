@@ -110,46 +110,53 @@
 
   <script>
     $(document).ready(function () {
-      var flipbookEL = $('#flipbook');
+  var flipbookEL = $('#flipbook');
 
-      // Initialize Turn.js on the flipbook
-      flipbookEL.turn({
-        autoCenter: true
-      });
+  function updateFlipbookSize() {
+    const aspectRatio = 4 / 3; // Replace with your image aspect ratio (width / height)
+    const thumbnailHeight = document.querySelector('.thumbnails').offsetHeight || 100;
 
-      // Resize event listener
-      function updateFlipbookSize() {
-        const aspectRatio = 4 / 3; // Replace with your image aspect ratio (width / height)
-        const thumbnailHeight = document.querySelector('.thumbnails').offsetHeight || 100;
+    let flipbookWidth = Math.min(window.innerWidth * 0.8, 800); // Maintain max-width
+    let flipbookHeight = flipbookWidth / aspectRatio;
 
-        let flipbookWidth = Math.min(window.innerWidth * 0.8, 800); // Maintain max-width
-        let flipbookHeight = flipbookWidth / aspectRatio;
+    // Adjust for available space
+    if (flipbookHeight > window.innerHeight - thumbnailHeight) {
+      flipbookHeight = window.innerHeight - thumbnailHeight;
+      flipbookWidth = flipbookHeight * aspectRatio;
+    }
 
-        // Adjust for available space
-        if (flipbookHeight > window.innerHeight - thumbnailHeight) {
-          flipbookHeight = window.innerHeight - thumbnailHeight;
-          flipbookWidth = flipbookHeight * aspectRatio;
-        }
+    // Apply calculated dimensions
+    flipbookEL.turn('size', flipbookWidth, flipbookHeight);
 
-        // Apply calculated dimensions
-        flipbookEL.turn('size', flipbookWidth, flipbookHeight);
-      }
-
-      updateFlipbookSize(); // Initial size update
-      window.addEventListener('resize', updateFlipbookSize); // Handle window resize
-
-      // Handle thumbnail click to navigate pages
-      $('#thumbnails').on('click', '.thumbnail', function () {
-        var page = $(this).data('page');
-        flipbookEL.turn('page', page);
-      });
-
-      // Play sound on page turn
-      var pageFlipAudio = new Audio('page-flip-4.mp3');
-      flipbookEL.on('turning', function () {
-        pageFlipAudio.play();
-      });
+    // Ensure flipbook container matches the calculated dimensions
+    flipbookEL.css({
+      width: flipbookWidth + 'px',
+      height: flipbookHeight + 'px'
     });
+  }
+
+  // Initialize Turn.js on the flipbook
+  flipbookEL.turn({
+    autoCenter: true,
+    height: 'auto', // Automatically adjust based on aspect ratio
+    width: 'auto' // Automatically adjust based on aspect ratio
+  });
+
+  updateFlipbookSize(); // Initial size update
+  window.addEventListener('resize', updateFlipbookSize); // Handle window resize
+
+  // Handle thumbnail click to navigate pages
+  $('#thumbnails').on('click', '.thumbnail', function () {
+    var page = $(this).data('page');
+    flipbookEL.turn('page', page);
+  });
+
+  // Play sound on page turn
+  var pageFlipAudio = new Audio('page-flip-4.mp3');
+  flipbookEL.on('turning', function () {
+    pageFlipAudio.play();
+  });
+});
   </script>
 </body>
 </html>
