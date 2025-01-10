@@ -77,6 +77,7 @@
         let currentIndex = 0;
         let startX = 0;
         let isSwiping = false;
+        let mainImage, nextImage, prevImage;
 
         function createImageWrapper(src, position = 0) {
             const wrapper = document.createElement('div');
@@ -94,55 +95,6 @@
             });
         }
 
-        function handleSwipeEnd(deltaX) {
-            const threshold = window.innerWidth / 4; // Swipe threshold for completing the transition
-            if (Math.abs(deltaX) > threshold) {
-                if (deltaX < 0 && currentIndex < images.length - 1) {
-                    currentIndex++;
-                } else if (deltaX > 0 && currentIndex > 0) {
-                    currentIndex--;
-                }
-            }
-
-            // Animate to the final positions
-            mainImage.style.transition = 'transform 0.3s';
-            nextImage.style.transition = 'transform 0.3s';
-            const finalDelta = currentIndex * -100;
-
-            mainImage.style.transform = `translateX(${finalDelta}%)`;
-            nextImage.style.transform = `translateX(${finalDelta + 100}%)`;
-
-            updateThumbnails();
-
-            // Play sound on swipe completion
-            swipeSound.currentTime = 0;
-            swipeSound.play();
-
-            setTimeout(() => {
-                mainDisplay.innerHTML = '';
-                setupImages();
-            }, 300);
-        }
-
-        function setupImages() {
-            mainDisplay.innerHTML = '';
-
-            const mainImageSrc = images[currentIndex];
-            const nextImageSrc = images[currentIndex + 1] || images[0];
-
-            mainImage = createImageWrapper(mainImageSrc, 0);
-            nextImage = createImageWrapper(nextImageSrc, 100);
-
-            mainDisplay.appendChild(mainImage);
-            mainDisplay.appendChild(nextImage);
-        }
-
-
-Here's the corrected and complete code for achieving a smooth swipe interaction where the user controls the motion in real-time:
-
-```html
-        let mainImage, nextImage;
-
         function setupImages() {
             mainDisplay.innerHTML = '';
 
@@ -157,6 +109,30 @@ Here's the corrected and complete code for achieving a smooth swipe interaction 
             mainDisplay.appendChild(prevImage);
             mainDisplay.appendChild(mainImage);
             mainDisplay.appendChild(nextImage);
+        }
+
+        function handleSwipeEnd(deltaX) {
+            const threshold = window.innerWidth / 4; // Swipe threshold for completing the transition
+            if (deltaX > threshold && currentIndex > 0) {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            } else if (deltaX < -threshold && currentIndex < images.length - 1) {
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            mainImage.style.transition = 'transform 0.3s';
+            nextImage.style.transition = 'transform 0.3s';
+            prevImage.style.transition = 'transform 0.3s';
+
+            mainImage.style.transform = 'translateX(0%)';
+            nextImage.style.transform = 'translateX(100%)';
+            prevImage.style.transform = 'translateX(-100%)';
+
+            updateThumbnails();
+
+            swipeSound.currentTime = 0;
+            swipeSound.play();
+
+            setTimeout(setupImages, 300);
         }
 
         function handleTouchStart(e) {
@@ -183,28 +159,7 @@ Here's the corrected and complete code for achieving a smooth swipe interaction 
             isSwiping = false;
 
             const deltaX = e.changedTouches[0].clientX - startX;
-            const threshold = window.innerWidth / 4;
-
-            if (deltaX > threshold && currentIndex > 0) {
-                currentIndex = (currentIndex - 1 + images.length) % images.length;
-            } else if (deltaX < -threshold && currentIndex < images.length - 1) {
-                currentIndex = (currentIndex + 1) % images.length;
-            }
-
-            mainImage.style.transition = 'transform 0.3s';
-            nextImage.style.transition = 'transform 0.3s';
-            prevImage.style.transition = 'transform 0.3s';
-
-            mainImage.style.transform = 'translateX(0%)';
-            nextImage.style.transform = 'translateX(100%)';
-            prevImage.style.transform = 'translateX(-100%)';
-
-            updateThumbnails();
-
-            swipeSound.currentTime = 0;
-            swipeSound.play();
-
-            setTimeout(setupImages, 300);
+            handleSwipeEnd(deltaX);
         }
 
         mainDisplay.addEventListener('touchstart', handleTouchStart);
@@ -236,7 +191,7 @@ Here's the corrected and complete code for achieving a smooth swipe interaction 
             isSwiping = false;
 
             const deltaX = e.clientX - startX;
-            handleTouchEnd({ changedTouches: [{ clientX: deltaX + startX }] });
+            handleSwipeEnd(deltaX);
         });
 
         setupImages();
