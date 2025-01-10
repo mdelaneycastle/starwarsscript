@@ -26,8 +26,8 @@
     }
 
     .flipbook {
-      height: 100%;
-      width: auto;
+      width: 80vw; /* Use a percentage of the viewport width */
+      height: auto; /* Height will be dynamically calculated */
       max-width: 800px;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -37,14 +37,9 @@
       user-select: none;
     }
 
-    .flipbook .page {
-      height: 100%;
-      width: auto;
-    }
-
     .flipbook .page img {
-     width: 100%;
-      height: 100%;
+      width: 100%;
+      height: auto; /* Maintain the aspect ratio */
     }
 
     /* Page thumbnails container */
@@ -124,17 +119,20 @@
 
       // Resize event listener
       function updateFlipbookSize() {
-        const thumbnailHeight = document.querySelector('.thumbnails').offsetHeight || 100; // Dynamically calculate thumbnail height
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        const isPC = window.matchMedia("(min-width: 1024px)").matches;
+        const aspectRatio = 4 / 3; // Replace with your image aspect ratio (width / height)
+        const thumbnailHeight = document.querySelector('.thumbnails').offsetHeight || 100;
 
-        if (isMobile) {
-          flipbookEL.turn('size', window.innerWidth * 1.5, window.innerHeight - thumbnailHeight);
-        } else if (isPC) {
-          flipbookEL.turn('size', window.innerWidth * 0.8, window.innerHeight - thumbnailHeight);
-        } else {
-          flipbookEL.turn('size', window.innerWidth, window.innerHeight - thumbnailHeight);
+        let flipbookWidth = Math.min(window.innerWidth * 0.8, 800); // Maintain max-width
+        let flipbookHeight = flipbookWidth / aspectRatio;
+
+        // Adjust for available space
+        if (flipbookHeight > window.innerHeight - thumbnailHeight) {
+          flipbookHeight = window.innerHeight - thumbnailHeight;
+          flipbookWidth = flipbookHeight * aspectRatio;
         }
+
+        // Apply calculated dimensions
+        flipbookEL.turn('size', flipbookWidth, flipbookHeight);
       }
 
       updateFlipbookSize(); // Initial size update
