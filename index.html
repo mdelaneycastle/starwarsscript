@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Swipe Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+        }
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-display {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .main-display img {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.3s ease;
+        }
+        .thumbnail-bar {
+            display: flex;
+            overflow-x: auto;
+            background-color: #222;
+            padding: 10px;
+        }
+        .thumbnail-bar img {
+            height: 60px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s;
+        }
+        .thumbnail-bar img.active {
+            border-color: #f00;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <div class="main-display" id="mainDisplay">
+            <img id="mainImage" src="image1.jpg" alt="Gallery Image">
+        </div>
+        <div class="thumbnail-bar" id="thumbnailBar">
+            <!-- Thumbnail images -->
+            <img src="image1.jpg" alt="Thumbnail 1" data-index="0" class="active">
+            <img src="image2.jpg" alt="Thumbnail 2" data-index="1">
+            <img src="image3.jpg" alt="Thumbnail 3" data-index="2">
+            <img src="image4.jpg" alt="Thumbnail 4" data-index="3">
+        </div>
+    </div>
+
+    <audio id="swipeSound" src="saber.mp3"></audio>
+
+    <script>
+        const images = [
+            'image1.jpg',
+            'image2.jpg',
+            'image3.jpg',
+            'image4.jpg'
+        ];
+
+        const mainImage = document.getElementById('mainImage');
+        const thumbnailBar = document.getElementById('thumbnailBar');
+        const swipeSound = document.getElementById('swipeSound');
+
+        let currentIndex = 0;
+
+        function updateMainImage(index) {
+            mainImage.src = images[index];
+            Array.from(thumbnailBar.children).forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+            swipeSound.currentTime = 0;
+            swipeSound.play();
+        }
+
+        function handleSwipe(direction) {
+            currentIndex = (currentIndex + direction + images.length) % images.length;
+            updateMainImage(currentIndex);
+        }
+
+        // Touch and swipe handling
+        let startX = 0;
+
+        mainImage.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        mainImage.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            if (endX - startX > 50) {
+                handleSwipe(-1); // Swipe right
+            } else if (startX - endX > 50) {
+                handleSwipe(1); // Swipe left
+            }
+        });
+
+        // Mouse click swipe handling
+        mainImage.addEventListener('mousedown', (e) => {
+            startX = e.clientX;
+        });
+
+        mainImage.addEventListener('mouseup', (e) => {
+            const endX = e.clientX;
+            if (endX - startX > 50) {
+                handleSwipe(-1); // Swipe right
+            } else if (startX - endX > 50) {
+                handleSwipe(1); // Swipe left
+            }
+        });
+
+        // Thumbnail click handling
+        thumbnailBar.addEventListener('click', (e) => {
+            if (e.target.tagName === 'IMG') {
+                currentIndex = parseInt(e.target.dataset.index, 10);
+                updateMainImage(currentIndex);
+            }
+        });
+    </script>
+</body>
+</html>
