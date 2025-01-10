@@ -74,33 +74,34 @@
     <!-- Flickity JavaScript -->
     <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script>
-        // Initialize Flickity
-        const flkty = new Flickity('.carousel', {
-            cellAlign: 'center',
-            contain: true,
-            wrapAround: true,
-            autoPlay: 3000, // Auto-advance every 3 seconds
-            prevNextButtons: true,
-            pageDots: false,
-            draggable: true
-        });
+    // Initialize Flickity with adjusted swipe sensitivity
+    const flkty = new Flickity('.carousel', {
+        cellAlign: 'center',
+        contain: true,
+        wrapAround: true,
+        autoPlay: 3000, // Auto-advance every 3 seconds
+        prevNextButtons: true,
+        pageDots: false,
+        draggable: true,
+        dragThreshold: 5 // Lower value makes it more sensitive
+    });
 
-        const thumbnailBar = document.getElementById('thumbnailBar');
-        const thumbnails = Array.from(thumbnailBar.children);
+    const thumbnailBar = document.getElementById('thumbnailBar');
+    const thumbnails = Array.from(thumbnailBar.children);
 
-        // Update active thumbnail when the slider changes
-        flkty.on('select', () => {
-            thumbnails.forEach((thumbnail, index) => {
-                thumbnail.classList.toggle('active', index === flkty.selectedIndex);
-            });
-        });
-
-        // Add click event to thumbnails
+    // Update active thumbnail when the slider changes
+    flkty.on('select', () => {
         thumbnails.forEach((thumbnail, index) => {
-            thumbnail.addEventListener('click', () => {
-                flkty.select(index);
-            });
+            thumbnail.classList.toggle('active', index === flkty.selectedIndex);
         });
-    </script>
+    });
+
+    // Add click event to thumbnails
+    thumbnails.forEach((thumbnail, index) => {
+        thumbnail.addEventListener('click', () => {
+            flkty.select(index);
+        });
+    });
+</script>
 </body>
 </html>
