@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliding Image Gallery</title>
+    <title>Interactive Swipe Gallery</title>
     <style>
         body {
             margin: 0;
@@ -31,6 +31,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: transform 0.3s ease;
         }
         .image-wrapper img {
             max-width: 100%;
@@ -52,39 +53,6 @@
         .thumbnail-bar img.active {
             border-color: #f00;
         }
-        /* Slide animations */
-        @keyframes slideInFromRight {
-            from {
-                transform: translateX(100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-        @keyframes slideOutToLeft {
-            from {
-                transform: translateX(0);
-            }
-            to {
-                transform: translateX(-100%);
-            }
-        }
-        @keyframes slideInFromLeft {
-            from {
-                transform: translateX(-100%);
-            }
-            to {
-                transform: translateX(0);
-            }
-        }
-        @keyframes slideOutToRight {
-            from {
-                transform: translateX(0);
-            }
-            to {
-                transform: translateX(100%);
-            }
-        }
     </style>
 </head>
 <body>
@@ -105,86 +73,173 @@
         const mainDisplay = document.getElementById('mainDisplay');
         const thumbnailBar = document.getElementById('thumbnailBar');
         const swipeSound = document.getElementById('swipeSound');
-        let currentIndex = 0;
 
-        function createImageWrapper(src, animation) {
+        let currentIndex = 0;
+        let startX = 0;
+        let isSwiping = false;
+
+        function createImageWrapper(src, position = 0) {
             const wrapper = document.createElement('div');
             wrapper.classList.add('image-wrapper');
-            wrapper.style.animation = animation;
+            wrapper.style.transform = `translateX(${position}%)`;
             const img = document.createElement('img');
             img.src = src;
             wrapper.appendChild(img);
             return wrapper;
         }
 
-        function updateMainDisplay(newIndex, direction) {
-            const currentImage = createImageWrapper(images[currentIndex], direction === 'right' ? 'slideOutToLeft 0.5s forwards' : 'slideOutToRight 0.5s forwards');
-            const newImage = createImageWrapper(images[newIndex], direction === 'right' ? 'slideInFromRight 0.5s forwards' : 'slideInFromLeft 0.5s forwards');
-
-            mainDisplay.appendChild(currentImage);
-            mainDisplay.appendChild(newImage);
-
-            currentIndex = newIndex;
-            swipeSound.currentTime = 0;
-            swipeSound.play();
-
+        function updateThumbnails() {
             Array.from(thumbnailBar.children).forEach((img, i) => {
                 img.classList.toggle('active', i === currentIndex);
             });
+        }
+
+        function handleSwipeEnd(deltaX) {
+            const threshold = window.innerWidth / 4; // Swipe threshold for completing the transition
+            if (Math.abs(deltaX) > threshold) {
+                if (deltaX < 0 && currentIndex < images.length - 1) {
+                    currentIndex++;
+                } else if (deltaX > 0 && currentIndex > 0) {
+                    currentIndex--;
+                }
+            }
+
+            // Animate to the final positions
+            mainImage.style.transition = 'transform 0.3s';
+            nextImage.style.transition = 'transform 0.3s';
+            const finalDelta = currentIndex * -100;
+
+            mainImage.style.transform = `translateX(${finalDelta}%)`;
+            nextImage.style.transform = `translateX(${finalDelta + 100}%)`;
+
+            updateThumbnails();
+
+            // Play sound on swipe completion
+            swipeSound.currentTime = 0;
+            swipeSound.play();
 
             setTimeout(() => {
-                mainDisplay.removeChild(currentImage);
-            }, 500);
+                mainDisplay.innerHTML = '';
+                setupImages();
+            }, 300);
         }
 
-        function handleSwipe(direction) {
-            const newIndex = (currentIndex + direction + images.length) % images.length;
-            updateMainDisplay(newIndex, direction > 0 ? 'right' : 'left');
+        function setupImages() {
+            mainDisplay.innerHTML = '';
+
+            const mainImageSrc = images[currentIndex];
+            const nextImageSrc = images[currentIndex + 1] || images[0];
+
+            mainImage = createImageWrapper(mainImageSrc, 0);
+            nextImage = createImageWrapper(nextImageSrc, 100);
+
+            mainDisplay.appendChild(mainImage);
+            mainDisplay.appendChild(nextImage);
         }
 
-        // Touch swipe handling
-        let startX = 0;
 
-        mainDisplay.addEventListener('touchstart', (e) => {
+Here's the corrected and complete code for achieving a smooth swipe interaction where the user controls the motion in real-time:
+
+```html
+        let mainImage, nextImage;
+
+        function setupImages() {
+            mainDisplay.innerHTML = '';
+
+            const mainImageSrc = images[currentIndex];
+            const nextImageSrc = images[(currentIndex + 1) % images.length];
+            const prevImageSrc = images[(currentIndex - 1 + images.length) % images.length];
+
+            mainImage = createImageWrapper(mainImageSrc, 0);
+            nextImage = createImageWrapper(nextImageSrc, 100);
+            prevImage = createImageWrapper(prevImageSrc, -100);
+
+            mainDisplay.appendChild(prevImage);
+            mainDisplay.appendChild(mainImage);
+            mainDisplay.appendChild(nextImage);
+        }
+
+        function handleTouchStart(e) {
             startX = e.touches[0].clientX;
-        });
+            isSwiping = true;
 
-        mainDisplay.addEventListener('touchend', (e) => {
-            const endX = e.changedTouches[0].clientX;
-            if (endX - startX > 50) {
-                handleSwipe(-1); // Swipe right
-            } else if (startX - endX > 50) {
-                handleSwipe(1); // Swipe left
+            mainImage.style.transition = 'none';
+            nextImage.style.transition = 'none';
+            prevImage.style.transition = 'none';
+        }
+
+        function handleTouchMove(e) {
+            if (!isSwiping) return;
+
+            const deltaX = e.touches[0].clientX - startX;
+
+            mainImage.style.transform = `translateX(${deltaX}px)`;
+            nextImage.style.transform = `translateX(${100 + deltaX / window.innerWidth * 100}%)`;
+            prevImage.style.transform = `translateX(${-100 + deltaX / window.innerWidth * 100}%)`;
+        }
+
+        function handleTouchEnd(e) {
+            if (!isSwiping) return;
+            isSwiping = false;
+
+            const deltaX = e.changedTouches[0].clientX - startX;
+            const threshold = window.innerWidth / 4;
+
+            if (deltaX > threshold && currentIndex > 0) {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            } else if (deltaX < -threshold && currentIndex < images.length - 1) {
+                currentIndex = (currentIndex + 1) % images.length;
             }
+
+            mainImage.style.transition = 'transform 0.3s';
+            nextImage.style.transition = 'transform 0.3s';
+            prevImage.style.transition = 'transform 0.3s';
+
+            mainImage.style.transform = 'translateX(0%)';
+            nextImage.style.transform = 'translateX(100%)';
+            prevImage.style.transform = 'translateX(-100%)';
+
+            updateThumbnails();
+
+            swipeSound.currentTime = 0;
+            swipeSound.play();
+
+            setTimeout(setupImages, 300);
+        }
+
+        mainDisplay.addEventListener('touchstart', handleTouchStart);
+        mainDisplay.addEventListener('touchmove', handleTouchMove);
+        mainDisplay.addEventListener('touchend', handleTouchEnd);
+
+        mainDisplay.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startX = e.clientX;
+            isSwiping = true;
+
+            mainImage.style.transition = 'none';
+            nextImage.style.transition = 'none';
+            prevImage.style.transition = 'none';
         });
 
-        // Mouse drag handling
-        mainDisplay.addEventListener('mousedown', (e) => {
-            startX = e.clientX;
+        mainDisplay.addEventListener('mousemove', (e) => {
+            if (!isSwiping) return;
+
+            const deltaX = e.clientX - startX;
+
+            mainImage.style.transform = `translateX(${deltaX}px)`;
+            nextImage.style.transform = `translateX(${100 + deltaX / window.innerWidth * 100}%)`;
+            prevImage.style.transform = `translateX(${-100 + deltaX / window.innerWidth * 100}%)`;
         });
 
         mainDisplay.addEventListener('mouseup', (e) => {
-            const endX = e.clientX;
-            if (endX - startX > 50) {
-                handleSwipe(-1); // Swipe right
-            } else if (startX - endX > 50) {
-                handleSwipe(1); // Swipe left
-            }
+            if (!isSwiping) return;
+            isSwiping = false;
+
+            const deltaX = e.clientX - startX;
+            handleTouchEnd({ changedTouches: [{ clientX: deltaX + startX }] });
         });
 
-        // Thumbnail click handling
-        thumbnailBar.addEventListener('click', (e) => {
-            if (e.target.tagName === 'IMG') {
-                const newIndex = parseInt(e.target.dataset.index, 10);
-                if (newIndex !== currentIndex) {
-                    const direction = newIndex > currentIndex ? 'right' : 'left';
-                    updateMainDisplay(newIndex, direction);
-                }
-            }
-        });
-
-        // Initial image setup
-        mainDisplay.appendChild(createImageWrapper(images[currentIndex], ''));
+        setupImages();
     </script>
 </body>
 </html>
