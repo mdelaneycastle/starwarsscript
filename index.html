@@ -24,7 +24,7 @@
             background: #111;
         }
         .carousel-cell {
-            width: 100%; /* Full width */
+            width: 70%; /* Reduce width to make part of the next image visible */
             height: 100%;
             margin-right: 10px;
             display: flex;
@@ -74,34 +74,35 @@
     <!-- Flickity JavaScript -->
     <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script>
-    // Initialize Flickity with adjusted swipe sensitivity
-    const flkty = new Flickity('.carousel', {
-        cellAlign: 'center',
-        contain: true,
-        wrapAround: true,
-        autoPlay: 3000, // Auto-advance every 3 seconds
-        prevNextButtons: true,
-        pageDots: false,
-        draggable: true,
-        dragThreshold: 2 // Lower value makes it more sensitive
-    });
+        // Initialize Flickity with adjusted swipe sensitivity
+        const flkty = new Flickity('.carousel', {
+            cellAlign: 'center',
+            contain: true,
+            wrapAround: true,
+            autoPlay: 3000, // Auto-advance every 3 seconds
+            prevNextButtons: true,
+            pageDots: false,
+            draggable: true,
+            dragThreshold: 2, // Lower value makes it more sensitive
+            groupCells: false // Ensure individual cells slide as expected
+        });
 
-    const thumbnailBar = document.getElementById('thumbnailBar');
-    const thumbnails = Array.from(thumbnailBar.children);
+        const thumbnailBar = document.getElementById('thumbnailBar');
+        const thumbnails = Array.from(thumbnailBar.children);
 
-    // Update active thumbnail when the slider changes
-    flkty.on('select', () => {
+        // Update active thumbnail when the slider changes
+        flkty.on('select', () => {
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.classList.toggle('active', index === flkty.selectedIndex);
+            });
+        });
+
+        // Add click event to thumbnails
         thumbnails.forEach((thumbnail, index) => {
-            thumbnail.classList.toggle('active', index === flkty.selectedIndex);
+            thumbnail.addEventListener('click', () => {
+                flkty.select(index);
+            });
         });
-    });
-
-    // Add click event to thumbnails
-    thumbnails.forEach((thumbnail, index) => {
-        thumbnail.addEventListener('click', () => {
-            flkty.select(index);
-        });
-    });
-</script>
+    </script>
 </body>
 </html>
