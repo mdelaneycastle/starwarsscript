@@ -112,11 +112,17 @@
         }
 
         function handleSwipeEnd(deltaX) {
-            const threshold = window.innerWidth / 4; // Swipe threshold for completing the transition
+            const threshold = window.innerWidth / 4;
+            let direction = 0; // Default to no movement
+
             if (deltaX > threshold && currentIndex > 0) {
-                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                direction = -1; // Swipe right
             } else if (deltaX < -threshold && currentIndex < images.length - 1) {
-                currentIndex = (currentIndex + 1) % images.length;
+                direction = 1; // Swipe left
+            }
+
+            if (direction !== 0) {
+                currentIndex = (currentIndex + direction + images.length) % images.length;
             }
 
             mainImage.style.transition = 'transform 0.3s';
@@ -162,6 +168,17 @@
             handleSwipeEnd(deltaX);
         }
 
+        function handleThumbnailClick(e) {
+            const index = parseInt(e.target.dataset.index, 10);
+            if (!isNaN(index)) {
+                currentIndex = index;
+                setupImages();
+                updateThumbnails();
+                swipeSound.currentTime = 0;
+                swipeSound.play();
+            }
+        }
+
         mainDisplay.addEventListener('touchstart', handleTouchStart);
         mainDisplay.addEventListener('touchmove', handleTouchMove);
         mainDisplay.addEventListener('touchend', handleTouchEnd);
@@ -193,6 +210,8 @@
             const deltaX = e.clientX - startX;
             handleSwipeEnd(deltaX);
         });
+
+        thumbnailBar.addEventListener('click', handleThumbnailClick);
 
         setupImages();
     </script>
