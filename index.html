@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Swipe Gallery</title>
+    <title>Sliding Image Gallery</title>
     <style>
         body {
             margin: 0;
@@ -21,16 +21,20 @@
         }
         .main-display {
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
-        .main-display img {
+        .image-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-wrapper img {
             max-width: 100%;
             max-height: 100%;
-            transition: transform 0.3s ease;
         }
         .thumbnail-bar {
             display: flex;
@@ -48,40 +52,45 @@
         .thumbnail-bar img.active {
             border-color: #f00;
         }
-        /* Prompt styles */
-        .swipe-prompt {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            text-align: center;
-            animation: pulse 1.5s infinite;
-            color: rgba(255, 255, 255, 0.8);
-            z-index: 10;
-        }
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.5;
-                transform: translate(-50%, -50%) scale(1);
+        /* Slide animations */
+        @keyframes slideInFromRight {
+            from {
+                transform: translateX(100%);
             }
-            50% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.05);
+            to {
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideOutToLeft {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideOutToRight {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(100%);
             }
         }
     </style>
 </head>
 <body>
     <div class="gallery-container">
-        <div class="main-display" id="mainDisplay">
-            <img id="mainImage" src="1.jpg" alt="Gallery Image">
-            <div class="swipe-prompt" id="swipePrompt">
-                Swipe to navigate
-            </div>
-        </div>
+        <div class="main-display" id="mainDisplay"></div>
         <div class="thumbnail-bar" id="thumbnailBar">
-            <!-- Thumbnail images -->
             <img src="1.jpg" alt="Thumbnail 1" data-index="0" class="active">
             <img src="2.jpg" alt="Thumbnail 2" data-index="1">
             <img src="3.jpg" alt="Thumbnail 3" data-index="2">
@@ -92,81 +101,90 @@
     <audio id="swipeSound" src="saber.mp3"></audio>
 
     <script>
-        const images = [
-            '1.jpg',
-            '2.jpg',
-            '3.jpg',
-            '4.jpg'
-        ];
-
-        const mainImage = document.getElementById('mainImage');
+        const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg'];
+        const mainDisplay = document.getElementById('mainDisplay');
         const thumbnailBar = document.getElementById('thumbnailBar');
         const swipeSound = document.getElementById('swipeSound');
-        const swipePrompt = document.getElementById('swipePrompt');
-
         let currentIndex = 0;
 
-        function updateMainImage(index) {
-            mainImage.src = images[index];
-            Array.from(thumbnailBar.children).forEach((img, i) => {
-                img.classList.toggle('active', i === index);
-            });
+        function createImageWrapper(src, animation) {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('image-wrapper');
+            wrapper.style.animation = animation;
+            const img = document.createElement('img');
+            img.src = src;
+            wrapper.appendChild(img);
+            return wrapper;
+        }
+
+        function updateMainDisplay(newIndex, direction) {
+            const currentImage = createImageWrapper(images[currentIndex], direction === 'right' ? 'slideOutToLeft 0.5s forwards' : 'slideOutToRight 0.5s forwards');
+            const newImage = createImageWrapper(images[newIndex], direction === 'right' ? 'slideInFromRight 0.5s forwards' : 'slideInFromLeft 0.5s forwards');
+
+            mainDisplay.appendChild(currentImage);
+            mainDisplay.appendChild(newImage);
+
+            currentIndex = newIndex;
             swipeSound.currentTime = 0;
             swipeSound.play();
+
+            Array.from(thumbnailBar.children).forEach((img, i) => {
+                img.classList.toggle('active', i === currentIndex);
+            });
+
+            setTimeout(() => {
+                mainDisplay.removeChild(currentImage);
+            }, 500);
         }
 
         function handleSwipe(direction) {
-            currentIndex = (currentIndex + direction + images.length) % images.length;
-            updateMainImage(currentIndex);
+            const newIndex = (currentIndex + direction + images.length) % images.length;
+            updateMainDisplay(newIndex, direction > 0 ? 'right' : 'left');
         }
 
-        // Hide swipe prompt after interaction
-        function hideSwipePrompt() {
-            if (swipePrompt) {
-                swipePrompt.style.display = 'none';
-            }
-        }
-
-        // Touch and swipe handling
+        // Touch swipe handling
         let startX = 0;
 
-        mainImage.addEventListener('touchstart', (e) => {
+        mainDisplay.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
         });
 
-        mainImage.addEventListener('touchend', (e) => {
+        mainDisplay.addEventListener('touchend', (e) => {
             const endX = e.changedTouches[0].clientX;
             if (endX - startX > 50) {
                 handleSwipe(-1); // Swipe right
             } else if (startX - endX > 50) {
                 handleSwipe(1); // Swipe left
             }
-            hideSwipePrompt();
         });
 
-        // Mouse click swipe handling
-        mainImage.addEventListener('mousedown', (e) => {
+        // Mouse drag handling
+        mainDisplay.addEventListener('mousedown', (e) => {
             startX = e.clientX;
         });
 
-        mainImage.addEventListener('mouseup', (e) => {
+        mainDisplay.addEventListener('mouseup', (e) => {
             const endX = e.clientX;
             if (endX - startX > 50) {
                 handleSwipe(-1); // Swipe right
             } else if (startX - endX > 50) {
                 handleSwipe(1); // Swipe left
             }
-            hideSwipePrompt();
         });
 
         // Thumbnail click handling
         thumbnailBar.addEventListener('click', (e) => {
             if (e.target.tagName === 'IMG') {
-                currentIndex = parseInt(e.target.dataset.index, 10);
-                updateMainImage(currentIndex);
-                hideSwipePrompt();
+                const newIndex = parseInt(e.target.dataset.index, 10);
+                if (newIndex !== currentIndex) {
+                    const direction = newIndex > currentIndex ? 'right' : 'left';
+                    updateMainDisplay(newIndex, direction);
+                }
             }
         });
+
+        // Initial image setup
+        mainDisplay.appendChild(createImageWrapper(images[currentIndex], ''));
     </script>
 </body>
 </html>
