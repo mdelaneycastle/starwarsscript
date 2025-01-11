@@ -10,8 +10,8 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: #dadada;
+            color: #000;
         }
         .gallery-container {
             width: 100%;
@@ -57,52 +57,81 @@
 </head>
 <body>
     <div class="gallery-container">
-        <div class="carousel">
-            <div class="carousel-cell"><img src="1.png" alt="Image 1"></div>
-            <div class="carousel-cell"><img src="2.png" alt="Image 2"></div>
-            <div class="carousel-cell"><img src="3.png" alt="Image 3"></div>
-            <div class="carousel-cell"><img src="4.jpg" alt="Image 4"></div>
-        </div>
-        <div class="thumbnail-bar" id="thumbnailBar">
-            <img src="1.png" alt="Thumbnail 1" data-index="0">
-            <img src="2.png" alt="Thumbnail 2" data-index="1">
-            <img src="3.png" alt="Thumbnail 3" data-index="2">
-            <img src="4.jpg" alt="Thumbnail 4" data-index="3">
-        </div>
+        <div class="carousel" id="carousel"></div>
+        <div class="thumbnail-bar" id="thumbnailBar"></div>
     </div>
 
     <!-- Flickity JavaScript -->
     <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
     <script>
-        // Initialize Flickity with adjusted swipe sensitivity
-        const flkty = new Flickity('.carousel', {
-            cellAlign: 'center',
-            contain: true,
-            wrapAround: true,
-            autoPlay: 3000, // Auto-advance every 3 seconds
-            prevNextButtons: true,
-            pageDots: false,
-            draggable: true,
-            dragThreshold: 2, // Lower value makes it more sensitive
-            groupCells: false // Ensure individual cells slide as expected
-        });
-
+        const carouselElement = document.getElementById('carousel');
         const thumbnailBar = document.getElementById('thumbnailBar');
-        const thumbnails = Array.from(thumbnailBar.children);
 
-        // Update active thumbnail when the slider changes
-        flkty.on('select', () => {
+        // Dynamically load all images from the "Images" folder
+        const imagesFolder = './Images/';
+        const imageExtensions = ['png', 'jpg', 'jpeg', 'gif']; // Supported image extensions
+
+        fetch(imagesFolder)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error fetching the folder contents');
+                }
+                return response.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const imageFiles = Array.from(doc.querySelectorAll('a'))
+                    .map(link => link.href)
+                    .filter(file => imageExtensions.some(ext => file.endsWith(ext)));
+
+                imageFiles.forEach((file, index) => {
+                    const carouselCell = document.createElement('div');
+                    carouselCell.classList.add('carousel-cell');
+                    carouselCell.innerHTML = `<img src="${file}" alt="Image ${index + 1}">`;
+                    carouselElement.appendChild(carouselCell);
+
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = file;
+                    thumbnail.alt = `Thumbnail ${index + 1}`;
+                    thumbnail.setAttribute('data-index', index);
+                    thumbnailBar.appendChild(thumbnail);
+                });
+
+                initializeFlickity();
+            })
+            .catch(error => console.error('Error loading images:', error));
+
+        function initializeFlickity() {
+            // Initialize Flickity with adjusted swipe sensitivity
+            const flkty = new Flickity('.carousel', {
+                cellAlign: 'center',
+                contain: true,
+                wrapAround: true,
+                autoPlay: 3000, // Auto-advance every 3 seconds
+                prevNextButtons: true,
+                pageDots: false,
+                draggable: true,
+                dragThreshold: 2, // Lower value makes it more sensitive
+                groupCells: false // Ensure individual cells slide as expected
+            });
+
+            const thumbnails = Array.from(thumbnailBar.children);
+
+            // Update active thumbnail when the slider changes
+            flkty.on('select', () => {
+                thumbnails.forEach((thumbnail, index) => {
+                    thumbnail.classList.toggle('active', index === flkty.selectedIndex);
+                });
+            });
+
+            // Add click event to thumbnails
             thumbnails.forEach((thumbnail, index) => {
-                thumbnail.classList.toggle('active', index === flkty.selectedIndex);
+                thumbnail.addEventListener('click', () => {
+                    flkty.select(index);
+                });
             });
-        });
-
-        // Add click event to thumbnails
-        thumbnails.forEach((thumbnail, index) => {
-            thumbnail.addEventListener('click', () => {
-                flkty.select(index);
-            });
-        });
+        }
     </script>
 </body>
 </html>
