@@ -10,7 +10,7 @@
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #dadada;
+            background-color: #111;
             color: #000;
         }
         .gallery-container {
@@ -21,10 +21,10 @@
         }
         .carousel {
             height: 80%;
-            background: #111;
+            background: #dadada;
         }
         .carousel-cell {
-            width: 70%; /* Reduce width to make part of the next image visible */
+            width: 70%;
             height: 100%;
             margin-right: 10px;
             display: flex;
@@ -67,32 +67,25 @@
         const carouselElement = document.getElementById('carousel');
         const thumbnailBar = document.getElementById('thumbnailBar');
 
-        // Dynamically load all images from the "Images" folder
-        const imagesFolder = './Images/';
-        const imageExtensions = ['png', 'jpg', 'jpeg', 'gif']; // Supported image extensions
-
-        fetch(imagesFolder)
+        // Fetch image list from the server
+        fetch('./list-images.php')
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Error fetching the folder contents');
+                    throw new Error('Failed to fetch image list');
                 }
-                return response.text();
+                return response.json();
             })
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const imageFiles = Array.from(doc.querySelectorAll('a'))
-                    .map(link => link.href)
-                    .filter(file => imageExtensions.some(ext => file.endsWith(ext)));
-
-                imageFiles.forEach((file, index) => {
+            .then(images => {
+                images.forEach((file, index) => {
+                    const imagePath = `./Images/${file}`;
+                    
                     const carouselCell = document.createElement('div');
                     carouselCell.classList.add('carousel-cell');
-                    carouselCell.innerHTML = `<img src="${file}" alt="Image ${index + 1}">`;
+                    carouselCell.innerHTML = `<img src="${imagePath}" alt="Image ${index + 1}">`;
                     carouselElement.appendChild(carouselCell);
 
                     const thumbnail = document.createElement('img');
-                    thumbnail.src = file;
+                    thumbnail.src = imagePath;
                     thumbnail.alt = `Thumbnail ${index + 1}`;
                     thumbnail.setAttribute('data-index', index);
                     thumbnailBar.appendChild(thumbnail);
@@ -103,17 +96,17 @@
             .catch(error => console.error('Error loading images:', error));
 
         function initializeFlickity() {
-            // Initialize Flickity with adjusted swipe sensitivity
+            // Initialize Flickity
             const flkty = new Flickity('.carousel', {
                 cellAlign: 'center',
                 contain: true,
                 wrapAround: true,
-                autoPlay: 3000, // Auto-advance every 3 seconds
+                autoPlay: 3000,
                 prevNextButtons: true,
                 pageDots: false,
                 draggable: true,
-                dragThreshold: 2, // Lower value makes it more sensitive
-                groupCells: false // Ensure individual cells slide as expected
+                dragThreshold: 2,
+                groupCells: false
             });
 
             const thumbnails = Array.from(thumbnailBar.children);
