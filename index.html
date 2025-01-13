@@ -1,174 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flickity Swipe Gallery</title>
-    <!-- Flickity CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #dadada; /* Light gray background */
-            color: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .gallery-container {
-            width: 100%;
-            max-width: 1200px;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .carousel {
-            width: 80%; /* Main images take up 80% of the screen width */
-            height: 60%; /* Adjust height as needed */
-            background: #dadada;
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .carousel-cell {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background: #dadada;
-        }
-        .carousel-cell img {
-            max-width: 100%;
-            max-height: 100%;
-        }
-        .image-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #000;
-        }
-        .thumbnail-bar {
-            width: 80%; /* Matches the carousel width */
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            background-color: #dadada;
-            padding: 10px;
-            overflow-x: auto; /* Enable horizontal scrolling */
-            scrollbar-width: thin; /* Firefox scrollbar */
-        }
-        .thumbnail-bar::-webkit-scrollbar {
-            height: 6px;
-        }
-        .thumbnail-bar::-webkit-scrollbar-thumb {
-            background: #aaa;
-            border-radius: 5px;
-        }
-        .thumbnail-bar::-webkit-scrollbar-track {
-            background: #dadada;
-        }
-        .thumbnail-bar img {
-            height: 60px;
-            margin: 0 5px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border 0.3s;
-            flex-shrink: 0; /* Prevent thumbnails from shrinking */
-        }
-        .thumbnail-bar img.active {
-            border-color: #f00;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Viewer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.3.0/flickity.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="gallery-container">
-        <div class="carousel" id="carousel"></div>
-        <div class="image-title" id="imageTitle">Image Title</div>
-        <div class="thumbnail-bar" id="thumbnailBar"></div>
+  <div class="gallery-container">
+    <div class="main-image">
+      <img id="current-image" src="" alt="Image">
+      <div id="image-title">Title</div>
     </div>
+    <div class="thumbnail-gallery">
+      <div id="thumbnails" class="carousel"></div>
+    </div>
+  </div>
 
-    <!-- Flickity JavaScript -->
-    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
-    <script>
-        const carouselElement = document.getElementById('carousel');
-        const thumbnailBar = document.getElementById('thumbnailBar');
-        const imageTitleElement = document.getElementById('imageTitle');
-
-        // Function to clean up filenames for display
-        function formatTitle(filename) {
-            const noExtension = filename.replace(/\.[^/.]+$/, ''); // Remove extension
-            const beforeUnderscore = noExtension.split('_')[0];  // Remove text after '_'
-            return beforeUnderscore;
-        }
-
-        // Fetch image list from images.json
-        fetch('./images.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch image list');
-                }
-                return response.json();
-            })
-            .then(images => {
-                images.forEach((file, index) => {
-                    const imagePath = `./Images/${file}`;
-                    const title = formatTitle(file); // Format title
-
-                    // Create carousel cell
-                    const carouselCell = document.createElement('div');
-                    carouselCell.classList.add('carousel-cell');
-                    carouselCell.innerHTML = `<img src="${imagePath}" alt="Image ${index + 1}">`;
-                    carouselElement.appendChild(carouselCell);
-
-                    // Create thumbnail
-                    const thumbnail = document.createElement('img');
-                    thumbnail.src = imagePath;
-                    thumbnail.alt = `Thumbnail ${index + 1}`;
-                    thumbnail.setAttribute('data-index', index);
-                    thumbnailBar.appendChild(thumbnail);
-                });
-
-                initializeFlickity(images);
-            })
-            .catch(error => console.error('Error loading images:', error));
-
-        function initializeFlickity(images) {
-            const flkty = new Flickity('.carousel', {
-                cellAlign: 'center',
-                contain: true,
-                wrapAround: true,
-                prevNextButtons: true,
-                pageDots: false,
-                draggable: true,
-                dragThreshold: 2,
-                groupCells: false,
-                autoPlay: false // Disabled autoplay
-            });
-
-            const thumbnails = Array.from(thumbnailBar.children);
-
-            // Set the initial title
-            imageTitleElement.textContent = formatTitle(images[0]);
-
-            // Update active thumbnail and title when the slider changes
-            flkty.on('select', () => {
-                thumbnails.forEach((thumbnail, index) => {
-                    thumbnail.classList.toggle('active', index === flkty.selectedIndex);
-                });
-                const currentIndex = flkty.selectedIndex;
-                imageTitleElement.textContent = formatTitle(images[currentIndex]);
-            });
-
-            // Add click event to thumbnails
-            thumbnails.forEach((thumbnail, index) => {
-                thumbnail.addEventListener('click', () => {
-                    flkty.select(index);
-                });
-            });
-        }
-    </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flickity/2.3.0/flickity.pkgd.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
