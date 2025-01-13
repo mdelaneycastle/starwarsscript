@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js</title>
+  <title>Image Viewer with Starjedi Font</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
+    @font-face {
+      font-family: 'Starjedi';
+      src: url('./fonts/Starjedi.ttf') format('truetype');
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -30,8 +35,8 @@
     }
 
     #thumbnail-slider .splide__slide img {
-      width: 120px; /* Larger thumbnails */
-      height: 90px; /* Larger thumbnails */
+      width: 120px;
+      height: 90px;
       object-fit: cover;
       border-radius: 5px;
       border: 2px solid transparent;
@@ -46,6 +51,7 @@
       font-size: 1.5rem;
       color: #333;
       text-align: center;
+      font-family: 'Starjedi', Arial, sans-serif; /* Apply the custom font */
     }
   </style>
 </head>
