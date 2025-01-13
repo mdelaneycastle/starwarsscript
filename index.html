@@ -30,8 +30,8 @@
     }
 
     #thumbnail-slider .splide__slide img {
-      width: 100px;
-      height: 70px;
+      width: 120px; /* Larger thumbnails */
+      height: 90px; /* Larger thumbnails */
       object-fit: cover;
       border-radius: 5px;
       border: 2px solid transparent;
@@ -94,20 +94,20 @@
           const extractTitle = (filename) => filename.split('_')[0];
 
           images.forEach((image, index) => {
-            // Create main slider item
+            // Create main slider item (High-res images)
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
             const mainImg = document.createElement('img');
-            mainImg.src = `Images/${image}`;
+            mainImg.src = `Images/${image}`; // High-res images for main slider
             mainImg.alt = extractTitle(image);
             mainSlide.appendChild(mainImg);
             mainList.appendChild(mainSlide);
 
-            // Create thumbnail slider item
+            // Create thumbnail slider item (Low-res thumbnails)
             const thumbnailSlide = document.createElement('li');
             thumbnailSlide.classList.add('splide__slide');
             const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `Images/${image}`;
+            thumbnailImg.src = `Thumbnails/${image}`; // Low-res images for thumbnails
             thumbnailImg.alt = extractTitle(image);
             thumbnailSlide.appendChild(thumbnailImg);
             thumbnailList.appendChild(thumbnailSlide);
@@ -124,8 +124,8 @@
 
           // Initialize Splide.js for the thumbnail slider
           const thumbnailSlider = new Splide('#thumbnail-slider', {
-            fixedWidth  : 100,
-            fixedHeight : 64,
+            fixedWidth  : 120, // Larger thumbnails
+            fixedHeight : 90,  // Larger thumbnails
             isNavigation: true,
             gap         : 10,
             focus       : 'center',
@@ -133,8 +133,8 @@
             cover       : true,
             breakpoints : {
               600: {
-                fixedWidth : 66,
-                fixedHeight: 40,
+                fixedWidth : 80,
+                fixedHeight: 60,
               },
             },
           });
