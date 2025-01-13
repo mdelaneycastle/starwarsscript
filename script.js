@@ -3,16 +3,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const mainImage = document.getElementById('current-image');
   const imageTitle = document.getElementById('image-title');
   const thumbnailsContainer = document.getElementById('thumbnails');
+  const prevButton = document.getElementById('prev-button');
+  const nextButton = document.getElementById('next-button');
 
   fetch('images.json')
     .then(response => response.json())
     .then(images => {
       let currentIndex = 0;
 
+      // Extract title from filename
+      const extractTitle = (filename) => {
+        const baseName = filename.split('.')[0]; // Remove file extension
+        return baseName.split('_')[0]; // Remove underscore and following characters
+      };
+
       // Function to update main image
       const updateMainImage = (index) => {
-        mainImage.src = `images/${images[index].file}`;
-        imageTitle.textContent = images[index].title;
+        mainImage.src = `images/${images[index]}`;
+        imageTitle.textContent = extractTitle(images[index]);
         currentIndex = index;
 
         // Update thumbnails' border
@@ -26,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const cell = document.createElement('div');
         cell.classList.add('carousel-cell');
         const img = document.createElement('img');
-        img.src = `images/${image.file}`;
-        img.alt = image.title;
+        img.src = `images/${image}`;
+        img.alt = extractTitle(image);
 
         img.addEventListener('click', () => updateMainImage(index));
         cell.appendChild(img);
@@ -44,6 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Set initial image
       updateMainImage(0);
+
+      // Navigation buttons
+      prevButton.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          updateMainImage(currentIndex - 1);
+        }
+      });
+
+      nextButton.addEventListener('click', () => {
+        if (currentIndex < images.length - 1) {
+          updateMainImage(currentIndex + 1);
+        }
+      });
 
       // Swipe through main image with arrow keys
       document.addEventListener('keydown', (e) => {
