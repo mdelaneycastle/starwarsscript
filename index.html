@@ -83,7 +83,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      fetch('images.json') // Ensure the JSON contains valid filenames
+      fetch('images.json') // Fetch JSON file
         .then(response => {
           if (!response.ok) {
             throw new Error(`Failed to fetch images.json: ${response.statusText}`);
@@ -103,18 +103,21 @@
           const extractTitle = (filename) => filename.split('_')[0].toLowerCase();
 
           images.forEach((image, index) => {
+            // Log for debugging
+            console.log("Processing image:", image);
+
             // Create main slider item (High-res images from Images folder)
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
             const mainImg = document.createElement('img');
-            mainImg.src = `Images/${image}`; // Always fetch from Images/
+            mainImg.src = `Images/${image}`;
             mainImg.alt = extractTitle(image);
 
-            // Adjust object-fit for portrait images
+            // Assign portrait styling based on natural dimensions
             mainImg.onload = () => {
               if (mainImg.naturalHeight > mainImg.naturalWidth) {
-                mainImg.style.objectFit = 'contain'; // Fit portrait images
-                mainImg.style.height = 'auto'; // Ensure height fits properly
+                console.log(`Portrait image detected: ${image}`);
+                mainImg.style.objectFit = 'contain';
               }
             };
 
@@ -125,8 +128,12 @@
             const thumbnailSlide = document.createElement('li');
             thumbnailSlide.classList.add('splide__slide');
             const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `Thumbnails/${image}`; // Always fetch from Thumbnails/
+            thumbnailImg.src = `Thumbnails/${image}`; // Ensure thumbnails match
             thumbnailImg.alt = extractTitle(image);
+
+            // Log for debugging
+            console.log("Thumbnail source:", thumbnailImg.src);
+
             thumbnailSlide.appendChild(thumbnailImg);
             thumbnailList.appendChild(thumbnailSlide);
           });
