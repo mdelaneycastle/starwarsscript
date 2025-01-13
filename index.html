@@ -8,7 +8,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #dadada; /* Background color */
+      background-color: #dadada;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -44,34 +44,43 @@
       right: 10px;
     }
 
+    .main-image-gallery {
+      display: flex;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      gap: 10px;
+      scrollbar-width: none; /* Hide scrollbar */
+    }
+
+    .main-image-gallery::-webkit-scrollbar {
+      display: none; /* Hide scrollbar */
+    }
+
     .main-image {
-      position: relative;
-      margin-bottom: 20px;
-      overflow: hidden; /* For swipe gestures */
-    }
-
-    #current-image {
-      width: 100%;
+      flex: 0 0 80%; /* Each image takes 80% of the container width */
       max-width: 800px;
-      max-height: 60vh;
-      object-fit: contain;
-      margin: 0 auto;
-      transition: transform 0.3s ease; /* Smooth swipe effect */
+      scroll-snap-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    #image-title {
-      margin-top: 10px;
-      font-size: 1.5rem;
-      color: #333;
+    .main-image img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
     }
 
     .thumbnail-gallery {
-      margin-top: 20px;
-      overflow-x: auto; /* Enable horizontal scroll for thumbnails */
       display: flex;
+      overflow-x: auto;
       gap: 15px;
       padding: 10px;
+      margin-top: 20px;
       scrollbar-width: none; /* Hide scrollbar */
+    }
+
+    .thumbnail-gallery::-webkit-scrollbar {
+      display: none; /* Hide scrollbar */
     }
 
     .carousel-cell {
@@ -91,37 +100,34 @@
       object-fit: cover;
     }
 
-    .carousel-cell img:hover {
+    .carousel-cell img:hover,
+    .carousel-cell.selected img {
       border-color: #007bff;
     }
 
-    .carousel-cell.selected img {
-      border-color: #007bff;
+    #image-title {
+      margin-top: 10px;
+      font-size: 1.5rem;
+      color: #333;
     }
   </style>
 </head>
 <body>
   <div class="gallery-container">
     <button id="prev-button" class="nav-button">❮</button>
-    <div class="main-image">
-      <img id="current-image" src="" alt="Image">
-      <div id="image-title">Title</div>
-    </div>
+    <div id="main-gallery" class="main-image-gallery"></div>
     <button id="next-button" class="nav-button">❯</button>
-
+    <div id="image-title">Title</div>
     <div id="thumbnails" class="thumbnail-gallery"></div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const mainImage = document.getElementById('current-image');
+      const mainGallery = document.getElementById('main-gallery');
       const imageTitle = document.getElementById('image-title');
       const thumbnailsContainer = document.getElementById('thumbnails');
       const prevButton = document.getElementById('prev-button');
       const nextButton = document.getElementById('next-button');
-
-      let touchStartX = 0;
-      let touchEndX = 0;
 
       fetch('images.json')
         .then(response => {
@@ -135,77 +141,78 @@
             throw new Error('Invalid JSON format: Expected an array.');
           }
 
-          let currentIndex = 0;
-
           const extractTitle = (filename) => filename.split('_')[0]; // Remove _1.jpg part
 
-          const updateMainImage = (index) => {
-            const imagePath = `Images/${images[index]}`;
-            mainImage.src = imagePath;
-            imageTitle.textContent = extractTitle(images[index]);
-            currentIndex = index;
-
-            document.querySelectorAll('.carousel-cell').forEach((cell, idx) => {
-              cell.classList.toggle('selected', idx === index);
-            });
-          };
-
           images.forEach((image, index) => {
+            // Create main image slide
+            const mainImageDiv = document.createElement('div');
+            mainImageDiv.classList.add('main-image');
+            const mainImage = document.createElement('img');
+            mainImage.src = `Images/${image}`;
+            mainImage.alt = extractTitle(image);
+            mainImageDiv.appendChild(mainImage);
+            mainGallery.appendChild(mainImageDiv);
+
+            // Create thumbnail
             const cell = document.createElement('div');
             cell.classList.add('carousel-cell');
             const img = document.createElement('img');
             img.src = `Images/${image}`;
             img.alt = extractTitle(image);
-            img.addEventListener('click', () => updateMainImage(index));
+            img.addEventListener('click', () => scrollToImage(index));
             cell.appendChild(img);
             thumbnailsContainer.appendChild(cell);
           });
 
-          updateMainImage(0);
+          // Scroll to the correct image
+          const scrollToImage = (index) => {
+            const targetImage = mainGallery.children[index];
+            targetImage.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            updateTitle(index);
+          };
 
+          // Update the title below the image
+          const updateTitle = (index) => {
+            imageTitle.textContent = extractTitle(images[index]);
+            document.querySelectorAll('.carousel-cell').forEach((cell, idx) => {
+              cell.classList.toggle('selected', idx === index);
+            });
+          };
+
+          // Initialize by scrolling to the first image
+          scrollToImage(0);
+
+          // Add button functionality
+          let currentIndex = 0;
           prevButton.addEventListener('click', () => {
-            if (currentIndex > 0) updateMainImage(currentIndex - 1);
+            if (currentIndex > 0) {
+              currentIndex--;
+              scrollToImage(currentIndex);
+            }
           });
 
           nextButton.addEventListener('click', () => {
-            if (currentIndex < images.length - 1) updateMainImage(currentIndex + 1);
-          });
-
-          document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' && currentIndex < images.length - 1) {
-              updateMainImage(currentIndex + 1);
-            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
-              updateMainImage(currentIndex - 1);
+            if (currentIndex < images.length - 1) {
+              currentIndex++;
+              scrollToImage(currentIndex);
             }
           });
 
-          // Add swipe gesture for main image
-          mainImage.addEventListener('touchstart', (e) => {
+          // Add swipe functionality for the main gallery
+          let touchStartX = 0;
+          let touchEndX = 0;
+          mainGallery.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
           });
-
-          mainImage.addEventListener('touchend', (e) => {
+          mainGallery.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-          });
-
-          const handleSwipe = () => {
             if (touchEndX < touchStartX && currentIndex < images.length - 1) {
-              updateMainImage(currentIndex + 1); // Swipe left
+              currentIndex++;
+              scrollToImage(currentIndex);
             } else if (touchEndX > touchStartX && currentIndex > 0) {
-              updateMainImage(currentIndex - 1); // Swipe right
+              currentIndex--;
+              scrollToImage(currentIndex);
             }
-          };
-
-          // Add swipe gesture for thumbnails
-          thumbnailsContainer.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-          });
-
-          thumbnailsContainer.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            const scrollDelta = touchStartX - touchEndX;
-            thumbnailsContainer.scrollBy({ left: scrollDelta, behavior: 'smooth' });
           });
         })
         .catch(error => console.error('Error:', error));
