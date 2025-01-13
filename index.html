@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Starjedi Font</title>
+  <title>Image Viewer with Splide.js</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -31,7 +31,9 @@
     .splide__slide img {
       width: 100%;
       height: auto;
-      object-fit: contain;
+      object-fit: contain; /* Ensures images are properly contained */
+      max-height: 60vh;    /* Prevents overly large portrait images */
+      transition: all 0.3s ease-in-out; /* Smooth resizing */
     }
 
     #thumbnail-slider .splide__slide img {
@@ -51,7 +53,7 @@
       font-size: 1.5rem;
       color: #333;
       text-align: center;
-      font-family: 'Starjedi', Arial, sans-serif; /* Apply the custom font */
+      font-family: 'Starjedi', Arial, sans-serif;
     }
   </style>
 </head>
@@ -106,6 +108,15 @@
             const mainImg = document.createElement('img');
             mainImg.src = `Images/${image}`; // High-res images for main slider
             mainImg.alt = extractTitle(image);
+
+            // Adjust object-fit for portrait images
+            mainImg.onload = () => {
+              if (mainImg.naturalHeight > mainImg.naturalWidth) {
+                mainImg.style.objectFit = 'contain'; // Fit portrait images
+                mainImg.style.maxHeight = '90vh'; // Increase height for portrait
+              }
+            };
+
             mainSlide.appendChild(mainImg);
             mainList.appendChild(mainSlide);
 
