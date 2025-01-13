@@ -11,17 +11,24 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #111;
-            color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .gallery-container {
             width: 100%;
+            max-width: 1200px;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
         .carousel {
-            height: 80%;
-            background: #dadada;
+            height: 60%;
+            width: 100%;
+            background: #222;
+            margin-bottom: 10px;
         }
         .carousel-cell {
             width: 70%;
@@ -36,12 +43,18 @@
             max-width: 100%;
             max-height: 100%;
         }
+        .image-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
         .thumbnail-bar {
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: #222;
             padding: 10px;
+            overflow-x: auto;
         }
         .thumbnail-bar img {
             height: 60px;
@@ -58,6 +71,7 @@
 <body>
     <div class="gallery-container">
         <div class="carousel" id="carousel"></div>
+        <div class="image-title" id="imageTitle">Image Title</div>
         <div class="thumbnail-bar" id="thumbnailBar"></div>
     </div>
 
@@ -66,9 +80,10 @@
     <script>
         const carouselElement = document.getElementById('carousel');
         const thumbnailBar = document.getElementById('thumbnailBar');
+        const imageTitleElement = document.getElementById('imageTitle');
 
-        // Fetch image list from the server
-        fetch('./list-images.php')
+        // Fetch image list from images.json
+        fetch('./images.json')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch image list');
@@ -78,12 +93,15 @@
             .then(images => {
                 images.forEach((file, index) => {
                     const imagePath = `./Images/${file}`;
+                    const title = file.replace(/\.[^/.]+$/, ''); // Remove file extension for the title
                     
+                    // Create carousel cell
                     const carouselCell = document.createElement('div');
                     carouselCell.classList.add('carousel-cell');
                     carouselCell.innerHTML = `<img src="${imagePath}" alt="Image ${index + 1}">`;
                     carouselElement.appendChild(carouselCell);
 
+                    // Create thumbnail
                     const thumbnail = document.createElement('img');
                     thumbnail.src = imagePath;
                     thumbnail.alt = `Thumbnail ${index + 1}`;
@@ -91,12 +109,11 @@
                     thumbnailBar.appendChild(thumbnail);
                 });
 
-                initializeFlickity();
+                initializeFlickity(images);
             })
             .catch(error => console.error('Error loading images:', error));
 
-        function initializeFlickity() {
-            // Initialize Flickity
+        function initializeFlickity(images) {
             const flkty = new Flickity('.carousel', {
                 cellAlign: 'center',
                 contain: true,
@@ -111,11 +128,16 @@
 
             const thumbnails = Array.from(thumbnailBar.children);
 
-            // Update active thumbnail when the slider changes
+            // Set the initial title
+            imageTitleElement.textContent = images[0].replace(/\.[^/.]+$/, '');
+
+            // Update active thumbnail and title when the slider changes
             flkty.on('select', () => {
                 thumbnails.forEach((thumbnail, index) => {
                     thumbnail.classList.toggle('active', index === flkty.selectedIndex);
                 });
+                const currentIndex = flkty.selectedIndex;
+                imageTitleElement.textContent = images[currentIndex].replace(/\.[^/.]+$/, '');
             });
 
             // Add click event to thumbnails
