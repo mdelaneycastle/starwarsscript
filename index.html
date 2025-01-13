@@ -54,7 +54,7 @@
       color: #333;
       text-align: center;
       font-family: 'Starjedi', Arial, sans-serif;
-      text-transform: lowercase; /* Force all text to lowercase */
+      text-transform: lowercase;
     }
   </style>
 </head>
@@ -83,7 +83,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      fetch('images.json')
+      fetch('images.json') // Ensure the JSON contains valid filenames
         .then(response => {
           if (!response.ok) {
             throw new Error(`Failed to fetch images.json: ${response.statusText}`);
@@ -99,15 +99,15 @@
           const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
           const imageTitle = document.getElementById('image-title');
 
-          // Helper to extract the title
-          const extractTitle = (filename) => filename.split('_')[0];
+          // Helper to extract the title and convert to lowercase
+          const extractTitle = (filename) => filename.split('_')[0].toLowerCase();
 
           images.forEach((image, index) => {
-            // Create main slider item (High-res images)
+            // Create main slider item (High-res images from Images folder)
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
             const mainImg = document.createElement('img');
-            mainImg.src = `Images/${image}`; // High-res images for main slider
+            mainImg.src = `Images/${image}`; // Always fetch from Images/
             mainImg.alt = extractTitle(image);
 
             // Adjust object-fit for portrait images
@@ -121,11 +121,11 @@
             mainSlide.appendChild(mainImg);
             mainList.appendChild(mainSlide);
 
-            // Create thumbnail slider item (Low-res thumbnails)
+            // Create thumbnail slider item (Low-res images from Thumbnails folder)
             const thumbnailSlide = document.createElement('li');
             thumbnailSlide.classList.add('splide__slide');
             const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `Thumbnails/${image}`; // Low-res images for thumbnails
+            thumbnailImg.src = `Thumbnails/${image}`; // Always fetch from Thumbnails/
             thumbnailImg.alt = extractTitle(image);
             thumbnailSlide.appendChild(thumbnailImg);
             thumbnailList.appendChild(thumbnailSlide);
@@ -142,8 +142,8 @@
 
           // Initialize Splide.js for the thumbnail slider
           const thumbnailSlider = new Splide('#thumbnail-slider', {
-            fixedWidth  : 120, // Larger thumbnails
-            fixedHeight : 90,  // Larger thumbnails
+            fixedWidth  : 120,
+            fixedHeight : 90,
             isNavigation: true,
             gap         : 10,
             focus       : 'center',
