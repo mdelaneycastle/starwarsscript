@@ -83,10 +83,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      fetch('corrected_images.json') // Ensure the JSON contains valid filenames
+      fetch('images.json') // Ensure the JSON contains valid filenames
         .then(response => {
           if (!response.ok) {
-            throw new Error(`Failed to fetch corrected_images.json: ${response.statusText}`);
+            throw new Error(`Failed to fetch images.json: ${response.statusText}`);
           }
           return response.json();
         })
@@ -114,7 +114,7 @@
             mainImg.onload = () => {
               if (mainImg.naturalHeight > mainImg.naturalWidth) {
                 mainImg.style.objectFit = 'contain'; // Fit portrait images
-                mainImg.style.maxHeight = '90vh'; // Increase height for portrait
+                mainImg.style.height = 'auto'; // Ensure height fits properly
               }
             };
 
