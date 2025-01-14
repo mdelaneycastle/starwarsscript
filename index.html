@@ -83,7 +83,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-  fetch('corrected_images.json') // Fetch JSON file
+  fetch('corrected_images.json') // Use the updated JSON reference
     .then(response => {
       if (!response.ok) {
         throw new Error(`Failed to fetch corrected_images.json: ${response.statusText}`);
@@ -99,15 +99,6 @@
       const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
       const imageTitle = document.getElementById('image-title');
 
-      // List of explicitly known portrait images
-      const portraitImages = [
-        "Dark Force Rising_1.jpg",
-        "Dark Side Dominator_1.jpg",
-        "High Adventures_1.jpg",
-        "The Empire VS Rebels_1.jpg",
-        "The Excitement Returns_1.jpg",
-      ];
-
       // Helper to extract the title and convert to lowercase
       const extractTitle = (filename) => filename.split('_')[0].toLowerCase();
 
@@ -118,12 +109,6 @@
         const mainImg = document.createElement('img');
         mainImg.src = `Images/${image}`;
         mainImg.alt = extractTitle(image);
-
-        // Explicitly handle portrait images
-        if (portraitImages.includes(image)) {
-          mainImg.style.objectFit = 'contain'; // Ensure the whole image fits
-          mainImg.style.maxHeight = '90vh'; // Limit height for better fit
-        }
 
         mainSlide.appendChild(mainImg);
         mainList.appendChild(mainSlide);
