@@ -83,10 +83,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      fetch('images.json') // Fetch JSON file
+      fetch('corrected_images.json') // Fetch JSON file
         .then(response => {
           if (!response.ok) {
-            throw new Error(`Failed to fetch images.json: ${response.statusText}`);
+            throw new Error(`Failed to fetch corrected_images.json: ${response.statusText}`);
           }
           return response.json();
         })
