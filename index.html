@@ -99,9 +99,24 @@
       const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
       const imageTitle = document.getElementById('image-title');
 
-      // Helper to extract the title and convert to lowercase
-      // Helper to extract the title, remove the first two characters, and convert to lowercase
-const extractTitle = (filename) => filename.slice(2).split('_')[0].toLowerCase();
+      // Helper to extract the title, remove the first two characters, and handle underscores
+const extractTitle = (filename) => {
+  // Remove the first two characters
+  let title = filename.slice(2);
+
+  // If the filename ends with `_1.jpg`, preserve the underscore in that suffix
+  if (title.endsWith('_1.jpg')) {
+    title = title.replace(/_(?!1\.jpg)/g, "'");
+  } else {
+    title = title.replace(/_/g, "'");
+  }
+
+  // Remove the `_1.jpg` suffix
+  title = title.replace(/_1\.jpg$/, '');
+
+  // Convert to lowercase
+  return title.toLowerCase();
+};
 
       images.forEach((image, index) => {
         // Create main slider item (High-res images from Images folder)
