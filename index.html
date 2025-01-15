@@ -100,7 +100,8 @@
       const imageTitle = document.getElementById('image-title');
 
       // Helper to extract the title and convert to lowercase
-      const extractTitle = (filename) => filename.split('_')[0].toLowerCase();
+      // Helper to extract the title, remove the first two characters, and convert to lowercase
+const extractTitle = (filename) => filename.slice(2).split('_')[0].toLowerCase();
 
       images.forEach((image, index) => {
         // Create main slider item (High-res images from Images folder)
