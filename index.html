@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js</title>
+  <title>Image Viewer with Splide.js.</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -140,111 +140,134 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      console.log('DOM fully loaded'); // Debug log
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('images.json')
+      .then(response => response.json())
+      .then(images => {
+        const mainList = document.querySelector('#main-slider .splide__list');
+        const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
+        const imageTitle = document.getElementById('image-title');
+        const modal = document.getElementById('image-modal');
+        const modalImg = modal.querySelector('img');
+        const closeModal = modal.querySelector('.close');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
 
-      fetch('images.json')
-        .then(response => response.json())
-        .then(images => {
-          const mainList = document.querySelector('#main-slider .splide__list');
-          const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
-          const imageTitle = document.getElementById('image-title');
-          const modal = document.getElementById('image-modal');
-          const modalImg = modal.querySelector('img');
-          const closeModal = modal.querySelector('.close');
-          const zoomIn = document.getElementById('zoom-in');
-          const zoomOut = document.getElementById('zoom-out');
+        let scale = 1;
 
-          let scale = 1;
+        const extractTitle = (filename) =>
+          filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
-          const extractTitle = (filename) =>
-            filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
+        // Populate sliders
+        images.forEach(image => {
+          const mainSlide = document.createElement('li');
+          mainSlide.classList.add('splide__slide');
+          const mainImg = document.createElement('img');
+          mainImg.src = Images/${image};
+          mainImg.alt = extractTitle(image);
 
-          // Populate sliders
-          images.forEach(image => {
-            const mainSlide = document.createElement('li');
-            mainSlide.classList.add('splide__slide');
-            const mainImg = document.createElement('img');
-            mainImg.src = `Images/${image}`;
-            mainImg.alt = extractTitle(image);
-            mainSlide.appendChild(mainImg);
-            mainList.appendChild(mainSlide);
+          mainSlide.appendChild(mainImg);
+          mainList.appendChild(mainSlide);
 
-            const thumbnailSlide = document.createElement('li');
-            thumbnailSlide.classList.add('splide__slide');
-            const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `Thumbnails/${image}`;
-            thumbnailImg.alt = extractTitle(image);
-            thumbnailSlide.appendChild(thumbnailImg);
-            thumbnailList.appendChild(thumbnailSlide);
-          });
+          const thumbnailSlide = document.createElement('li');
+          thumbnailSlide.classList.add('splide__slide');
+          const thumbnailImg = document.createElement('img');
+          thumbnailImg.src = Thumbnails/${image};
+          thumbnailImg.alt = extractTitle(image);
+          thumbnailSlide.appendChild(thumbnailImg);
+          thumbnailList.appendChild(thumbnailSlide);
+        });
 
-          const mainSlider = new Splide('#main-slider', {
-            type: 'fade',
-            heightRatio: 0.5,
-            pagination: false,
-            arrows: false,
-            cover: true,
-          });
+        // Initialize sliders
+        const mainSlider = new Splide('#main-slider', {
+          type: 'fade',
+          heightRatio: 0.5,
+          pagination: false,
+          arrows: false,
+          cover: true,
+        });
 
-          const thumbnailSlider = new Splide('#thumbnail-slider', {
-            fixedWidth: 120,
-            fixedHeight: 90,
-            isNavigation: true,
-            gap: 10,
-            focus: 'center',
-            pagination: false,
-            cover: true,
-          });
+        const thumbnailSlider = new Splide('#thumbnail-slider', {
+          fixedWidth: 120,
+          fixedHeight: 90,
+          isNavigation: true,
+          gap: 10,
+          focus: 'center',
+          pagination: false,
+          cover: true,
+        });
 
-          mainSlider.sync(thumbnailSlider).mount();
-          thumbnailSlider.mount();
+        mainSlider.sync(thumbnailSlider).mount();
+        thumbnailSlider.mount();
 
-          // Handle click events for active image
-          const updateMainImageClick = () => {
-            const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
-            if (activeImage) {
-              console.log('Active image found:', activeImage.src); // Debug log
-              activeImage.onclick = () => {
-                console.log('Main image clicked! Opening modal...');
-                modal.style.display = 'flex';
-                modalImg.src = activeImage.src;
-                scale = 1;
-                modalImg.style.transform = `scale(${scale})`;
-              };
-            }
-          };
+        // Update title and add click event to the visible main image
+        const updateMainImageClick = () => {
+          const activeImage = document.querySelector(
+            '#main-slider .splide__slide.is-active img'
+          );
 
-          mainSlider.on('mounted move', () => {
-            updateMainImageClick();
-            const index = mainSlider.index;
-            imageTitle.textContent = extractTitle(images[index]);
-          });
+          if (activeImage) {
+            console.log('Active image found:', activeImage.src); // Debug log
 
-          closeModal.addEventListener('click', () => {
-            console.log('Close button clicked!');
+            // Remove existing event listeners by replacing the image element
+            const newImage = activeImage.cloneNode(true);
+            activeImage.parentNode.replaceChild(newImage, activeImage);
+
+            // Attach the click event listener to the active image
+            newImage.addEventListener('click', () => {
+              console.log('Main image clicked! Opening modal...'); // Debug log
+              modal.style.display = 'flex'; // Open the modal
+              modalImg.src = newImage.src; // Set the modal image source
+              scale = 1; // Reset zoom
+              modalImg.style.transform = scale(${scale});
+            });
+          } else {
+            console.log('No active image found.'); // Debug log
+          }
+        };
+
+        mainSlider.on('mounted move', index => {
+          imageTitle.textContent = extractTitle(images[index]);
+          updateMainImageClick();
+        });
+
+        // Set initial title and enable click
+        imageTitle.textContent = extractTitle(images[0]);
+        updateMainImageClick();
+
+        // Modal functionality
+        closeModal.addEventListener('click', (e) => {
+          console.log('Close button clicked!'); // Debug log
+          modal.style.display = 'none';
+          e.stopPropagation(); // Prevent bubbling
+        });
+
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) { // Ensure click is on the background
+            console.log('Modal background clicked!'); // Debug log
             modal.style.display = 'none';
-          });
+          }
+        });
 
-          modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-              console.log('Modal background clicked!');
-              modal.style.display = 'none';
-            }
-          });
+        zoomIn.addEventListener('click', () => {
+          scale += 0.2;
+          modalImg.style.transform = scale(${scale});
+        });
 
-          zoomIn.addEventListener('click', () => {
-            scale += 0.2;
-            modalImg.style.transform = `scale(${scale})`;
-          });
+        zoomOut.addEventListener('click', () => {
+          scale = Math.max(1, scale - 0.2);
+          modalImg.style.transform = scale(${scale});
+        });
 
-          zoomOut.addEventListener('click', () => {
-            scale = Math.max(1, scale - 0.2);
-            modalImg.style.transform = `scale(${scale})`;
-          });
-        })
-        .catch(error => console.error('Error:', error));
-    });
-  </script>
+        // Test if the modal works independently
+        document.body.addEventListener('click', (e) => {
+          if (e.target.closest('#main-slider')) return; // Prevent triggering when clicking unrelated areas
+          modal.style.display = 'flex'; // Open the modal manually
+          modalImg.src = 'Images/01The Star Wars_1.jpg'; // Replace with a valid image path
+          console.log('Modal triggered independently!'); // Debug log
+        });
+      });
+  });
+</script>
 </body>
 </html>
