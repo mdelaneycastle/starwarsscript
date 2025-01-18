@@ -34,6 +34,7 @@
       object-fit: contain;
       max-height: 60vh;
       transition: all 0.3s ease-in-out;
+      cursor: pointer;
     }
 
     #thumbnail-slider .splide__slide img {
@@ -55,6 +56,53 @@
       text-align: center;
       font-family: 'Starjedi', Arial, sans-serif;
       text-transform: lowercase;
+    }
+
+    /* Modal Styles */
+    #image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #image-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      transform: scale(1);
+      transition: transform 0.3s ease;
+    }
+
+    #image-modal .close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    #image-modal .zoom {
+      position: absolute;
+      bottom: 20px;
+      font-size: 1.2rem;
+      color: white;
+      display: flex;
+      gap: 15px;
+    }
+
+    #image-modal .zoom button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 1.5rem;
     }
   </style>
 </head>
@@ -80,106 +128,101 @@
   <!-- Image Title -->
   <div id="image-title">Title</div>
 
+  <!-- Image Modal -->
+  <div id="image-modal">
+    <span class="close">&times;</span>
+    <img src="" alt="Full Image">
+    <div class="zoom">
+      <button id="zoom-in">+</button>
+      <button id="zoom-out">-</button>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-  fetch('images.json') // Use the updated JSON reference
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch images.json: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then(images => {
-      if (!Array.isArray(images)) {
-        throw new Error('Invalid JSON format: Expected an array.');
-      }
+      fetch('images.json') 
+        .then(response => response.json())
+        .then(images => {
+          const mainList = document.querySelector('#main-slider .splide__list');
+          const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
+          const imageTitle = document.getElementById('image-title');
+          const modal = document.getElementById('image-modal');
+          const modalImg = modal.querySelector('img');
+          const closeModal = modal.querySelector('.close');
+          const zoomIn = document.getElementById('zoom-in');
+          const zoomOut = document.getElementById('zoom-out');
 
-      const mainList = document.querySelector('#main-slider .splide__list');
-      const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
-      const imageTitle = document.getElementById('image-title');
+          let scale = 1;
 
-      // Helper to extract the title, remove the first two characters, and handle underscores
-const extractTitle = (filename) => {
-  // Remove the first two characters
-  let title = filename.slice(2);
+          const extractTitle = (filename) => filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
-  // If the filename ends with `_1.jpg`, preserve the underscore in that suffix
-  if (title.endsWith('_1.jpg')) {
-    title = title.replace(/_(?!1\.jpg)/g, "'");
-  } else {
-    title = title.replace(/_/g, "'");
-  }
+          images.forEach((image, index) => {
+            const mainSlide = document.createElement('li');
+            mainSlide.classList.add('splide__slide');
+            const mainImg = document.createElement('img');
+            mainImg.src = `Images/${image}`;
+            mainImg.alt = extractTitle(image);
+            mainImg.addEventListener('click', () => {
+              modal.style.display = 'flex';
+              modalImg.src = mainImg.src;
+              scale = 1;
+              modalImg.style.transform = `scale(${scale})`;
+            });
+            mainSlide.appendChild(mainImg);
+            mainList.appendChild(mainSlide);
 
-  // Remove the `_1.jpg` suffix
-  title = title.replace(/_1\.jpg$/, '');
+            const thumbnailSlide = document.createElement('li');
+            thumbnailSlide.classList.add('splide__slide');
+            const thumbnailImg = document.createElement('img');
+            thumbnailImg.src = `Thumbnails/${image}`;
+            thumbnailImg.alt = extractTitle(image);
+            thumbnailSlide.appendChild(thumbnailImg);
+            thumbnailList.appendChild(thumbnailSlide);
+          });
 
-  // Convert to lowercase
-  return title.toLowerCase();
-};
+          closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+          });
 
-      images.forEach((image, index) => {
-        // Create main slider item (High-res images from Images folder)
-        const mainSlide = document.createElement('li');
-        mainSlide.classList.add('splide__slide');
-        const mainImg = document.createElement('img');
-        mainImg.src = `Images/${image}`;
-        mainImg.alt = extractTitle(image);
+          zoomIn.addEventListener('click', () => {
+            scale += 0.2;
+            modalImg.style.transform = `scale(${scale})`;
+          });
 
-        mainSlide.appendChild(mainImg);
-        mainList.appendChild(mainSlide);
+          zoomOut.addEventListener('click', () => {
+            scale = Math.max(1, scale - 0.2);
+            modalImg.style.transform = `scale(${scale})`;
+          });
 
-        // Create thumbnail slider item (Low-res images from Thumbnails folder)
-        const thumbnailSlide = document.createElement('li');
-        thumbnailSlide.classList.add('splide__slide');
-        const thumbnailImg = document.createElement('img');
-        thumbnailImg.src = `Thumbnails/${image}`;
-        thumbnailImg.alt = extractTitle(image);
+          const mainSlider = new Splide('#main-slider', {
+            type: 'fade',
+            heightRatio: 0.5,
+            pagination: false,
+            arrows: false,
+            cover: true,
+          });
 
-        thumbnailSlide.appendChild(thumbnailImg);
-        thumbnailList.appendChild(thumbnailSlide);
-      });
+          const thumbnailSlider = new Splide('#thumbnail-slider', {
+            fixedWidth: 120,
+            fixedHeight: 90,
+            isNavigation: true,
+            gap: 10,
+            focus: 'center',
+            pagination: false,
+            cover: true,
+          });
 
-      // Initialize Splide.js for the main slider
-      const mainSlider = new Splide('#main-slider', {
-        type       : 'fade',
-        heightRatio: 0.5,
-        pagination : false,
-        arrows     : false,
-        cover      : true,
-      });
+          mainSlider.sync(thumbnailSlider).mount();
+          thumbnailSlider.mount();
 
-      // Initialize Splide.js for the thumbnail slider
-      const thumbnailSlider = new Splide('#thumbnail-slider', {
-        fixedWidth  : 120,
-        fixedHeight : 90,
-        isNavigation: true,
-        gap         : 10,
-        focus       : 'center',
-        pagination  : false,
-        cover       : true,
-        breakpoints : {
-          600: {
-            fixedWidth : 80,
-            fixedHeight: 60,
-          },
-        },
-      });
+          mainSlider.on('move', (index) => {
+            imageTitle.textContent = extractTitle(images[index]);
+          });
 
-      // Sync the main slider with the thumbnail slider
-      mainSlider.sync(thumbnailSlider).mount();
-      thumbnailSlider.mount();
-
-      // Update title when the main slider changes
-      mainSlider.on('move', (index) => {
-        imageTitle.textContent = extractTitle(images[index]);
-      });
-
-      // Set initial title
-      imageTitle.textContent = extractTitle(images[0]);
-    })
-    .catch(error => console.error('Error:', error));
-});
+          imageTitle.textContent = extractTitle(images[0]);
+        });
+    });
   </script>
 </body>
 </html>
