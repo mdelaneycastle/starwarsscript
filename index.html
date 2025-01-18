@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Slider with Modal</title>
+    <title>Image Slider with Modal.</title>
     <style>
         body {
             background-color: #dadada;
@@ -48,6 +48,7 @@
             font-family: 'StarJedi', sans-serif;
             margin: 10px 0;
             font-size: 24px;
+            text-transform: lowercase;
         }
 
         .modal {
@@ -101,7 +102,7 @@
 <body>
 
 <img id="main-image" class="main-image" src="" alt="Main">
-<div class="title" id="image-title">Select an image</div>
+<div class="title" id="image-title">select an image</div>
 <div class="slider" id="slider-container"></div>
 
 <div class="modal" id="image-modal">
@@ -131,7 +132,7 @@
     let currentZoom = 1;
 
     function updateTitle(filename) {
-        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ');
+        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
         imageTitle.textContent = title;
     }
 
@@ -151,14 +152,14 @@
     }
 
     fetch(imagesDataUrl)
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to fetch JSON');
-        return response.json();
-    })
-    .then(images => {
-        createSlider(images); // Directly pass the array to the function
-    })
-    .catch(error => console.error(error));
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch JSON');
+            return response.json();
+        })
+        .then(images => {
+            createSlider(images); // Directly pass the array to the function
+        })
+        .catch(error => console.error(error));
 
     mainImage.addEventListener('click', () => {
         modal.style.display = 'flex';
