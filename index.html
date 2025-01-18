@@ -140,89 +140,106 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      fetch('images.json') 
-        .then(response => response.json())
-        .then(images => {
-          const mainList = document.querySelector('#main-slider .splide__list');
-          const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
-          const imageTitle = document.getElementById('image-title');
-          const modal = document.getElementById('image-modal');
-          const modalImg = modal.querySelector('img');
-          const closeModal = modal.querySelector('.close');
-          const zoomIn = document.getElementById('zoom-in');
-          const zoomOut = document.getElementById('zoom-out');
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('images.json')
+      .then(response => response.json())
+      .then(images => {
+        const mainList = document.querySelector('#main-slider .splide__list');
+        const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
+        const imageTitle = document.getElementById('image-title');
+        const modal = document.getElementById('image-modal');
+        const modalImg = modal.querySelector('img');
+        const closeModal = modal.querySelector('.close');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
 
-          let scale = 1;
+        let scale = 1;
 
-          const extractTitle = (filename) => filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
+        const extractTitle = (filename) =>
+          filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
-          images.forEach((image, index) => {
-            const mainSlide = document.createElement('li');
-            mainSlide.classList.add('splide__slide');
-            const mainImg = document.createElement('img');
-            mainImg.src = `Images/${image}`;
-            mainImg.alt = extractTitle(image);
-            mainImg.addEventListener('click', () => {
+        // Populate sliders
+        images.forEach(image => {
+          const mainSlide = document.createElement('li');
+          mainSlide.classList.add('splide__slide');
+          const mainImg = document.createElement('img');
+          mainImg.src = `Images/${image}`;
+          mainImg.alt = extractTitle(image);
+
+          mainSlide.appendChild(mainImg);
+          mainList.appendChild(mainSlide);
+
+          const thumbnailSlide = document.createElement('li');
+          thumbnailSlide.classList.add('splide__slide');
+          const thumbnailImg = document.createElement('img');
+          thumbnailImg.src = `Thumbnails/${image}`;
+          thumbnailImg.alt = extractTitle(image);
+          thumbnailSlide.appendChild(thumbnailImg);
+          thumbnailList.appendChild(thumbnailSlide);
+        });
+
+        // Initialize sliders
+        const mainSlider = new Splide('#main-slider', {
+          type: 'fade',
+          heightRatio: 0.5,
+          pagination: false,
+          arrows: false,
+          cover: true,
+        });
+
+        const thumbnailSlider = new Splide('#thumbnail-slider', {
+          fixedWidth: 120,
+          fixedHeight: 90,
+          isNavigation: true,
+          gap: 10,
+          focus: 'center',
+          pagination: false,
+          cover: true,
+        });
+
+        mainSlider.sync(thumbnailSlider).mount();
+        thumbnailSlider.mount();
+
+        // Update title and add click event to the visible main image
+        const updateMainImageClick = () => {
+          const activeImage = document.querySelector(
+            '#main-slider .splide__slide.is-active img'
+          );
+          if (activeImage) {
+            activeImage.addEventListener('click', () => {
               modal.style.display = 'flex';
-              modalImg.src = mainImg.src;
-              scale = 1;
+              modalImg.src = activeImage.src;
+              scale = 1; // Reset zoom
               modalImg.style.transform = `scale(${scale})`;
             });
-            mainSlide.appendChild(mainImg);
-            mainList.appendChild(mainSlide);
+          }
+        };
 
-            const thumbnailSlide = document.createElement('li');
-            thumbnailSlide.classList.add('splide__slide');
-            const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `Thumbnails/${image}`;
-            thumbnailImg.alt = extractTitle(image);
-            thumbnailSlide.appendChild(thumbnailImg);
-            thumbnailList.appendChild(thumbnailSlide);
-          });
-
-          closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-          });
-
-          zoomIn.addEventListener('click', () => {
-            scale += 0.2;
-            modalImg.style.transform = `scale(${scale})`;
-          });
-
-          zoomOut.addEventListener('click', () => {
-            scale = Math.max(1, scale - 0.2);
-            modalImg.style.transform = `scale(${scale})`;
-          });
-
-          const mainSlider = new Splide('#main-slider', {
-            type: 'fade',
-            heightRatio: 0.5,
-            pagination: false,
-            arrows: false,
-            cover: true,
-          });
-
-          const thumbnailSlider = new Splide('#thumbnail-slider', {
-            fixedWidth: 120,
-            fixedHeight: 90,
-            isNavigation: true,
-            gap: 10,
-            focus: 'center',
-            pagination: false,
-            cover: true,
-          });
-
-          mainSlider.sync(thumbnailSlider).mount();
-          thumbnailSlider.mount();
-
-          mainSlider.on('move', (index) => {
-            imageTitle.textContent = extractTitle(images[index]);
-          });
-
-          imageTitle.textContent = extractTitle(images[0]);
+        mainSlider.on('mounted move', index => {
+          imageTitle.textContent = extractTitle(images[index]);
+          updateMainImageClick();
         });
-    });
-  </script>
+
+        // Set initial title and enable click
+        imageTitle.textContent = extractTitle(images[0]);
+        updateMainImageClick();
+
+        // Modal functionality
+        closeModal.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+
+        zoomIn.addEventListener('click', () => {
+          scale += 0.2;
+          modalImg.style.transform = `scale(${scale})`;
+        });
+
+        zoomOut.addEventListener('click', () => {
+          scale = Math.max(1, scale - 0.2);
+          modalImg.style.transform = `scale(${scale})`;
+        });
+      });
+  });
+</script>
 </body>
 </html>
