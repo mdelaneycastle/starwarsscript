@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js.</title>
+  <title>Image Viewer with Splide.js</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -206,23 +206,23 @@
             modalImg.src = src;
             scale = 1; // Reset zoom
             modalImg.style.transform = `scale(${scale})`;
+            console.log('Modal opened with:', src);
           };
 
-          // Open modal on page load for the first image
+          // Open modal on page load
           mainSlider.on('mounted', () => {
             const activeImage = document.querySelector('#main-slider .splide__slide img');
             if (activeImage) {
-              console.log('Opening modal on load with:', activeImage.src);
+              console.log('Automatically opening modal for:', activeImage.src);
               showModal(activeImage.src);
             }
           });
 
-          // Open modal when an image is clicked
+          // Attach click event for all active images
           mainSlider.on('move', () => {
             const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
             if (activeImage) {
               activeImage.onclick = () => {
-                console.log('Main image clicked! Opening modal...');
                 showModal(activeImage.src);
               };
             }
