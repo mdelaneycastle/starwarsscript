@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Slider with Modal.</title>
+    <title>Image Slider with Modal</title>
     <style>
         body {
             background-color: #dadada;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
@@ -18,12 +21,25 @@
             src: url('./Starjedi.ttf');
         }
 
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
         .main-image {
             width: 98%;
             max-height: 80vh;
             margin: 5px auto 0;
-            display: block;
             object-fit: contain;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
         }
 
         .slider {
@@ -106,87 +122,90 @@
     </style>
 </head>
 <body>
-
-<img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
-<div class="title" id="image-title">a story of glory</div>
-<div class="slider" id="slider-container"></div>
-
-<div class="modal" id="image-modal">
-    <div class="modal-zoom">
-        <button id="zoom-in">+</button>
-        <button id="zoom-out">-</button>
+    <div class="main-content">
+        <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
+        <div class="title" id="image-title">a story of glory</div>
     </div>
-    <span class="modal-controls" id="close-modal">&times;</span>
-    <img id="modal-image" src="" alt="Modal">
-</div>
+    <div class="slider-container">
+        <div class="slider" id="slider-container"></div>
+    </div>
 
-<script>
-    const imagesDataUrl = 'images.json';
-    const thumbnailsPath = 'Thumbnails/';
-    const imagesPath = 'Images/';
+    <div class="modal" id="image-modal">
+        <div class="modal-zoom">
+            <button id="zoom-in">+</button>
+            <button id="zoom-out">-</button>
+        </div>
+        <span class="modal-controls" id="close-modal">&times;</span>
+        <img id="modal-image" src="" alt="Modal">
+    </div>
 
-    const mainImage = document.getElementById('main-image');
-    const imageTitle = document.getElementById('image-title');
-    const sliderContainer = document.getElementById('slider-container');
+    <script>
+        const imagesDataUrl = 'images.json';
+        const thumbnailsPath = 'Thumbnails/';
+        const imagesPath = 'Images/';
 
-    const modal = document.getElementById('image-modal');
-    const modalImage = document.getElementById('modal-image');
-    const closeModal = document.getElementById('close-modal');
-    const zoomIn = document.getElementById('zoom-in');
-    const zoomOut = document.getElementById('zoom-out');
+        const mainImage = document.getElementById('main-image');
+        const imageTitle = document.getElementById('image-title');
+        const sliderContainer = document.getElementById('slider-container');
 
-    let currentZoom = 1;
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeModal = document.getElementById('close-modal');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
 
-    function updateTitle(filename) {
-        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-        imageTitle.textContent = title;
-    }
+        let currentZoom = 1;
 
-    function createSlider(images) {
-        images.forEach(image => {
-            const thumb = document.createElement('img');
-            thumb.src = `${thumbnailsPath}${image}`;
-            thumb.alt = image;
+        function updateTitle(filename) {
+            const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+            imageTitle.textContent = title;
+        }
 
-            thumb.addEventListener('click', () => {
-                mainImage.src = `${imagesPath}${image}`;
-                updateTitle(image);
+        function createSlider(images) {
+            images.forEach(image => {
+                const thumb = document.createElement('img');
+                thumb.src = `${thumbnailsPath}${image}`;
+                thumb.alt = image;
+
+                thumb.addEventListener('click', () => {
+                    mainImage.src = `${imagesPath}${image}`;
+                    updateTitle(image);
+                });
+
+                sliderContainer.appendChild(thumb);
             });
+        }
 
-            sliderContainer.appendChild(thumb);
+        fetch(imagesDataUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch JSON');
+                return response.json();
+            })
+            .then(images => {
+                createSlider(images); // Directly pass the array to the function
+            })
+            .catch(error => console.error(error));
+
+        mainImage.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modalImage.src = mainImage.src;
+            currentZoom = 1;
+            modalImage.style.transform = `scale(${currentZoom})`;
         });
-    }
 
-    fetch(imagesDataUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch JSON');
-            return response.json();
-        })
-        .then(images => {
-            createSlider(images); // Directly pass the array to the function
-        })
-        .catch(error => console.error(error));
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
 
-    mainImage.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        modalImage.src = mainImage.src;
-        currentZoom = 1;
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
+        zoomIn.addEventListener('click', () => {
+            currentZoom += 0.1;
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
 
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    zoomIn.addEventListener('click', () => {
-        currentZoom += 0.1;
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
-
-    zoomOut.addEventListener('click', () => {
-        currentZoom = Math.max(0.1, currentZoom - 0.1);
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
-</script>
+        zoomOut.addEventListener('click', () => {
+            currentZoom = Math.max(0.1, currentZoom - 0.1);
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+    </script>
 </body>
 </html>
