@@ -141,8 +141,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOM fully loaded and parsed'); // Debugging log
+
       fetch('images.json')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) throw new Error(`Failed to fetch images.json: ${response.statusText}`);
+          return response.json();
+        })
         .then(images => {
           const mainList = document.querySelector('#main-slider .splide__list');
           const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
@@ -158,14 +163,12 @@
           const extractTitle = (filename) =>
             filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
-          // Populate sliders
           images.forEach(image => {
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
             const mainImg = document.createElement('img');
             mainImg.src = `Images/${image}`;
             mainImg.alt = extractTitle(image);
-
             mainSlide.appendChild(mainImg);
             mainList.appendChild(mainSlide);
 
@@ -178,7 +181,6 @@
             thumbnailList.appendChild(thumbnailSlide);
           });
 
-          // Initialize sliders
           const mainSlider = new Splide('#main-slider', {
             type: 'fade',
             heightRatio: 0.5,
@@ -200,34 +202,33 @@
           mainSlider.sync(thumbnailSlider).mount();
           thumbnailSlider.mount();
 
-          // Attach click event to the active main image
           mainSlider.on('mounted move', () => {
             const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
             if (activeImage) {
+              console.log('Active image found:', activeImage.src); // Debug log
               activeImage.addEventListener('click', () => {
                 console.log('Main image clicked! Opening modal...');
                 modal.style.display = 'flex';
                 modalImg.src = activeImage.src;
-                scale = 1; // Reset zoom
+                scale = 1;
                 modalImg.style.transform = `scale(${scale})`;
               });
             }
-            const index = mainSlider.index;
-            imageTitle.textContent = extractTitle(images[index]);
+            imageTitle.textContent = extractTitle(images[mainSlider.index]);
           });
 
-          // Close modal functionality
           closeModal.addEventListener('click', () => {
+            console.log('Close button clicked!');
             modal.style.display = 'none';
           });
 
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
+              console.log('Modal background clicked!');
               modal.style.display = 'none';
             }
           });
 
-          // Zoom functionality
           zoomIn.addEventListener('click', () => {
             scale += 0.2;
             modalImg.style.transform = `scale(${scale})`;
@@ -237,7 +238,8 @@
             scale = Math.max(1, scale - 0.2);
             modalImg.style.transform = `scale(${scale})`;
           });
-        });
+        })
+        .catch(error => console.error('Error:', error));
     });
   </script>
 </body>
