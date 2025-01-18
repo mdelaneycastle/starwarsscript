@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js</title>
+  <title>Image Viewer with Splide.js.</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -141,13 +141,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      console.log('DOM fully loaded and parsed'); // Debugging log
-
       fetch('images.json')
-        .then(response => {
-          if (!response.ok) throw new Error(`Failed to fetch images.json: ${response.statusText}`);
-          return response.json();
-        })
+        .then(response => response.json())
         .then(images => {
           const mainList = document.querySelector('#main-slider .splide__list');
           const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
@@ -163,6 +158,7 @@
           const extractTitle = (filename) =>
             filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
+          // Populate sliders
           images.forEach(image => {
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
@@ -202,11 +198,10 @@
           mainSlider.sync(thumbnailSlider).mount();
           thumbnailSlider.mount();
 
-          // Handle click events for the main slider images
-          mainSlider.on('mounted move', () => {
+          const updateMainImageClick = () => {
             const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
             if (activeImage) {
-              console.log('Active image found:', activeImage.src); // Debug log
+              console.log('Active image found:', activeImage.src);
               activeImage.onclick = () => {
                 console.log('Main image clicked! Opening modal...');
                 modal.style.display = 'flex';
@@ -215,17 +210,20 @@
                 modalImg.style.transform = `scale(${scale})`;
               };
             }
-            imageTitle.textContent = extractTitle(images[mainSlider.index]);
+          };
+
+          mainSlider.on('mounted move', () => {
+            updateMainImageClick();
+            const index = mainSlider.index;
+            imageTitle.textContent = extractTitle(images[index]);
           });
 
           closeModal.addEventListener('click', () => {
-            console.log('Close button clicked!');
             modal.style.display = 'none';
           });
 
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-              console.log('Modal background clicked!');
               modal.style.display = 'none';
             }
           });
@@ -239,8 +237,7 @@
             scale = Math.max(1, scale - 0.2);
             modalImg.style.transform = `scale(${scale})`;
           });
-        })
-        .catch(error => console.error('Error:', error));
+        });
     });
   </script>
 </body>
