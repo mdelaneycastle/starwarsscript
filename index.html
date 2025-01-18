@@ -168,7 +168,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
-  <script>
+ <script>
   document.addEventListener('DOMContentLoaded', function () {
     fetch('images.json')
       .then(response => response.json())
@@ -234,17 +234,19 @@
           const activeImage = document.querySelector(
             '#main-slider .splide__slide.is-active img'
           );
+
           if (activeImage) {
             console.log('Active image found:', activeImage.src); // Debug log
 
-            // Remove any previous click event to avoid duplicates
+            // Remove existing event listeners by replacing the image element
             const newImage = activeImage.cloneNode(true);
             activeImage.parentNode.replaceChild(newImage, activeImage);
 
+            // Attach the click event listener to the active image
             newImage.addEventListener('click', () => {
-              console.log('Main image clicked!'); // Debug log
-              modal.style.display = 'flex';
-              modalImg.src = newImage.src;
+              console.log('Main image clicked! Opening modal...'); // Debug log
+              modal.style.display = 'flex'; // Open the modal
+              modalImg.src = newImage.src; // Set the modal image source
               scale = 1; // Reset zoom
               modalImg.style.transform = `scale(${scale})`;
             });
@@ -280,9 +282,9 @@
         // Test if the modal works independently
         document.body.addEventListener('click', (e) => {
           if (e.target.closest('#main-slider')) return; // Prevent triggering when clicking unrelated areas
-          modal.style.display = 'flex';
+          modal.style.display = 'flex'; // Open the modal manually
           modalImg.src = 'Images/example.jpg'; // Replace with a valid image path
-          console.log('Modal triggered independently!');
+          console.log('Modal triggered independently!'); // Debug log
         });
       });
   });
