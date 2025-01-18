@@ -104,6 +104,35 @@
       cursor: pointer;
       font-size: 1.5rem;
     }
+
+    #image-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+#image-modal .close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+}
   </style>
 </head>
 <body>
@@ -202,22 +231,27 @@
 
         // Update title and add click event to the visible main image
         const updateMainImageClick = () => {
-  const activeImage = document.querySelector(
-    '#main-slider .splide__slide.is-active img'
-  );
-  if (activeImage) {
-    console.log('Active image found:', activeImage.src); // Debug log
-    activeImage.addEventListener('click', () => {
-      console.log('Main image clicked!'); // Debug log
-      modal.style.display = 'flex';
-      modalImg.src = activeImage.src;
-      scale = 1; // Reset zoom
-      modalImg.style.transform = `scale(${scale})`;
-    });
-  } else {
-    console.log('No active image found.'); // Debug log
-  }
-};
+          const activeImage = document.querySelector(
+            '#main-slider .splide__slide.is-active img'
+          );
+          if (activeImage) {
+            console.log('Active image found:', activeImage.src); // Debug log
+
+            // Remove any previous click event to avoid duplicates
+            const newImage = activeImage.cloneNode(true);
+            activeImage.parentNode.replaceChild(newImage, activeImage);
+
+            newImage.addEventListener('click', () => {
+              console.log('Main image clicked!'); // Debug log
+              modal.style.display = 'flex';
+              modalImg.src = newImage.src;
+              scale = 1; // Reset zoom
+              modalImg.style.transform = `scale(${scale})`;
+            });
+          } else {
+            console.log('No active image found.'); // Debug log
+          }
+        };
 
         mainSlider.on('mounted move', index => {
           imageTitle.textContent = extractTitle(images[index]);
@@ -241,6 +275,14 @@
         zoomOut.addEventListener('click', () => {
           scale = Math.max(1, scale - 0.2);
           modalImg.style.transform = `scale(${scale})`;
+        });
+
+        // Test if the modal works independently
+        document.body.addEventListener('click', (e) => {
+          if (e.target.closest('#main-slider')) return; // Prevent triggering when clicking unrelated areas
+          modal.style.display = 'flex';
+          modalImg.src = 'Images/example.jpg'; // Replace with a valid image path
+          console.log('Modal triggered independently!');
         });
       });
   });
