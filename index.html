@@ -151,10 +151,14 @@
     }
 
     fetch(imagesDataUrl)
-        .then(response => response.json())
-        .then(data => {
-            createSlider(data.images);
-        });
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch JSON');
+        return response.json();
+    })
+    .then(images => {
+        createSlider(images); // Directly pass the array to the function
+    })
+    .catch(error => console.error(error));
 
     mainImage.addEventListener('click', () => {
         modal.style.display = 'flex';
