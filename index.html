@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js</title>
+  <title>Image Viewer with Splide.js.</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -250,7 +250,8 @@
             scale = Math.max(1, scale - 0.2);
             modalImg.style.transform = `scale(${scale})`;
           });
-        });
+        })
+        .catch(error => console.error('Error fetching images.json:', error));
     });
   </script>
 </body>
