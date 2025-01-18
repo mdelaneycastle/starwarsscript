@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js.</title>
+  <title>Image Viewer with Splide.js</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -141,6 +141,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      console.log('DOM fully loaded'); // Debug log
+
       fetch('images.json')
         .then(response => response.json())
         .then(images => {
@@ -198,15 +200,16 @@
           mainSlider.sync(thumbnailSlider).mount();
           thumbnailSlider.mount();
 
+          // Handle click events for active image
           const updateMainImageClick = () => {
             const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
             if (activeImage) {
-              console.log('Active image found:', activeImage.src);
+              console.log('Active image found:', activeImage.src); // Debug log
               activeImage.onclick = () => {
                 console.log('Main image clicked! Opening modal...');
                 modal.style.display = 'flex';
                 modalImg.src = activeImage.src;
-                scale = 1; // Reset zoom
+                scale = 1;
                 modalImg.style.transform = `scale(${scale})`;
               };
             }
@@ -219,11 +222,13 @@
           });
 
           closeModal.addEventListener('click', () => {
+            console.log('Close button clicked!');
             modal.style.display = 'none';
           });
 
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
+              console.log('Modal background clicked!');
               modal.style.display = 'none';
             }
           });
@@ -237,7 +242,8 @@
             scale = Math.max(1, scale - 0.2);
             modalImg.style.transform = `scale(${scale})`;
           });
-        });
+        })
+        .catch(error => console.error('Error:', error));
     });
   </script>
 </body>
