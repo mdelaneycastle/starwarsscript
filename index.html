@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Viewer with Splide.js.</title>
+  <title>Image Viewer with Splide.js</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/css/splide.min.css">
   <style>
     @font-face {
@@ -141,12 +141,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.11/dist/js/splide.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      console.log('DOM fully loaded and parsed'); // Log DOM load
+      console.log('DOM fully loaded and parsed');
 
       fetch('images.json')
         .then(response => response.json())
         .then(images => {
-          console.log('Images fetched successfully:', images); // Log images loaded
+          console.log('Images fetched successfully:', images);
 
           const mainList = document.querySelector('#main-slider .splide__list');
           const thumbnailList = document.querySelector('#thumbnail-slider .splide__list');
@@ -162,7 +162,6 @@
           const extractTitle = (filename) =>
             filename.slice(2).replace(/_1\.jpg$/, '').replace(/_/g, "'").toLowerCase();
 
-          // Populate sliders
           images.forEach(image => {
             const mainSlide = document.createElement('li');
             mainSlide.classList.add('splide__slide');
@@ -202,7 +201,7 @@
           mainSlider.sync(thumbnailSlider).mount();
           thumbnailSlider.mount();
 
-          const updateMainImageClick = () => {
+          mainSlider.on('mounted move', () => {
             const activeImage = document.querySelector('#main-slider .splide__slide.is-active img');
             if (activeImage) {
               console.log('Active image found:', activeImage.src);
@@ -214,23 +213,17 @@
                 modalImg.style.transform = `scale(${scale})`;
               };
             }
-          };
-
-          mainSlider.on('mounted move', () => {
-            console.log('Slider moved or mounted'); // Log slider state
-            updateMainImageClick();
-            const index = mainSlider.index;
-            imageTitle.textContent = extractTitle(images[index]);
+            imageTitle.textContent = extractTitle(images[mainSlider.index]);
           });
 
           closeModal.addEventListener('click', () => {
-            console.log('Close button clicked!'); // Log close button
+            console.log('Close button clicked!');
             modal.style.display = 'none';
           });
 
           modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-              console.log('Modal background clicked!'); // Log background click
+              console.log('Modal background clicked!');
               modal.style.display = 'none';
             }
           });
@@ -238,16 +231,13 @@
           zoomIn.addEventListener('click', () => {
             scale += 0.2;
             modalImg.style.transform = `scale(${scale})`;
-            console.log('Zoomed in to scale:', scale); // Log zoom in
           });
 
           zoomOut.addEventListener('click', () => {
             scale = Math.max(1, scale - 0.2);
             modalImg.style.transform = `scale(${scale})`;
-            console.log('Zoomed out to scale:', scale); // Log zoom out
           });
-        })
-        .catch(error => console.error('Error fetching images.json:', error)); // Log errors
+        });
     });
   </script>
 </body>
