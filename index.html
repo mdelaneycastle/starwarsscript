@@ -93,10 +93,13 @@
 @media (max-width: 600px) {
     .title {
         top: 60px; /* Adjust positioning for smaller screens */
-        font-size: 30px; /* Reduce font size for better fit */
+        font-size: 20px; /* Reduce font size for better fit */
+        white-space: normal; /* Allow wrapping */
+        word-wrap: break-word; /* Ensure long words break */
+        width: 90%; /* Limit width to fit within screen */
+        text-align: center; /* Ensure text stays centered */
     }
 }
-
         .modal {
             display: none;
             position: fixed;
