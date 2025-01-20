@@ -66,17 +66,25 @@
         }
 
         .title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 100px;
-            text-align: center;
-            font-family: 'Starjedi', sans-serif;
-            margin: 5px 0;
-            font-size: 28px;
-            text-transform: lowercase;
-            z-index: 10;
-        }
+    position: absolute; /* Keep it absolute for placement control */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center based on width */
+    top: 100px; /* Default for larger screens */
+    text-align: center;
+    font-family: 'Starjedi', sans-serif;
+    font-size: 28px;
+    text-transform: lowercase;
+    z-index: 10;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 600px) {
+    .title {
+        top: 20px; /* Adjust positioning for smaller screens */
+        font-size: 20px; /* Reduce font size for better fit */
+    }
+}
 
         .modal {
             display: none;
