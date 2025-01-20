@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Slider with Modal</title>
+    <title>Image Slider with Modal.</title>
     <style>
      body {
     background-color: #dadada;
@@ -106,6 +106,8 @@
     .main-content {
         flex-direction: row; /* Arrange content horizontally */
         margin-left: 160px; /* Leave space for the updated slider on the left */
+        clip-path: inset(0 0 0 10%); /* Crop 10% from the left */
+        object-position: 10% 0; /* Adjust the image position after cropping */
     }
 
     .main-image {
