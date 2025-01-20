@@ -105,7 +105,7 @@
 @media (min-width: 1024px) {
     .main-content {
         flex-direction: row; /* Arrange content horizontally */
-        margin-left: 120px; /* Leave space for the slider on the left */
+        margin-left: 150px; /* Leave space for the slider on the left */
     }
 
     .main-image {
@@ -118,7 +118,7 @@
         top: 0;
         left: 0;
         height: 100%; /* Full height */
-        width: 100px; /* Fixed width for the slider */
+        width: 150px; /* Increased width to accommodate larger thumbnails */
         background-color: #f4f4f4; /* Optional: background for the slider */
         overflow-y: auto; /* Scrollable thumbnails */
         padding: 10px;
@@ -126,14 +126,15 @@
 
     .slider {
         flex-direction: column; /* Stack thumbnails vertically */
-        gap: 10px; /* Add spacing between thumbnails */
+        gap: 15px; /* Add spacing between thumbnails */
         align-items: center; /* Center thumbnails horizontally */
     }
 
     .slider img {
-        width: 80px; /* Adjust thumbnail size */
+        width: 120px; /* Twice the size of original */
         height: auto; /* Maintain aspect ratio */
     }
+
 }
         .modal {
             display: none;
