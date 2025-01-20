@@ -21,14 +21,15 @@
             src: url('./Starjedi.ttf');
         }
 
-        .main-content {
+       .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-left: 120px; /* Leave space for the slider on the left */
+    position: relative;
     overflow: hidden;
-    position: relative; /* Necessary for absolute positioning of children */
 }
 
         .main-image {
@@ -47,12 +48,15 @@
 }
 
         .slider-container {
-    position: absolute; /* Take it out of normal flow */
-    bottom: 20px; /* Position it 20px from the bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust for the element's width */
-    width: 90%; /* Optional: set a width relative to the container */
-    z-index: 10; /* Ensure it's above other elements if necessary */
+    position: absolute; /* Separate from the document flow */
+    top: 0; /* Align it to the top of the viewport */
+    left: 0; /* Stick to the left side */
+    height: 100%; /* Make it full height */
+    width: 100px; /* Set a fixed width for the slider area */
+    background-color: #f4f4f4; /* Optional: add a background color to distinguish */
+    overflow-y: auto; /* Allow vertical scrolling for thumbnails */
+    padding: 10px; /* Add padding for spacing */
+    z-index: 10; /* Ensure it stays above other elements */
 }
 
         @media (max-width: 600px) {
@@ -63,25 +67,24 @@
 }
 
         .slider {
-            display: flex;
-            overflow-x: auto;
-            padding: 5px 5px 20px 5px;
-            gap: 10px;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
+    display: flex;
+    flex-direction: column; /* Stack thumbnails vertically */
+    gap: 10px; /* Add spacing between thumbnails */
+    align-items: center; /* Center thumbnails horizontally within the slider */
+}
+
 
         .slider img {
-            height: 100px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border 0.3s;
-            flex-shrink: 0;
-        }
+    width: 80px; /* Adjust width for the thumbnails */
+    height: auto; /* Maintain aspect ratio */
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.3s;
+}
 
         .slider img:hover {
-            border: 2px solid #000;
-        }
+    border: 2px solid #000;
+}
 
         .title {
     position: absolute; /* Keep it absolute for placement control */
