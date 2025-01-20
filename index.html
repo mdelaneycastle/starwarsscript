@@ -22,14 +22,14 @@
         }
 
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative; /* Necessary for absolute positioning of children */
+}
 
         .main-image {
             width: 98%;
@@ -40,9 +40,20 @@
         }
 
         .slider-container {
-            display: flex;
-            flex-direction: column;
-        }
+    position: absolute; /* Take it out of normal flow */
+    bottom: 20px; /* Position it 20px from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for the element's width */
+    width: 90%; /* Optional: set a width relative to the container */
+    z-index: 10; /* Ensure it's above other elements if necessary */
+}
+
+        @media (max-width: 600px) {
+    .slider-container {
+        bottom: 10px; /* Bring the slider closer to the bottom */
+        width: 100%; /* Adjust width for smaller screens */
+    }
+}
 
         .slider {
             display: flex;
