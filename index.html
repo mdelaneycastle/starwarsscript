@@ -119,26 +119,26 @@
         }
 
         .modal-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: white;
-            font-size: 36px;
-            cursor: pointer;
-            z-index: 1100;
-        }
+    position: absolute;
+    top: 20px; /* Move it further down */
+    right: 20px; /* Move it further in from the right */
+    color: white;
+    font-size: 48px; /* Increase font size */
+    cursor: pointer;
+    z-index: 1100;
+}
 
-        .modal-zoom {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-size: 36px;
-            cursor: pointer;
-            display: flex;
-            gap: 15px;
-            z-index: 1100;
-        }
+.modal-zoom {
+    position: absolute;
+    top: 20px; /* Move it further down */
+    left: 20px; /* Move it further in from the left */
+    color: white;
+    font-size: 48px; /* Increase font size */
+    cursor: pointer;
+    display: flex;
+    gap: 20px; /* Adjust spacing between + and - */
+    z-index: 1100;
+}
 
         .modal-zoom button {
             background: none;
@@ -200,90 +200,111 @@
     </div>
 
     <script>
-        const imagesDataUrl = 'images.json';
-        const thumbnailsPath = 'Thumbnails/';
-        const imagesPath = 'Images/';
+    const imagesDataUrl = 'images.json';
+    const thumbnailsPath = 'Thumbnails/';
+    const imagesPath = 'Images/';
 
-        const mainImage = document.getElementById('main-image');
-        const imageTitle = document.getElementById('image-title');
-        const sliderContainer = document.getElementById('slider-container');
-        const instructions = document.getElementById('instructions');
+    const mainImage = document.getElementById('main-image');
+    const imageTitle = document.getElementById('image-title');
+    const sliderContainer = document.getElementById('slider-container');
+    const instructions = document.getElementById('instructions');
 
-        const modal = document.getElementById('image-modal');
-        const modalImage = document.getElementById('modal-image');
-        const closeModal = document.getElementById('close-modal');
-        const zoomIn = document.getElementById('zoom-in');
-        const zoomOut = document.getElementById('zoom-out');
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const closeModal = document.getElementById('close-modal');
+    const zoomIn = document.getElementById('zoom-in');
+    const zoomOut = document.getElementById('zoom-out');
 
-        let currentZoom = 1;
-        let idleTimeout;
+    let currentZoom = 1;
+    let idleTimeout;
 
-        function updateTitle(filename) {
-            const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-            imageTitle.textContent = title;
-        }
+    // Function to update the title text based on the filename
+    function updateTitle(filename) {
+        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+        imageTitle.textContent = title;
+    }
 
-        function createSlider(images) {
-            images.forEach(image => {
-                const thumb = document.createElement('img');
-                thumb.src = `${thumbnailsPath}${image}`;
-                thumb.alt = image;
+    // Function to create the slider images dynamically
+    function createSlider(images) {
+        images.forEach(image => {
+            const thumb = document.createElement('img');
+            thumb.src = `${thumbnailsPath}${image}`;
+            thumb.alt = image;
 
-                thumb.addEventListener('click', () => {
-                    mainImage.src = `${imagesPath}${image}`;
-                    updateTitle(image);
-                });
-
-                sliderContainer.appendChild(thumb);
+            thumb.addEventListener('click', () => {
+                mainImage.src = `${imagesPath}${image}`;
+                updateTitle(image);
             });
-        }
 
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                createSlider(images); // Directly pass the array to the function
-            })
-            .catch(error => console.error(error));
-
-        mainImage.addEventListener('click', () => {
-            modal.style.display = 'flex';
-            modalImage.src = mainImage.src;
-            currentZoom = 1;
-            modalImage.style.transform = `scale(${currentZoom})`;
+            sliderContainer.appendChild(thumb);
         });
+    }
 
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+    // Fetch the JSON data and populate the slider
+    fetch(imagesDataUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch JSON');
+            return response.json();
+        })
+        .then(images => {
+            createSlider(images); // Directly pass the array to the function
+        })
+        .catch(error => console.error(error));
 
-        zoomIn.addEventListener('click', () => {
-            currentZoom += 0.1;
-            modalImage.style.transform = `scale(${currentZoom})`;
-        });
+    // Open the modal and display the clicked image
+    mainImage.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        modalImage.src = mainImage.src;
+        currentZoom = 1;
+        modalImage.style.transform = `scale(${currentZoom})`;
+    });
 
-        zoomOut.addEventListener('click', () => {
-            currentZoom = Math.max(0.1, currentZoom - 0.1);
-            modalImage.style.transform = `scale(${currentZoom})`;
-        });
+    // Close the modal
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
 
-        function showInstructions() {
-            instructions.classList.remove('hidden');
-            setTimeout(() => instructions.classList.add('hidden'), 5000);
-        }
+    // Zoom in functionality
+    zoomIn.addEventListener('click', () => {
+        currentZoom += 0.1;
+        modalImage.style.transform = `scale(${currentZoom})`;
+    });
 
-        function resetIdleTimer() {
-            clearTimeout(idleTimeout);
-            idleTimeout = setTimeout(showInstructions, 120000); // 2 minutes
-        }
+    // Zoom out functionality
+    zoomOut.addEventListener('click', () => {
+        currentZoom = Math.max(0.1, currentZoom - 0.1);
+        modalImage.style.transform = `scale(${currentZoom})`;
+    });
 
-        document.addEventListener('mousemove', resetIdleTimer);
-        document.addEventListener('touchstart', resetIdleTimer);
-        resetIdleTimer(); // Start the timer
+    // Show instructions and hide them after 5 seconds
+    function showInstructions() {
+        instructions.classList.remove('hidden');
+        setTimeout(() => instructions.classList.add('hidden'), 5000);
+    }
 
-        window.onload = showInstructions;
-    </script>
+    // Reset the idle timer and show instructions after 15 seconds of inactivity
+    function resetIdleTimer() {
+        clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => {
+            instructions.classList.remove('hidden'); // Show instructions
+        }, 15000); // 15 seconds
+    }
+
+    // Hide instructions when clicked or tapped
+    instructions.addEventListener('click', () => {
+        instructions.classList.add('hidden');
+        clearTimeout(idleTimeout);
+    });
+
+    // Add event listeners to reset the timer on interaction
+    document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('touchstart', resetIdleTimer);
+
+    // Start the idle timer and show instructions on load
+    window.onload = () => {
+        showInstructions(); // Show instructions on load
+        resetIdleTimer();   // Start the idle timer
+    };
+</script>
 </body>
 </html>
