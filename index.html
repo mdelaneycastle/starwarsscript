@@ -56,7 +56,7 @@
         }
 
         .slider img {
-            height: 100px;
+            height: 150px;
             cursor: pointer;
             border: 2px solid transparent;
             transition: border 0.3s;
@@ -98,7 +98,7 @@
             top: 10px;
             right: 10px;
             color: white;
-            font-size: 36px;
+            font-size: 48px;
             cursor: pointer;
             z-index: 1100;
         }
@@ -108,10 +108,10 @@
             top: 10px;
             left: 10px;
             color: white;
-            font-size: 36px;
+            font-size: 48px;
             cursor: pointer;
             display: flex;
-            gap: 15px;
+            gap: 20px;
             z-index: 1100;
         }
 
@@ -120,7 +120,7 @@
             border: none;
             color: white;
             cursor: pointer;
-            font-size: 36px;
+            font-size: 48px;
         }
 
         @media (max-width: 768px) {
@@ -129,7 +129,19 @@
             }
 
             .slider img {
-                height: 80px;
+                height: 200px;
+            }
+
+            .modal-controls {
+                font-size: 64px;
+            }
+
+            .modal-zoom button {
+                font-size: 64px;
+            }
+
+            .modal-zoom {
+                gap: 25px;
             }
         }
 
