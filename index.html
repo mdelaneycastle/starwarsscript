@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
      body {
     background-color: #dadada;
@@ -261,6 +261,7 @@
     const zoomOut = document.getElementById('zoom-out');
     const audioPlayer = document.getElementById('audio-player');
 
+
     let currentZoom = 1;
     let idleTimeout;
     let audioPlayed = false;
@@ -282,11 +283,11 @@
     function createSlider(images) {
         images.forEach(image => {
             const thumb = document.createElement('img');
-            thumb.src = ${thumbnailsPath}${image};
+            thumb.src = `${thumbnailsPath}${image}`;
             thumb.alt = image;
 
             thumb.addEventListener('click', () => {
-                mainImage.src = ${imagesPath}${image};
+                mainImage.src = `${imagesPath}${image}`;
                 updateTitle(image);
             });
 
@@ -310,7 +311,7 @@
         modal.style.display = 'flex';
         modalImage.src = mainImage.src;
         currentZoom = 1.8;
-        modalImage.style.transform = scale(${currentZoom});
+        modalImage.style.transform = `scale(${currentZoom})`;
     });
 
     // Close the modal
@@ -321,13 +322,13 @@
     // Zoom in functionality
     zoomIn.addEventListener('click', () => {
         currentZoom += 0.1;
-        modalImage.style.transform = scale(${currentZoom});
+        modalImage.style.transform = `scale(${currentZoom})`;
     });
 
     // Zoom out functionality
     zoomOut.addEventListener('click', () => {
         currentZoom = Math.max(0.1, currentZoom - 0.1);
-        modalImage.style.transform = scale(${currentZoom});
+        modalImage.style.transform = `scale(${currentZoom})`;
     });
 
     // Show instructions and hide them after 5 seconds
