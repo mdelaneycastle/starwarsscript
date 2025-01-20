@@ -28,6 +28,7 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
         .main-image {
@@ -37,6 +38,19 @@
             object-fit: contain;
         }
 
+        .title {
+            text-align: center;
+            font-family: 'Starjedi', sans-serif;
+            margin: 5px 0;
+            font-size: 28px;
+            text-transform: lowercase;
+            z-index: 100;
+            color: black;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            position: relative;
+        }
+
         .slider-container {
             display: flex;
             flex-direction: column;
@@ -44,6 +58,7 @@
             bottom: 0;
             width: 100%;
             background: rgba(255, 255, 255, 0.8);
+            z-index: 50;
         }
 
         .slider {
@@ -65,14 +80,6 @@
 
         .slider img:hover {
             border: 2px solid #000;
-        }
-
-        .title {
-            text-align: center;
-            font-family: 'Starjedi', sans-serif;
-            margin: 5px 0;
-            font-size: 28px;
-            text-transform: lowercase;
         }
 
         .modal {
