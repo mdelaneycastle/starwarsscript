@@ -105,7 +105,7 @@
 @media (min-width: 1024px) {
     .main-content {
         flex-direction: row; /* Arrange content horizontally */
-        margin-left: 150px; /* Leave space for the slider on the left */
+        margin-left: 160px; /* Leave space for the updated slider on the left */
     }
 
     .main-image {
@@ -114,14 +114,16 @@
     }
 
     .slider-container {
-        position: absolute;
+        position: fixed; /* Stick to the left side and prevent shifting */
         top: 0;
         left: 0;
         height: 100%; /* Full height */
-        width: 150px; /* Increased width to accommodate larger thumbnails */
-        background-color: #dadada; /* Optional: background for the slider */
+        width: 160px; /* Increased width for proper alignment */
+        background-color: #dadada; /* Update the background color */
         overflow-y: auto; /* Scrollable thumbnails */
         padding: 10px;
+        z-index: 10; /* Ensure it stays on top */
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for separation */
     }
 
     .slider {
@@ -131,9 +133,10 @@
     }
 
     .slider img {
-        width: 120px; /* Twice the size of original */
+        width: 120px; /* Twice the original size */
         height: auto; /* Maintain aspect ratio */
     }
+
 
 }
         .modal {
