@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
      body {
     background-color: #dadada;
@@ -226,16 +226,16 @@
     </style>
 </head>
 <body>
+    <audio id="audio-player" src="saber.mp3" preload="auto"></audio>
+    
     <div class="instructions" id="instructions">Swipe/Scroll to view more. Tap to Zoom.</div>
-
     <div class="main-content">
         <div class="title" id="image-title">a story of glory</div>
         <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
-        </div>
+    </div>
     <div class="slider-container">
         <div class="slider" id="slider-container"></div>
     </div>
-
     <div class="modal" id="image-modal">
         <div class="modal-zoom">
             <button id="zoom-in">+</button>
@@ -244,7 +244,6 @@
         <span class="modal-controls" id="close-modal">&times;</span>
         <img id="modal-image" src="" alt="Modal">
     </div>
-
     <script>
     const imagesDataUrl = 'images.json';
     const thumbnailsPath = 'Thumbnails/';
@@ -350,6 +349,11 @@
     window.onload = () => {
         showInstructions(); // Show instructions on load
         resetIdleTimer();   // Start the idle timer
+
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.play().catch(error => {
+            console.error("Audio Playback Failed:", error);
+        });
     };
 </script>
 </body>
