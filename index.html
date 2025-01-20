@@ -35,6 +35,7 @@
             max-height: 80vh;
             margin: 5px auto 0;
             object-fit: contain;
+            z-index: 5;
         }
 
         .slider-container {
@@ -69,6 +70,7 @@
             margin: 5px 0;
             font-size: 28px;
             text-transform: lowercase;
+            z-index: 10;
         }
 
         .modal {
@@ -154,9 +156,9 @@
     <div class="instructions" id="instructions">Swipe the thumbnails to navigate and tap an image to view it larger!</div>
 
     <div class="main-content">
-        <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
         <div class="title" id="image-title">a story of glory</div>
-    </div>
+        <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
+        </div>
     <div class="slider-container">
         <div class="slider" id="slider-container"></div>
     </div>
