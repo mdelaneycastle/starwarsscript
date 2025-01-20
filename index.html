@@ -5,92 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Slider with Modal</title>
     <style>
-        body {
-            background-color: #dadada;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
+     body {
+    background-color: #dadada;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        @font-face {
-            font-family: 'Starjedi';
-            src: url('./Starjedi.ttf');
-        }
+@font-face {
+    font-family: 'Starjedi';
+    src: url('./Starjedi.ttf');
+}
 
-       .main-content {
+.main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-left: 120px; /* Leave space for the slider on the left */
-    position: relative;
     overflow: hidden;
+    position: relative; /* Necessary for absolute positioning of children */
 }
 
-        .main-image {
-            width: 98%;
-            max-height: 80vh;
-            margin: 5px auto 0;
-            object-fit: contain;
-            z-index: 5;
-        }
-
-        @media (min-width: 1024px) {
-    .main-image {
-        width: 65%; /* Increase width by 50% */
-        max-height: none; /* Remove height restriction */
-    }
+/* Main image styling */
+.main-image {
+    width: 98%; /* Default mobile width */
+    max-height: 80vh;
+    margin: 5px auto 0;
+    object-fit: contain;
+    z-index: 5;
 }
 
-        .slider-container {
-    position: absolute; /* Separate from the document flow */
-    top: 0; /* Align it to the top of the viewport */
-    left: 0; /* Stick to the left side */
-    height: 100%; /* Make it full height */
-    width: 100px; /* Set a fixed width for the slider area */
-    background-color: #f4f4f4; /* Optional: add a background color to distinguish */
-    overflow-y: auto; /* Allow vertical scrolling for thumbnails */
-    padding: 10px; /* Add padding for spacing */
-    z-index: 10; /* Ensure it stays above other elements */
+/* Slider container for mobile */
+.slider-container {
+    position: absolute; /* Take it out of normal flow */
+    bottom: 10px; /* Position it at the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for the element's width */
+    width: 100%; /* Full width on mobile */
+    z-index: 10; /* Ensure it's above other elements if necessary */
 }
 
-        @media (max-width: 600px) {
-    .slider-container {
-        bottom: 10px; /* Bring the slider closer to the bottom */
-        width: 100%; /* Adjust width for smaller screens */
-    }
-}
-
-        .slider {
+/* Slider for mobile */
+.slider {
     display: flex;
-    flex-direction: column; /* Stack thumbnails vertically */
-    gap: 10px; /* Add spacing between thumbnails */
-    align-items: center; /* Center thumbnails horizontally within the slider */
+    overflow-x: auto;
+    padding: 5px;
+    gap: 10px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
 
-
-        .slider img {
-    width: 80px; /* Adjust width for the thumbnails */
-    height: auto; /* Maintain aspect ratio */
+.slider img {
+    height: 100px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: border 0.3s;
+    flex-shrink: 0;
 }
 
-        .slider img:hover {
+.slider img:hover {
     border: 2px solid #000;
 }
 
-        .title {
+/* Title styling */
+.title {
     position: absolute; /* Keep it absolute for placement control */
     left: 50%; /* Center horizontally */
     transform: translateX(-50%); /* Center based on width */
-    top: 10px; /* Default for larger screens */
+    top: 60px; /* Adjust positioning */
     text-align: center;
     font-family: 'Starjedi', sans-serif;
     font-size: 20px;
@@ -99,15 +86,53 @@
     white-space: nowrap; /* Prevent wrapping */
 }
 
-/* Media query for smaller screens */
+/* Mobile-specific styling */
 @media (max-width: 600px) {
     .title {
-        top: 60px; /* Adjust positioning for smaller screens */
-        font-size: 20px; /* Reduce font size for better fit */
+        font-size: 20px; /* Keep the font size small */
         white-space: normal; /* Allow wrapping */
         word-wrap: break-word; /* Ensure long words break */
         width: 90%; /* Limit width to fit within screen */
         text-align: center; /* Ensure text stays centered */
+    }
+    .slider-container {
+        bottom: 10px; /* Keep at the bottom */
+        width: 100%; /* Full width on mobile */
+    }
+}
+
+/* Desktop-specific styling */
+@media (min-width: 1024px) {
+    .main-content {
+        flex-direction: row; /* Arrange content horizontally */
+        margin-left: 120px; /* Leave space for the slider on the left */
+    }
+
+    .main-image {
+        width: 65%; /* Increase size for desktop */
+        max-height: none; /* Allow it to grow */
+    }
+
+    .slider-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%; /* Full height */
+        width: 100px; /* Fixed width for the slider */
+        background-color: #f4f4f4; /* Optional: background for the slider */
+        overflow-y: auto; /* Scrollable thumbnails */
+        padding: 10px;
+    }
+
+    .slider {
+        flex-direction: column; /* Stack thumbnails vertically */
+        gap: 10px; /* Add spacing between thumbnails */
+        align-items: center; /* Center thumbnails horizontally */
+    }
+
+    .slider img {
+        width: 80px; /* Adjust thumbnail size */
+        height: auto; /* Maintain aspect ratio */
     }
 }
         .modal {
