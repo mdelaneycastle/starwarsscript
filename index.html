@@ -301,7 +301,7 @@
     mainImage.addEventListener('click', () => {
         modal.style.display = 'flex';
         modalImage.src = mainImage.src;
-        currentZoom = 1;
+        currentZoom = 1.8;
         modalImage.style.transform = `scale(${currentZoom})`;
     });
 
@@ -312,7 +312,7 @@
 
     // Zoom in functionality
     zoomIn.addEventListener('click', () => {
-        currentZoom += 0.8;
+        currentZoom += 0.1;
         modalImage.style.transform = `scale(${currentZoom})`;
     });
 
