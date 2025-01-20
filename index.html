@@ -3,117 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
-        body {
-            background-color: #dadada;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
+     body {
+    background-color: #dadada;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
 
-        @font-face {
-            font-family: 'Starjedi';
-            src: url('./Starjedi.ttf');
-        }
+@font-face {
+    font-family: 'Starjedi';
+    src: url('./Starjedi.ttf');
+}
 
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-        }
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative; /* Necessary for absolute positioning of children */
+}
 
-        .main-image {
-            width: 98%;
-            max-height: 80vh;
-            margin: 5px auto 0;
-            object-fit: contain;
-            z-index: 5;
-        }
+/* Main image styling */
+.main-image {
+    width: 98%; /* Default mobile width */
+    max-height: 80vh;
+    margin: 5px auto 0;
+    object-fit: contain;
+    z-index: 5;
+}
 
-        .slider-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            z-index: 10;
-        }
+/* Slider container for mobile */
+.slider-container {
+    position: absolute; /* Take it out of normal flow */
+    bottom: 10px; /* Position it at the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for the element's width */
+    width: 100%; /* Full width on mobile */
+    z-index: 10; /* Ensure it's above other elements if necessary */
+}
 
-        .slider {
-            display: flex;
-            overflow-x: auto;
-            padding: 5px;
-            gap: 10px;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-        }
+/* Slider for mobile */
+.slider {
+    display: flex;
+    overflow-x: auto;
+    padding: 5px;
+    gap: 10px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
 
-        .slider img {
-            height: 100px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: border 0.3s;
-            flex-shrink: 0;
-        }
+.slider img {
+    height: 100px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border 0.3s;
+    flex-shrink: 0;
+}
 
-        .slider img:hover {
-            border: 2px solid #000;
-        }
+.slider img:hover {
+    border: 2px solid #000;
+}
 
-        .title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 60px;
-            text-align: center;
-            font-family: 'Starjedi', sans-serif;
-            font-size: 20px;
-            text-transform: lowercase;
-            z-index: 10;
-        }
+/* Title styling */
+.title {
+    position: absolute; /* Keep it absolute for placement control */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center based on width */
+    top: 60px; /* Adjust positioning */
+    text-align: center;
+    font-family: 'Starjedi', sans-serif;
+    font-size: 20px;
+    text-transform: lowercase;
+    z-index: 10;
+    white-space: nowrap; /* Prevent wrapping */
+}
 
-        .search-container {
+/* Mobile-specific styling */
+@media (max-width: 600px) {
+    .title {
+        font-size: 20px; /* Keep the font size small */
+        white-space: normal; /* Allow wrapping */
+        word-wrap: break-word; /* Ensure long words break */
+        width: 90%; /* Limit width to fit within screen */
+        text-align: center; /* Ensure text stays centered */
+    }
+    .slider-container {
+        bottom: 10px; /* Keep at the bottom */
+        width: 100%; /* Full width on mobile */
+    }
+}
+
+/* Desktop-specific styling */
+@media (min-width: 1024px) {
+    .main-content {
+        flex-direction: row; /* Keep horizontal layout */
+        margin-left: 140px; /* Adjust the left margin for the slider */
+        margin-right: 40px; /* Reduce right margin to make the image larger */
+    }
+
+    .main-image {
+        width: 75%; /* Increase the size of the image */
+        max-height: none; /* Allow the image to grow unrestricted */
+        margin: 0 auto; /* Center the image */
+    }
+
+    .slider-container {
+        position: fixed; /* Fix position to the left */
+        top: 0;
+        left: 0;
+        height: 100%; /* Full height */
+        width: 140px; /* Keep width consistent */
+        background-color: #dadada; /* Slider container background */
+        overflow-y: auto; /* Enable scrolling for thumbnails */
+        padding: 0; /* Ensure no extra padding */
+        z-index: 10; /* Ensure it's above other elements */
+        margin-left: 80px;
+    }
+
+    .slider {
+        display: flex;
+        flex-direction: column; /* Stack thumbnails vertically */
+        gap: 15px; /* Add spacing between thumbnails */
+        align-items: center; /* Center thumbnails */
+        padding: 10px 0; /* Padding for vertical alignment */
+        width: 100%; /* Ensure thumbnails fit within the container */
+        margin: 0; /* Remove extra margins */
+    }
+
+    .slider img {
+        width: 120px; /* Keep thumbnail size consistent */
+        height: auto; /* Maintain aspect ratio */
+        margin: 0; /* Remove any margins */
+        padding: 0; /* Ensure no extra padding */
+        display: block; /* Align thumbnails properly */
+    }
+}
+        .modal {
+            display: none;
             position: fixed;
-            bottom: 0;
+            top: 0;
+            left: 0;
             width: 100%;
-            background-color: #dadada;
-            padding: 10px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .modal-controls {
+    position: absolute;
+    top: 20px; /* Move it further down */
+    right: 20px; /* Move it further in from the right */
+    color: white;
+    font-size: 48px; /* Increase font size */
+    cursor: pointer;
+    z-index: 1100;
+}
+
+.modal-zoom {
+    position: absolute;
+    top: 20px; /* Move it further down */
+    left: 20px; /* Move it further in from the left */
+    color: white;
+    font-size: 48px; /* Increase font size */
+    cursor: pointer;
+    display: flex;
+    gap: 20px; /* Adjust spacing between + and - */
+    z-index: 1100;
+}
+
+        .modal-zoom button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 36px;
+        }
+
+        .instructions {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            z-index: 2000;
+            animation: flash 1.5s infinite alternate;
         }
 
-        .search-container input[type="text"] {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-right: 10px;
-            width: 200px;
+        @keyframes flash {
+            from {
+                opacity: 0.7;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
-        .search-container button {
-            padding: 8px 16px;
-            font-size: 16px;
-            border: none;
-            background-color: #000;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .search-container button:hover {
-            background-color: #333;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -128,10 +236,6 @@
     <div class="slider-container">
         <div class="slider" id="slider-container"></div>
     </div>
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Enter page number">
-        <button id="search-button">Search</button>
-    </div>
     <div class="modal" id="image-modal">
         <div class="modal-zoom">
             <button id="zoom-in">+</button>
@@ -141,28 +245,25 @@
         <img id="modal-image" src="" alt="Modal">
     </div>
     <script>
-        const imagesDataUrl = 'images.json';
-        const thumbnailsPath = 'Thumbnails/';
-        const imagesPath = 'Images/';
+    const imagesDataUrl = 'images.json';
+    const thumbnailsPath = 'Thumbnails/';
+    const imagesPath = 'Images/';
 
-        const mainImage = document.getElementById('main-image');
-        const imageTitle = document.getElementById('image-title');
-        const sliderContainer = document.getElementById('slider-container');
-        const instructions = document.getElementById('instructions');
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
+    const mainImage = document.getElementById('main-image');
+    const imageTitle = document.getElementById('image-title');
+    const sliderContainer = document.getElementById('slider-container');
+    const instructions = document.getElementById('instructions');
 
-        const modal = document.getElementById('image-modal');
-        const modalImage = document.getElementById('modal-image');
-        const closeModal = document.getElementById('close-modal');
-        const zoomIn = document.getElementById('zoom-in');
-        const zoomOut = document.getElementById('zoom-out');
-        const audioPlayer = document.getElementById('audio-player');
+    const modal = document.getElementById('image-modal');
+    const modalImage = document.getElementById('modal-image');
+    const closeModal = document.getElementById('close-modal');
+    const zoomIn = document.getElementById('zoom-in');
+    const zoomOut = document.getElementById('zoom-out');
+    const audioPlayer = document.getElementById('audio-player');
 
-        let currentZoom = 1.8;
-        let idleTimeout;
-        let audioPlayed = false;
-        let imageList = [];
+    let currentZoom = 1;
+    let idleTimeout;
+    let audioPlayed = false;
 
         document.addEventListener('click', () => {
             if (!audioPlayed) {
@@ -171,74 +272,96 @@
             }
         }, { once: true });
 
-        function updateTitle(filename) {
-            const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-            imageTitle.textContent = title;
-        }
+    // Function to update the title text based on the filename
+    function updateTitle(filename) {
+        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+        imageTitle.textContent = title;
+    }
 
-        function createSlider(images) {
-            images.forEach(image => {
-                const thumb = document.createElement('img');
-                thumb.src = `${thumbnailsPath}${image}`;
-                thumb.alt = image;
+    // Function to create the slider images dynamically
+    function createSlider(images) {
+        images.forEach(image => {
+            const thumb = document.createElement('img');
+            thumb.src = ${thumbnailsPath}${image};
+            thumb.alt = image;
 
-                thumb.addEventListener('click', () => {
-                    mainImage.src = `${imagesPath}${image}`;
-                    updateTitle(image);
-                });
-
-                sliderContainer.appendChild(thumb);
+            thumb.addEventListener('click', () => {
+                mainImage.src = ${imagesPath}${image};
+                updateTitle(image);
             });
-        }
 
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                imageList = images; // Store the list of images
-                createSlider(images);
-            })
-            .catch(error => console.error(error));
-
-        searchButton.addEventListener('click', () => {
-            const searchValue = searchInput.value.trim();
-            if (!searchValue) return;
-
-            let formattedSearch = searchValue.padStart(3, '0'); // Ensure it's three digits
-            const match = imageList.find(image => image.startsWith(formattedSearch));
-
-            if (match) {
-                mainImage.src = `${imagesPath}${match}`;
-                updateTitle(match);
-
-                const matchingThumb = Array.from(sliderContainer.children).find(img => img.src.includes(match));
-                if (matchingThumb) matchingThumb.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                alert('No matching image found');
-            }
+            sliderContainer.appendChild(thumb);
         });
+    }
 
-        mainImage.addEventListener('click', () => {
-            modal.style.display = 'flex';
-            modalImage.src = mainImage.src;
-            modalImage.style.transform = `scale(${currentZoom})`;
-        });
+    // Fetch the JSON data and populate the slider
+    fetch(imagesDataUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch JSON');
+            return response.json();
+        })
+        .then(images => {
+            createSlider(images); // Directly pass the array to the function
+        })
+        .catch(error => console.error(error));
 
-        closeModal.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+    // Open the modal and display the clicked image
+    mainImage.addEventListener('click', () => {
+        modal.style.display = 'flex';
+        modalImage.src = mainImage.src;
+        currentZoom = 1.8;
+        modalImage.style.transform = scale(${currentZoom});
+    });
 
-        zoomIn.addEventListener('click', () => {
-            currentZoom += 0.1;
-            modalImage.style.transform = `scale(${currentZoom})`;
-        });
+    // Close the modal
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
 
-        zoomOut.addEventListener('click', () => {
-            currentZoom = Math.max(0.1, currentZoom - 0.1);
-            modalImage.style.transform = `scale(${currentZoom})`;
-        });
-    </script>
+    // Zoom in functionality
+    zoomIn.addEventListener('click', () => {
+        currentZoom += 0.1;
+        modalImage.style.transform = scale(${currentZoom});
+    });
+
+    // Zoom out functionality
+    zoomOut.addEventListener('click', () => {
+        currentZoom = Math.max(0.1, currentZoom - 0.1);
+        modalImage.style.transform = scale(${currentZoom});
+    });
+
+    // Show instructions and hide them after 5 seconds
+    function showInstructions() {
+        instructions.classList.remove('hidden');
+        setTimeout(() => instructions.classList.add('hidden'), 5000);
+    }
+
+    // Reset the idle timer and show instructions after 15 seconds of inactivity
+    function resetIdleTimer() {
+        clearTimeout(idleTimeout);
+        idleTimeout = setTimeout(() => {
+            instructions.classList.remove('hidden'); // Show instructions
+        }, 15000); // 15 seconds
+    }
+
+    // Hide instructions when clicked or tapped
+    instructions.addEventListener('click', () => {
+        instructions.classList.add('hidden');
+        clearTimeout(idleTimeout);
+    });
+
+    // Add event listeners to reset the timer on interaction
+    document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('touchstart', resetIdleTimer);
+
+    // Start the idle timer and show instructions on load
+    window.onload = () => {
+        showInstructions(); // Show instructions on load
+        resetIdleTimer();   // Start the idle timer
+
+        
+    
+    };
+</script>
 </body>
 </html>
