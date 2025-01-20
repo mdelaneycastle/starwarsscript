@@ -104,47 +104,45 @@
 /* Desktop-specific styling */
 @media (min-width: 1024px) {
     .main-content {
-        flex-direction: row; /* Arrange content horizontally */
-        margin-left: 140px; /* Reduced space to bring the content closer to the slider */
-        margin-right: 40px; /* Reduced space on the right */
+        flex-direction: row; /* Keep horizontal layout */
+        margin-left: 140px; /* Adjust the left margin for the slider */
+        margin-right: 40px; /* Reduce right margin to make the image larger */
     }
 
     .main-image {
-        width: 70%; /* Increase the image size slightly */
-        max-height: none; /* Allow it to grow without constraints */
-        clip-path: inset(0 0 0 10%); /* Crop 10% from the left if necessary */
-        object-position: 10% 0; /* Adjust the visible portion */
+        width: 75%; /* Increase the size of the image */
+        max-height: none; /* Allow the image to grow unrestricted */
+        margin: 0 auto; /* Center the image */
     }
 
     .slider-container {
-        position: fixed; /* Stick to the left side */
+        position: fixed; /* Fix position to the left */
         top: 0;
         left: 0;
         height: 100%; /* Full height */
-        width: 140px; /* Slightly reduced width for better balance */
-        background-color: #dadada; /* Background color as requested */
-        overflow-y: auto; /* Scrollable thumbnails */
-        padding: 0; /* No extra padding */
-        z-index: 10;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+        width: 140px; /* Keep width consistent */
+        background-color: #dadada; /* Slider container background */
+        overflow-y: auto; /* Enable scrolling for thumbnails */
+        padding: 0; /* Ensure no extra padding */
+        z-index: 10; /* Ensure it's above other elements */
     }
 
     .slider {
         display: flex;
         flex-direction: column; /* Stack thumbnails vertically */
-        gap: 15px; /* Space between thumbnails */
+        gap: 15px; /* Add spacing between thumbnails */
         align-items: center; /* Center thumbnails */
-        margin: 0; /* No extra margins */
-        padding: 10px 0; /* Add vertical padding inside the slider */
-        width: 100%; /* Ensure the slider fits within the container */
+        padding: 10px 0; /* Padding for vertical alignment */
+        width: 100%; /* Ensure thumbnails fit within the container */
+        margin: 0; /* Remove extra margins */
     }
 
     .slider img {
-        width: 120px; /* Thumbnail size */
+        width: 120px; /* Keep thumbnail size consistent */
         height: auto; /* Maintain aspect ratio */
         margin: 0; /* Remove any margins */
         padding: 0; /* Ensure no extra padding */
-        display: block; /* Ensure proper alignment */
+        display: block; /* Align thumbnails properly */
     }
 }
         .modal {
