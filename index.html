@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
      body {
     background-color: #dadada;
@@ -259,9 +259,19 @@
     const closeModal = document.getElementById('close-modal');
     const zoomIn = document.getElementById('zoom-in');
     const zoomOut = document.getElementById('zoom-out');
+    const audioPlayer = document.getElementById('audio-player');
+
 
     let currentZoom = 1;
     let idleTimeout;
+    let audioPlayed = false;
+
+        document.addEventListener('click', () => {
+            if (!audioPlayed) {
+                audioPlayer.play().catch(error => console.error('Audio playback failed:', error));
+                audioPlayed = true;
+            }
+        }, { once: true });
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
@@ -350,9 +360,7 @@
         showInstructions(); // Show instructions on load
         resetIdleTimer();   // Start the idle timer
 
-        const audioPlayer = document.getElementById('audio-player');
-        audioPlayer.play().catch(error => {
-            console.error("Audio Playback Failed:", error);
+        
         });
     };
 </script>
