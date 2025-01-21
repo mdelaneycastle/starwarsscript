@@ -527,6 +527,18 @@
 
     // Add event listener for the search button
     searchButton.addEventListener('click', handleSearch);
+
+        // Ensure saber.mp3 plays on the first user interaction
+document.body.addEventListener('click', () => {
+    if (!audioPlayed) {
+        audioPlayer.play().then(() => {
+            console.log('Audio played successfully.');
+        }).catch(error => {
+            console.error('Audio playback failed:', error);
+        });
+        audioPlayed = true;
+    }
+}, { once: true });
 </script>
 </body>
 </html>
