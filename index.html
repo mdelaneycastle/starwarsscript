@@ -382,7 +382,7 @@
         .catch(error => console.error(error));
 
     // Unified search functionality
-    searchButton.addEventListener('click', () => {
+    function handleSearch() {
         const query = searchBox.value.trim().toLowerCase();
         if (!query) {
             alert('Please enter a page number or a keyword.');
@@ -396,7 +396,7 @@
         } else {
             handleWordSearch(query);
         }
-    });
+    }
 
     // Handle number-based search
     function handleNumberSearch(query) {
@@ -517,6 +517,16 @@
         showInstructions(); // Show instructions on load
         resetIdleTimer();   // Start the idle timer
     };
+
+    // Add event listener for the Enter key
+    searchBox.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
+    // Add event listener for the search button
+    searchButton.addEventListener('click', handleSearch);
 </script>
 </body>
 </html>
