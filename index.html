@@ -328,17 +328,19 @@
     const zoomOut = document.getElementById('zoom-out');
     const audioPlayer = document.getElementById('audio-player');
 
+    const searchBox = document.querySelector('.search-box');
+    const searchButton = document.querySelector('.search-button');
 
     let currentZoom = 1;
     let idleTimeout;
     let audioPlayed = false;
 
-        document.addEventListener('click', () => {
-            if (!audioPlayed) {
-                audioPlayer.play().catch(error => console.error('Audio playback failed:', error));
-                audioPlayed = true;
-            }
-        }, { once: true });
+    document.addEventListener('click', () => {
+        if (!audioPlayed) {
+            audioPlayer.play().catch(error => console.error('Audio playback failed:', error));
+            audioPlayed = true;
+        }
+    }, { once: true });
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
@@ -426,10 +428,43 @@
     window.onload = () => {
         showInstructions(); // Show instructions on load
         resetIdleTimer();   // Start the idle timer
-
-        
-    
     };
+
+    // Search functionality
+    searchButton.addEventListener('click', () => {
+        const query = searchBox.value.trim();
+        if (!query) {
+            alert('Please enter a page number.');
+            return;
+        }
+
+        const paddedQuery = query.length === 1 ? `0${query}` : query; // Add leading zero if necessary
+
+        fetch(imagesDataUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch JSON');
+                return response.json();
+            })
+            .then(images => {
+                // Find the first image that matches the query
+                const matchingImage = images.find(image => image.startsWith(paddedQuery));
+                if (matchingImage) {
+                    // Update the main image
+                    mainImage.src = `${imagesPath}${matchingImage}`;
+                    updateTitle(matchingImage);
+
+                    // Scroll the slider to the matching thumbnail
+                    const thumbnails = sliderContainer.querySelectorAll('img');
+                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
+                    if (matchingThumbnail) {
+                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    alert('No image found for the entered page number.');
+                }
+            })
+            .catch(error => console.error('Error during search:', error));
+    });
 </script>
 </body>
 </html>
