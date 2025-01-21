@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
      body {
     background-color: #dadada;
@@ -330,7 +330,8 @@
     const mainImage = document.getElementById('main-image');
     const imageTitle = document.getElementById('image-title');
     const sliderContainer = document.getElementById('slider-container');
-    const instructions = document.getElementById('instructions');
+    const searchBox = document.querySelector('.search-box');
+    const searchButton = document.querySelector('.search-button');
 
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
@@ -339,19 +340,13 @@
     const zoomOut = document.getElementById('zoom-out');
     const audioPlayer = document.getElementById('audio-player');
 
-    const searchBox = document.querySelector('.search-box');
-    const searchButton = document.querySelector('.search-button');
+    const instructions = document.getElementById('instructions');
 
+    let currentSearchIndex = -1; // Tracks current index for cycling through word matches
+    let currentMatches = []; // Stores matching images for word searches
     let currentZoom = 1;
     let idleTimeout;
     let audioPlayed = false;
-
-    document.addEventListener('click', () => {
-        if (!audioPlayed) {
-            audioPlayer.play().catch(error => console.error('Audio playback failed:', error));
-            audioPlayed = true;
-        }
-    }, { once: true });
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
@@ -382,9 +377,91 @@
             return response.json();
         })
         .then(images => {
-            createSlider(images); // Directly pass the array to the function
+            createSlider(images);
         })
         .catch(error => console.error(error));
+
+    // Unified search functionality
+    searchButton.addEventListener('click', () => {
+        const query = searchBox.value.trim().toLowerCase();
+        if (!query) {
+            alert('Please enter a page number or a keyword.');
+            return;
+        }
+
+        // Determine if the query is a number or a word
+        const isNumber = /^\d+$/.test(query);
+        if (isNumber) {
+            handleNumberSearch(query);
+        } else {
+            handleWordSearch(query);
+        }
+    });
+
+    // Handle number-based search
+    function handleNumberSearch(query) {
+        const paddedQuery = query.length === 1 ? `0${query}` : query; // Add leading zero if necessary
+
+        fetch(imagesDataUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch JSON');
+                return response.json();
+            })
+            .then(images => {
+                const matchingImage = images.find(image => image.startsWith(paddedQuery));
+                if (matchingImage) {
+                    // Update the main image
+                    mainImage.src = `${imagesPath}${matchingImage}`;
+                    updateTitle(matchingImage);
+
+                    // Scroll the slider to the matching thumbnail
+                    const thumbnails = sliderContainer.querySelectorAll('img');
+                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
+                    if (matchingThumbnail) {
+                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    alert('No image found for the entered page number.');
+                }
+            })
+            .catch(error => console.error('Error during number search:', error));
+    }
+
+    // Handle word-based search
+    function handleWordSearch(query) {
+        fetch(imagesDataUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch JSON');
+                return response.json();
+            })
+            .then(images => {
+                // Find all matches for the query
+                currentMatches = images.filter(image => {
+                    const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+                    return title.includes(query);
+                });
+
+                if (currentMatches.length > 0) {
+                    // Cycle through matches
+                    currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
+                    const matchingImage = currentMatches[currentSearchIndex];
+
+                    // Update the main image
+                    mainImage.src = `${imagesPath}${matchingImage}`;
+                    updateTitle(matchingImage);
+
+                    // Scroll the slider to the matching thumbnail
+                    const thumbnails = sliderContainer.querySelectorAll('img');
+                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
+                    if (matchingThumbnail) {
+                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                } else {
+                    alert('No images found with the entered keyword.');
+                }
+            })
+            .catch(error => console.error('Error during word search:', error));
+    }
 
     // Open the modal and display the clicked image
     mainImage.addEventListener('click', () => {
@@ -440,42 +517,6 @@
         showInstructions(); // Show instructions on load
         resetIdleTimer();   // Start the idle timer
     };
-
-    // Search functionality
-    searchButton.addEventListener('click', () => {
-        const query = searchBox.value.trim();
-        if (!query) {
-            alert('Please enter a page number.');
-            return;
-        }
-
-        const paddedQuery = query.length === 1 ? `0${query}` : query; // Add leading zero if necessary
-
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                // Find the first image that matches the query
-                const matchingImage = images.find(image => image.startsWith(paddedQuery));
-                if (matchingImage) {
-                    // Update the main image
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
-
-                    // Scroll the slider to the matching thumbnail
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
-                    if (matchingThumbnail) {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                } else {
-                    alert('No image found for the entered page number.');
-                }
-            })
-            .catch(error => console.error('Error during search:', error));
-    });
 </script>
 </body>
 </html>
