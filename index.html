@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
      body {
     background-color: #dadada;
@@ -85,6 +85,67 @@
     z-index: 10;
     white-space: nowrap; /* Prevent wrapping */
 }
+
+        .search-container {
+        position: fixed;
+        bottom: 20px; /* Slightly above the slider */
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #fff;
+        padding: 10px 15px;
+        border-radius: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        z-index: 15;
+    }
+
+    .search-box {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 10px;
+        border-radius: 15px;
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
+
+    .search-box::placeholder {
+        font-family: Arial, sans-serif;
+        color: #999;
+    }
+
+    .search-button {
+        border: none;
+        outline: none;
+        background-color: #000;
+        color: #fff;
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+        background-color: #333;
+    }
+
+    @media (max-width: 600px) {
+        .search-container {
+            width: 90%; /* Fit better on mobile */
+        }
+
+        .search-box {
+            font-size: 14px;
+        }
+
+        .search-button {
+            font-size: 14px;
+        }
+    }
+</style>
 
 /* Mobile-specific styling */
 @media (max-width: 600px) {
@@ -232,7 +293,12 @@
     <div class="main-content">
         <div class="title" id="image-title">a story of glory</div>
         <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
+        <div class="search-container">
+    <input type="text" class="search-box" placeholder="Search for an image...">
+    <button class="search-button">Search</button>
+</div>
     </div>
+
     <div class="slider-container">
         <div class="slider" id="slider-container"></div>
     </div>
