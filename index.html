@@ -400,32 +400,37 @@
 
     // Handle number-based search
     function handleNumberSearch(query) {
-        const paddedQuery = query.length === 1 ? `0${query}` : query; // Add leading zero if necessary
+    const paddedQuery = query.length === 1 ? `0${query}` : query;
 
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                const matchingImage = images.find(image => image.startsWith(paddedQuery));
-                if (matchingImage) {
-                    // Update the main image
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
+    fetch(imagesDataUrl)
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch JSON');
+            return response.json();
+        })
+        .then(images => {
+            const matchingImage = images.find(image => image.startsWith(paddedQuery));
+            console.log('Matching Image:', matchingImage); // Log the matching image
 
-                    // Scroll the slider to the matching thumbnail
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
-                    if (matchingThumbnail) {
+            if (matchingImage) {
+                mainImage.src = `${imagesPath}${matchingImage}`;
+                updateTitle(matchingImage);
+
+                // Find matching thumbnail
+                const thumbnails = sliderContainer.querySelectorAll('img');
+                const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
+                console.log('Matching Thumbnail:', matchingThumbnail); // Log the matching thumbnail
+
+                if (matchingThumbnail) {
+                    setTimeout(() => {
                         matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                } else {
-                    alert('No image found for the entered page number.');
+                    }, 0);
                 }
-            })
-            .catch(error => console.error('Error during number search:', error));
-    }
+            } else {
+                alert('No image found for the entered page number.');
+            }
+        })
+        .catch(error => console.error('Error during number search:', error));
+}
 
     // Handle word-based search
     function handleWordSearch(query) {
