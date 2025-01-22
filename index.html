@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
      body {
     background-color: #dadada;
@@ -409,17 +409,29 @@
         })
         .then(images => {
             const matchingImage = images.find(image => image.startsWith(paddedQuery));
-            console.log('Matching Image:', matchingImage); // Log the matching image
+            console.log('Matching Image:', matchingImage); // Log the matched image
 
             if (matchingImage) {
                 mainImage.src = `${imagesPath}${matchingImage}`;
                 updateTitle(matchingImage);
 
-                // Find matching thumbnail
+                // Debugging starts here
                 const thumbnails = sliderContainer.querySelectorAll('img');
-                const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
-                console.log('Matching Thumbnail:', matchingThumbnail); // Log the matching thumbnail
+                console.log('Matching Image:', matchingImage); // Log the matched image
 
+                // Debug: Log all thumbnail sources
+                thumbnails.forEach((thumb, index) => {
+                    console.log(`Thumbnail ${index}:`, thumb.src);
+                });
+
+                const matchingThumbnail = Array.from(thumbnails).find(thumb => {
+                    console.log(`Checking Thumbnail: ${thumb.src} against ${matchingImage}`);
+                    return thumb.src.includes(matchingImage); // Debugging the match condition
+                });
+
+                console.log('Matching Thumbnail:', matchingThumbnail); // Log the found thumbnail
+
+                // Attempt to scroll to the thumbnail
                 if (matchingThumbnail) {
                     setTimeout(() => {
                         matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
