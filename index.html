@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
      body {
     background-color: #dadada;
@@ -415,7 +415,6 @@
                 mainImage.src = `${imagesPath}${matchingImage}`;
                 updateTitle(matchingImage);
 
-                // Debugging starts here
                 const thumbnails = sliderContainer.querySelectorAll('img');
                 console.log('Matching Image:', matchingImage); // Log the matched image
 
@@ -424,9 +423,11 @@
                     console.log(`Thumbnail ${index}:`, thumb.src);
                 });
 
+                // Find matching thumbnail with URL decoding
                 const matchingThumbnail = Array.from(thumbnails).find(thumb => {
-                    console.log(`Checking Thumbnail: ${thumb.src} against ${matchingImage}`);
-                    return thumb.src.includes(matchingImage); // Debugging the match condition
+                    const decodedSrc = decodeURIComponent(thumb.src); // Decode the thumbnail URL
+                    console.log(`Checking Thumbnail (Decoded): ${decodedSrc} against ${matchingImage}`);
+                    return decodedSrc.includes(matchingImage); // Compare with matchingImage
                 });
 
                 console.log('Matching Thumbnail:', matchingThumbnail); // Log the found thumbnail
@@ -436,6 +437,8 @@
                     setTimeout(() => {
                         matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 0);
+                } else {
+                    alert('Matching thumbnail not found.');
                 }
             } else {
                 alert('No image found for the entered page number.');
