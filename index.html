@@ -389,7 +389,6 @@
             return;
         }
 
-        // Determine if the query is a number or a word
         const isNumber = /^\d+$/.test(query);
         if (isNumber) {
             handleNumberSearch(query);
@@ -400,52 +399,38 @@
 
     // Handle number-based search
     function handleNumberSearch(query) {
-    const paddedQuery = query.length === 1 ? `0${query}` : query;
+        const paddedQuery = query.length === 1 ? `0${query}` : query;
 
-    fetch(imagesDataUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch JSON');
-            return response.json();
-        })
-        .then(images => {
-            const matchingImage = images.find(image => image.startsWith(paddedQuery));
-            console.log('Matching Image:', matchingImage); // Log the matched image
+        fetch(imagesDataUrl)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch JSON');
+                return response.json();
+            })
+            .then(images => {
+                const matchingImage = images.find(image => image.startsWith(paddedQuery));
 
-            if (matchingImage) {
-                mainImage.src = `${imagesPath}${matchingImage}`;
-                updateTitle(matchingImage);
+                if (matchingImage) {
+                    mainImage.src = `${imagesPath}${matchingImage}`;
+                    updateTitle(matchingImage);
 
-                const thumbnails = sliderContainer.querySelectorAll('img');
-                console.log('Matching Image:', matchingImage); // Log the matched image
+                    const thumbnails = sliderContainer.querySelectorAll('img');
+                    const matchingThumbnail = Array.from(thumbnails).find(thumb => {
+                        return decodeURIComponent(thumb.src).includes(matchingImage);
+                    });
 
-                // Debug: Log all thumbnail sources
-                thumbnails.forEach((thumb, index) => {
-                    console.log(`Thumbnail ${index}:`, thumb.src);
-                });
-
-                // Find matching thumbnail with URL decoding
-                const matchingThumbnail = Array.from(thumbnails).find(thumb => {
-                    const decodedSrc = decodeURIComponent(thumb.src); // Decode the thumbnail URL
-                    console.log(`Checking Thumbnail (Decoded): ${decodedSrc} against ${matchingImage}`);
-                    return decodedSrc.includes(matchingImage); // Compare with matchingImage
-                });
-
-                console.log('Matching Thumbnail:', matchingThumbnail); // Log the found thumbnail
-
-                // Attempt to scroll to the thumbnail
-                if (matchingThumbnail) {
-                    setTimeout(() => {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 0);
+                    if (matchingThumbnail) {
+                        setTimeout(() => {
+                            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 0);
+                    } else {
+                        alert('Matching thumbnail not found.');
+                    }
                 } else {
-                    alert('Matching thumbnail not found.');
+                    alert('No image found for the entered page number.');
                 }
-            } else {
-                alert('No image found for the entered page number.');
-            }
-        })
-        .catch(error => console.error('Error during number search:', error));
-}
+            })
+            .catch(error => console.error('Error during number search:', error));
+    }
 
     // Handle word-based search
     function handleWordSearch(query) {
@@ -455,22 +440,18 @@
                 return response.json();
             })
             .then(images => {
-                // Find all matches for the query
                 currentMatches = images.filter(image => {
                     const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
                     return title.includes(query);
                 });
 
                 if (currentMatches.length > 0) {
-                    // Cycle through matches
                     currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
                     const matchingImage = currentMatches[currentSearchIndex];
 
-                    // Update the main image
                     mainImage.src = `${imagesPath}${matchingImage}`;
                     updateTitle(matchingImage);
 
-                    // Scroll the slider to the matching thumbnail
                     const thumbnails = sliderContainer.querySelectorAll('img');
                     const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
                     if (matchingThumbnail) {
@@ -482,6 +463,54 @@
             })
             .catch(error => console.error('Error during word search:', error));
     }
+
+    // Enable swiping on the slider
+    const slider = document.querySelector('.slider');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.classList.add('active');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.classList.remove('active');
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    slider.addEventListener('touchstart', (e) => {
+        isDown = true;
+        startX = e.touches[0].pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('touchend', () => {
+        isDown = false;
+    });
+
+    slider.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        const x = e.touches[0].pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        slider.scrollLeft = scrollLeft - walk;
+    });
 
     // Open the modal and display the clicked image
     mainImage.addEventListener('click', () => {
@@ -548,17 +577,17 @@
     // Add event listener for the search button
     searchButton.addEventListener('click', handleSearch);
 
-        // Ensure saber.mp3 plays on the first user interaction
-document.body.addEventListener('click', () => {
-    if (!audioPlayed) {
-        audioPlayer.play().then(() => {
-            console.log('Audio played successfully.');
-        }).catch(error => {
-            console.error('Audio playback failed:', error);
-        });
-        audioPlayed = true;
-    }
-}, { once: true });
+    // Ensure saber.mp3 plays on the first user interaction
+    document.body.addEventListener('click', () => {
+        if (!audioPlayed) {
+            audioPlayer.play().then(() => {
+                console.log('Audio played successfully.');
+            }).catch(error => {
+                console.error('Audio playback failed:', error);
+            });
+            audioPlayed = true;
+        }
+    }, { once: true });
 </script>
 </body>
 </html>
