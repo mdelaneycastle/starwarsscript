@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
      body {
     background-color: #dadada;
@@ -332,6 +332,7 @@
     const sliderContainer = document.getElementById('slider-container');
     const searchBox = document.querySelector('.search-box');
     const searchButton = document.querySelector('.search-button');
+    const onscreenKeyboard = document.createElement('div');
 
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
@@ -342,11 +343,90 @@
 
     const instructions = document.getElementById('instructions');
 
-    let currentSearchIndex = -1; // Tracks current index for cycling through word matches
-    let currentMatches = []; // Stores matching images for word searches
+    let currentSearchIndex = -1;
+    let currentMatches = [];
     let currentZoom = 1;
     let idleTimeout;
     let audioPlayed = false;
+
+    // Utility to detect if the device is mobile
+    function isMobileDevice() {
+        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    }
+
+    // Function to create the onscreen keyboard
+    function createOnscreenKeyboard() {
+        onscreenKeyboard.id = 'onscreen-keyboard';
+        onscreenKeyboard.style.position = 'fixed';
+        onscreenKeyboard.style.bottom = '0';
+        onscreenKeyboard.style.left = '0';
+        onscreenKeyboard.style.width = '100%';
+        onscreenKeyboard.style.backgroundColor = '#f1f1f1';
+        onscreenKeyboard.style.display = 'grid';
+        onscreenKeyboard.style.gridTemplateColumns = 'repeat(10, 1fr)';
+        onscreenKeyboard.style.padding = '10px';
+        onscreenKeyboard.style.gap = '5px';
+        onscreenKeyboard.style.zIndex = '1000';
+
+        const keys = [
+            '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+            'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
+            'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
+            'Z', 'X', 'C', 'V', 'B', 'N', 'M',
+            'Backspace', 'Space', 'Enter'
+        ];
+
+        keys.forEach(key => {
+            const keyButton = document.createElement('button');
+            keyButton.textContent = key;
+            keyButton.style.padding = '10px';
+            keyButton.style.fontSize = '18px';
+            keyButton.style.cursor = 'pointer';
+
+            keyButton.addEventListener('click', () => {
+                if (key === 'Backspace') {
+                    searchBox.value = searchBox.value.slice(0, -1);
+                } else if (key === 'Space') {
+                    searchBox.value += ' ';
+                } else if (key === 'Enter') {
+                    handleSearch();
+                    hideOnscreenKeyboard();
+                } else {
+                    searchBox.value += key;
+                }
+                searchBox.focus();
+            });
+
+            onscreenKeyboard.appendChild(keyButton);
+        });
+
+        document.body.appendChild(onscreenKeyboard);
+    }
+
+    // Function to show the onscreen keyboard
+    function showOnscreenKeyboard() {
+        onscreenKeyboard.style.display = 'grid';
+    }
+
+    // Function to hide the onscreen keyboard
+    function hideOnscreenKeyboard() {
+        onscreenKeyboard.style.display = 'none';
+    }
+
+    // Only create the onscreen keyboard if not on mobile devices
+    if (!isMobileDevice()) {
+        createOnscreenKeyboard();
+
+        // Show the keyboard when the search box is focused
+        searchBox.addEventListener('focus', showOnscreenKeyboard);
+
+        // Hide the keyboard when the user clicks outside of the search box or keyboard
+        document.addEventListener('click', (event) => {
+            if (!onscreenKeyboard.contains(event.target) && event.target !== searchBox) {
+                hideOnscreenKeyboard();
+            }
+        });
+    }
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
