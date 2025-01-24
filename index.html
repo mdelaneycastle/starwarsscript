@@ -111,21 +111,6 @@
         font-family: Arial, sans-serif;
     }
 
-        #onscreen-keyboard button {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    transition: background-color 0.2s ease;
-}
-
-#onscreen-keyboard button:hover {
-    background-color: #e0e0e0;
-}
-
-#onscreen-keyboard button:active {
-    background-color: #ccc;
-}
-
     .search-box::placeholder {
         font-family: Arial, sans-serif;
         color: #999;
@@ -347,122 +332,21 @@
     const sliderContainer = document.getElementById('slider-container');
     const searchBox = document.querySelector('.search-box');
     const searchButton = document.querySelector('.search-button');
-    let onscreenKeyboard;
 
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const closeModal = document.getElementById('close-modal');
     const zoomIn = document.getElementById('zoom-in');
     const zoomOut = document.getElementById('zoom-out');
+    const audioPlayer = document.getElementById('audio-player');
+
     const instructions = document.getElementById('instructions');
 
+    let currentSearchIndex = -1; // Tracks current index for cycling through word matches
+    let currentMatches = []; // Stores matching images for word searches
+    let currentZoom = 1;
     let idleTimeout;
     let audioPlayed = false;
-
-    // Utility to detect if the device is mobile
-    function isMobileDevice() {
-        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    }
-
-   // Function to create the onscreen keyboard
-function createOnscreenKeyboard() {
-    onscreenKeyboard = document.createElement('div');
-    onscreenKeyboard.id = 'onscreen-keyboard';
-    onscreenKeyboard.style.position = 'fixed';
-    onscreenKeyboard.style.bottom = '20px';
-    onscreenKeyboard.style.left = '50%';
-    onscreenKeyboard.style.transform = 'translateX(-50%)';
-    onscreenKeyboard.style.backgroundColor = '#f9f9f9';
-    onscreenKeyboard.style.borderRadius = '20px';
-    onscreenKeyboard.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-    onscreenKeyboard.style.display = 'none';
-    onscreenKeyboard.style.zIndex = '1000';
-    onscreenKeyboard.style.padding = '10px';
-    onscreenKeyboard.style.maxWidth = '600px';
-    onscreenKeyboard.style.textAlign = 'center';
-
-    const keys = [
-        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-        'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
-        'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
-        'Z', 'X', 'C', 'V', 'B', 'N', 'M',
-        'Backspace', 'Space', 'Enter'
-    ];
-
-    keys.forEach(key => {
-        const keyButton = document.createElement('button');
-        keyButton.textContent = key;
-        keyButton.style.border = 'none';
-        keyButton.style.backgroundColor = '#ffffff';
-        keyButton.style.color = '#333';
-        keyButton.style.padding = '10px 15px';
-        keyButton.style.margin = '5px';
-        keyButton.style.borderRadius = '8px';
-        keyButton.style.fontSize = '16px';
-        keyButton.style.cursor = 'pointer';
-        keyButton.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
-        keyButton.style.transition = 'background-color 0.2s, transform 0.1s';
-
-        keyButton.addEventListener('mouseover', () => {
-            keyButton.style.backgroundColor = '#e0e0e0';
-        });
-        keyButton.addEventListener('mouseout', () => {
-            keyButton.style.backgroundColor = '#ffffff';
-        });
-        keyButton.addEventListener('click', () => {
-            if (key === 'Backspace') {
-                searchBox.value = searchBox.value.slice(0, -1);
-            } else if (key === 'Space') {
-                searchBox.value += ' ';
-            } else if (key === 'Enter') {
-                handleSearch();
-                hideOnscreenKeyboard();
-            } else {
-                searchBox.value += key;
-            }
-            searchBox.focus();
-        });
-
-        onscreenKeyboard.appendChild(keyButton);
-    });
-
-    document.body.appendChild(onscreenKeyboard);
-}
-
-// Function to show the onscreen keyboard
-function showOnscreenKeyboard() {
-    onscreenKeyboard.style.display = 'flex';
-    onscreenKeyboard.style.flexWrap = 'wrap';
-    onscreenKeyboard.style.justifyContent = 'center';
-}
-
-// Function to hide the onscreen keyboard
-function hideOnscreenKeyboard() {
-    onscreenKeyboard.style.display = 'none';
-}
-
-// Only create the onscreen keyboard if not on mobile devices
-if (!isMobileDevice()) {
-    createOnscreenKeyboard();
-
-    // Show the keyboard when the search box is focused
-    searchBox.addEventListener('focus', showOnscreenKeyboard);
-
-    // Hide the keyboard only if clicking outside the search box and the keyboard
-    document.addEventListener('click', (event) => {
-        if (
-            !onscreenKeyboard.contains(event.target) && // Not clicking on the keyboard
-            event.target !== searchBox // Not clicking on the search box
-        ) {
-            hideOnscreenKeyboard();
-        }
-    });
-
-    // Prevent the keyboard from hiding immediately when interacting with it
-    onscreenKeyboard.addEventListener('mousedown', (event) => {
-        event.stopPropagation();
-    });
-}
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
