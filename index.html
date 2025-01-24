@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/kioskboard/dist/kioskboard-2.1.0.min.css">
     <style>
         body {
@@ -46,16 +46,15 @@
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
             z-index: 10;
         }
 
         .slider {
             display: flex;
-            overflow-x: auto;
-            padding: 5px;
             gap: 10px;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            padding: 5px;
         }
 
         .slider img {
