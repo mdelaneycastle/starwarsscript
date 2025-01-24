@@ -3,221 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
-     body {
-    background-color: #dadada;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-}
+        body {
+            background-color: #dadada;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-@font-face {
-    font-family: 'Starjedi';
-    src: url('./Starjedi.ttf');
-}
+        @font-face {
+            font-family: 'Starjedi';
+            src: url('./Starjedi.ttf');
+        }
 
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    position: relative; /* Necessary for absolute positioning of children */
-}
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-/* Main image styling */
-.main-image {
-    width: 98%; /* Default mobile width */
-    max-height: 80vh;
-    margin: 5px auto 0;
-    object-fit: contain;
-    z-index: 5;
-}
+        .main-image {
+            width: 98%;
+            max-height: 80vh;
+            margin: 5px auto 0;
+            object-fit: contain;
+            z-index: 5;
+        }
 
-/* Slider container for mobile */
-.slider-container {
-    position: absolute; /* Take it out of normal flow */
-    bottom: 10px; /* Position it at the bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust for the element's width */
-    width: 100%; /* Full width on mobile */
-    z-index: 10; /* Ensure it's above other elements if necessary */
-}
+        .slider-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+            z-index: 10;
+        }
 
-/* Slider for mobile */
-.slider {
-    display: flex;
-    overflow-x: auto;
-    padding: 5px;
-    gap: 10px;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-}
+        .slider {
+            display: flex;
+            gap: 10px;
+            padding: 5px;
+        }
 
-.slider img {
-    height: 100px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border 0.3s;
-    flex-shrink: 0;
-}
+        .slider img {
+            height: 100px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border 0.3s;
+            flex-shrink: 0;
+        }
 
-.slider img:hover {
-    border: 2px solid #000;
-}
+        .slider img:hover {
+            border: 2px solid #000;
+        }
 
-/* Title styling */
-.title {
-    position: absolute; /* Keep it absolute for placement control */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Center based on width */
-    top: 60px; /* Adjust positioning */
-    text-align: center;
-    font-family: 'Starjedi', sans-serif;
-    font-size: 20px;
-    text-transform: lowercase;
-    z-index: 10;
-    white-space: nowrap; /* Prevent wrapping */
-}
+        .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 60px;
+            text-align: center;
+            font-family: 'Starjedi', sans-serif;
+            font-size: 20px;
+            text-transform: lowercase;
+            z-index: 10;
+            white-space: nowrap;
+        }
 
         .search-container {
-        position: fixed;
-        bottom: 40px; /* Slightly above the slider */
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background-color: #fff;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        z-index: 15;
-    }
-
-    .search-box {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 10px;
-        border-radius: 15px;
-        font-size: 16px;
-        font-family: Arial, sans-serif;
-    }
-
-    .search-box::placeholder {
-        font-family: Arial, sans-serif;
-        color: #999;
-    }
-
-    .search-button {
-        border: none;
-        outline: none;
-        background-color: #000;
-        color: #fff;
-        font-size: 16px;
-        padding: 10px 20px;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .search-button:hover {
-        background-color: #333;
-    }
-
-        /* Desktop-specific styling */
-@media (min-width: 1024px) {
-    .search-container {
-        width: 15%; /* Adjust container width for desktop */
-    }
-
-    .search-box {
-        width: 100%; /* Ensure the search box stretches within the container */
-    }
-}
-
-    @media (max-width: 600px) {
-        .search-container {
-            bottom: 130px;
-            width: 90%; /* Fit better on mobile */
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            z-index: 15;
         }
 
         .search-box {
-            font-size: 14px;
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
+
+        .search-box::placeholder {
+            color: #999;
         }
 
         .search-button {
-            font-size: 14px;
+            border: none;
+            outline: none;
+            background-color: #000;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-    }
 
-/* Mobile-specific styling */
-@media (max-width: 600px) {
-    .title {
-        font-size: 20px; /* Keep the font size small */
-        white-space: normal; /* Allow wrapping */
-        word-wrap: break-word; /* Ensure long words break */
-        width: 90%; /* Limit width to fit within screen */
-        text-align: center; /* Ensure text stays centered */
-    }
-    .slider-container {
-        bottom: 10px; /* Keep at the bottom */
-        width: 100%; /* Full width on mobile */
-    }
-}
+        .search-button:hover {
+            background-color: #333;
+        }
 
-/* Desktop-specific styling */
-@media (min-width: 1024px) {
-    .main-content {
-        flex-direction: row; /* Keep horizontal layout */
-        margin-left: 140px; /* Adjust the left margin for the slider */
-        margin-right: 40px; /* Reduce right margin to make the image larger */
-    }
-
-    .main-image {
-        width: 75%; /* Increase the size of the image */
-        max-height: none; /* Allow the image to grow unrestricted */
-        margin: 0 auto; /* Center the image */
-    }
-
-    .slider-container {
-        position: fixed; /* Fix position to the left */
-        top: 0;
-        left: 0;
-        height: 100%; /* Full height */
-        width: 140px; /* Keep width consistent */
-        background-color: #dadada; /* Slider container background */
-        overflow-y: auto; /* Enable scrolling for thumbnails */
-        padding: 0; /* Ensure no extra padding */
-        z-index: 10; /* Ensure it's above other elements */
-        margin-left: 80px;
-    }
-
-    .slider {
-        display: flex;
-        flex-direction: column; /* Stack thumbnails vertically */
-        gap: 15px; /* Add spacing between thumbnails */
-        align-items: center; /* Center thumbnails */
-        padding: 10px 0; /* Padding for vertical alignment */
-        width: 100%; /* Ensure thumbnails fit within the container */
-        margin: 0; /* Remove extra margins */
-    }
-
-    .slider img {
-        width: 120px; /* Keep thumbnail size consistent */
-        height: auto; /* Maintain aspect ratio */
-        margin: 0; /* Remove any margins */
-        padding: 0; /* Ensure no extra padding */
-        display: block; /* Align thumbnails properly */
-    }
-}
         .modal {
             display: none;
             position: fixed;
@@ -237,26 +145,24 @@
         }
 
         .modal-controls {
-    position: absolute;
-    top: 20px; /* Move it further down */
-    right: 20px; /* Move it further in from the right */
-    color: white;
-    font-size: 48px; /* Increase font size */
-    cursor: pointer;
-    z-index: 1100;
-}
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+        }
 
-.modal-zoom {
-    position: absolute;
-    top: 20px; /* Move it further down */
-    left: 20px; /* Move it further in from the left */
-    color: white;
-    font-size: 48px; /* Increase font size */
-    cursor: pointer;
-    display: flex;
-    gap: 20px; /* Adjust spacing between + and - */
-    z-index: 1100;
-}
+        .modal-zoom {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 48px;
+            cursor: pointer;
+            display: flex;
+            gap: 20px;
+        }
 
         .modal-zoom button {
             background: none;
@@ -266,53 +172,39 @@
             font-size: 36px;
         }
 
-        .instructions {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            z-index: 2000;
-            animation: flash 1.5s infinite alternate;
-        }
-
-        @keyframes flash {
-            from {
-                opacity: 0.7;
+        @media (max-width: 600px) {
+            .search-container {
+                bottom: 130px;
+                width: 90%;
             }
-            to {
-                opacity: 1;
-            }
-        }
 
-        .hidden {
-            display: none;
+            .search-box {
+                font-size: 14px;
+            }
+
+            .search-button {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
     <audio id="audio-player" src="saber.mp3" preload="auto"></audio>
     
-    <div class="instructions" id="instructions">Swipe/Scroll to view more. Tap to Zoom.</div>
     <div class="main-content">
         <div class="title" id="image-title">a story of glory</div>
         <img id="main-image" class="main-image" src="Images/04A Story Of Glory_1.jpg" alt="Main">
+
         <div class="search-container">
-    <input type="text" class="search-box" placeholder="Search for a page number...">
-    <button class="search-button">Search</button>
-</div>
+            <input type="text" class="search-box" placeholder="Search for a page number...">
+            <button class="search-button">Search</button>
+        </div>
     </div>
 
     <div class="slider-container">
         <div class="slider" id="slider-container"></div>
     </div>
+
     <div class="modal" id="image-modal">
         <div class="modal-zoom">
             <button id="zoom-in">+</button>
@@ -321,272 +213,94 @@
         <span class="modal-controls" id="close-modal">&times;</span>
         <img id="modal-image" src="" alt="Modal">
     </div>
+
     <script>
-    const imagesDataUrl = 'images.json';
-    const thumbnailsPath = 'Thumbnails/';
-    const imagesPath = 'Images/';
+        const imagesDataUrl = 'images.json';
+        const thumbnailsPath = 'Thumbnails/';
+        const imagesPath = 'Images/';
 
-    const mainImage = document.getElementById('main-image');
-    const imageTitle = document.getElementById('image-title');
-    const sliderContainer = document.getElementById('slider-container');
-    const searchBox = document.querySelector('.search-box');
-    const searchButton = document.querySelector('.search-button');
+        const mainImage = document.getElementById('main-image');
+        const imageTitle = document.getElementById('image-title');
+        const sliderContainer = document.getElementById('slider-container');
+        const searchBox = document.querySelector('.search-box');
+        const searchButton = document.querySelector('.search-button');
 
-    const modal = document.getElementById('image-modal');
-    const modalImage = document.getElementById('modal-image');
-    const closeModal = document.getElementById('close-modal');
-    const zoomIn = document.getElementById('zoom-in');
-    const zoomOut = document.getElementById('zoom-out');
-    const audioPlayer = document.getElementById('audio-player');
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const closeModal = document.getElementById('close-modal');
+        const zoomIn = document.getElementById('zoom-in');
+        const zoomOut = document.getElementById('zoom-out');
 
-    const instructions = document.getElementById('instructions');
+        let currentZoom = 1;
 
-    let currentSearchIndex = -1; // Tracks current index for cycling through word matches
-    let currentMatches = []; // Stores matching images for word searches
-    let currentZoom = 1;
-    let idleTimeout;
-    let audioPlayed = false;
-
-    // Function to update the title text based on the filename
-    function updateTitle(filename) {
-        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-        imageTitle.textContent = title;
-    }
-
-    // Function to create the slider images dynamically
-    function createSlider(images) {
-        images.forEach(image => {
-            const thumb = document.createElement('img');
-            thumb.src = ${thumbnailsPath}${image};
-            thumb.alt = image;
-
-            thumb.addEventListener('click', () => {
-                mainImage.src = ${imagesPath}${image};
-                updateTitle(image);
-            });
-
-            sliderContainer.appendChild(thumb);
-        });
-    }
-
-    // Fetch the JSON data and populate the slider
-    fetch(imagesDataUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch JSON');
-            return response.json();
-        })
-        .then(images => {
-            createSlider(images);
-        })
-        .catch(error => console.error(error));
-
-    // Unified search functionality
-    function handleSearch() {
-        const query = searchBox.value.trim().toLowerCase();
-        if (!query) {
-            alert('Please enter a page number or a keyword.');
-            return;
+        function updateTitle(filename) {
+            const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+            imageTitle.textContent = title;
         }
 
-        const isNumber = /^\d+$/.test(query);
-        if (isNumber) {
-            handleNumberSearch(query);
-        } else {
-            handleWordSearch(query);
-        }
-    }
+        function createSlider(images) {
+            images.forEach(image => {
+                const thumb = document.createElement('img');
+                thumb.src = `${thumbnailsPath}${image}`;
+                thumb.alt = image;
 
-    // Handle number-based search
-    function handleNumberSearch(query) {
-        const paddedQuery = query.length === 1 ? 0${query} : query;
-
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                const matchingImage = images.find(image => image.startsWith(paddedQuery));
-
-                if (matchingImage) {
-                    mainImage.src = ${imagesPath}${matchingImage};
-                    updateTitle(matchingImage);
-
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => {
-                        return decodeURIComponent(thumb.src).includes(matchingImage);
-                    });
-
-                    if (matchingThumbnail) {
-                        setTimeout(() => {
-                            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 0);
-                    } else {
-                        alert('Matching thumbnail not found.');
-                    }
-                } else {
-                    alert('No image found for the entered page number.');
-                }
-            })
-            .catch(error => console.error('Error during number search:', error));
-    }
-
-    // Handle word-based search
-    function handleWordSearch(query) {
-        fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
-            .then(images => {
-                currentMatches = images.filter(image => {
-                    const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-                    return title.includes(query);
+                thumb.addEventListener('click', () => {
+                    mainImage.src = `${imagesPath}${image}`;
+                    updateTitle(image);
                 });
 
-                if (currentMatches.length > 0) {
-                    currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
-                    const matchingImage = currentMatches[currentSearchIndex];
-
-                    mainImage.src = ${imagesPath}${matchingImage};
-                    updateTitle(matchingImage);
-
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
-                    if (matchingThumbnail) {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                } else {
-                    alert('No images found with the entered keyword.');
-                }
-            })
-            .catch(error => console.error('Error during word search:', error));
-    }
-
-    // Enable swiping on the slider
-    const slider = document.querySelector('.slider');
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-
-    slider.addEventListener('mousedown', (e) => {
-        isDown = true;
-        slider.classList.add('active');
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    });
-
-    slider.addEventListener('mouseleave', () => {
-        isDown = false;
-        slider.classList.remove('active');
-    });
-
-    slider.addEventListener('mouseup', () => {
-        isDown = false;
-        slider.classList.remove('active');
-    });
-
-    slider.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2; // Scroll speed multiplier
-        slider.scrollLeft = scrollLeft - walk;
-    });
-
-    slider.addEventListener('touchstart', (e) => {
-        isDown = true;
-        startX = e.touches[0].pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-    });
-
-    slider.addEventListener('touchend', () => {
-        isDown = false;
-    });
-
-    slider.addEventListener('touchmove', (e) => {
-        if (!isDown) return;
-        const x = e.touches[0].pageX - slider.offsetLeft;
-        const walk = (x - startX) * 2; // Scroll speed multiplier
-        slider.scrollLeft = scrollLeft - walk;
-    });
-
-    // Open the modal and display the clicked image
-    mainImage.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        modalImage.src = mainImage.src;
-        currentZoom = 1.8;
-        modalImage.style.transform = scale(${currentZoom});
-    });
-
-    // Close the modal
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // Zoom in functionality
-    zoomIn.addEventListener('click', () => {
-        currentZoom += 0.1;
-        modalImage.style.transform = scale(${currentZoom});
-    });
-
-    // Zoom out functionality
-    zoomOut.addEventListener('click', () => {
-        currentZoom = Math.max(0.1, currentZoom - 0.1);
-        modalImage.style.transform = scale(${currentZoom});
-    });
-
-    // Show instructions and hide them after 5 seconds
-    function showInstructions() {
-        instructions.classList.remove('hidden');
-        setTimeout(() => instructions.classList.add('hidden'), 5000);
-    }
-
-    // Reset the idle timer and show instructions after 15 seconds of inactivity
-    function resetIdleTimer() {
-        clearTimeout(idleTimeout);
-        idleTimeout = setTimeout(() => {
-            instructions.classList.remove('hidden'); // Show instructions
-        }, 15000); // 15 seconds
-    }
-
-    // Hide instructions when clicked or tapped
-    instructions.addEventListener('click', () => {
-        instructions.classList.add('hidden');
-        clearTimeout(idleTimeout);
-    });
-
-    // Add event listeners to reset the timer on interaction
-    document.addEventListener('mousemove', resetIdleTimer);
-    document.addEventListener('touchstart', resetIdleTimer);
-
-    // Start the idle timer and show instructions on load
-    window.onload = () => {
-        showInstructions(); // Show instructions on load
-        resetIdleTimer();   // Start the idle timer
-    };
-
-    // Add event listener for the Enter key
-    searchBox.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            handleSearch();
-        }
-    });
-
-    // Add event listener for the search button
-    searchButton.addEventListener('click', handleSearch);
-
-    // Ensure saber.mp3 plays on the first user interaction
-    document.body.addEventListener('click', () => {
-        if (!audioPlayed) {
-            audioPlayer.play().then(() => {
-                console.log('Audio played successfully.');
-            }).catch(error => {
-                console.error('Audio playback failed:', error);
+                sliderContainer.appendChild(thumb);
             });
-            audioPlayed = true;
         }
-    }, { once: true });
-</script>
+
+        fetch(imagesDataUrl)
+            .then(response => response.json())
+            .then(images => {
+                createSlider(images);
+            })
+            .catch(error => console.error(error));
+
+        searchButton.addEventListener('click', () => {
+            const query = searchBox.value.trim().toLowerCase();
+            if (!query) {
+                alert('Please enter a search term.');
+                return;
+            }
+
+            fetch(imagesDataUrl)
+                .then(response => response.json())
+                .then(images => {
+                    const matchingImage = images.find(image => image.toLowerCase().includes(query));
+                    if (matchingImage) {
+                        mainImage.src = `${imagesPath}${matchingImage}`;
+                        updateTitle(matchingImage);
+                    } else {
+                        alert('No match found.');
+                    }
+                })
+                .catch(error => console.error('Search error:', error));
+        });
+
+        mainImage.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modalImage.src = mainImage.src;
+            currentZoom = 1;
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        zoomIn.addEventListener('click', () => {
+            currentZoom += 0.1;
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+
+        zoomOut.addEventListener('click', () => {
+            currentZoom = Math.max(0.1, currentZoom - 0.1);
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+    </script>
 </body>
 </html>
