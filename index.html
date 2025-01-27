@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -322,7 +322,7 @@
     <span class="modal-controls" id="close-modal">&times;</span>
     <img id="modal-image" src="" alt="Modal">
 </div>
-    <script>
+   <script>
     const imagesDataUrl = 'images.json';
     const thumbnailsPath = 'Thumbnails/';
     const imagesPath = 'Images/';
@@ -339,13 +339,9 @@
     const zoomIn = document.getElementById('zoom-in');
     const zoomOut = document.getElementById('zoom-out');
 
-
-    
     let currentSearchIndex = -1;
     let currentMatches = [];
     let currentZoom = 1;
-    let idleTimeout;
-    let audioPlayed = false;
 
     // Function to update the title text based on the filename
     function updateTitle(filename) {
@@ -355,6 +351,7 @@
 
     // Function to create the slider images dynamically
     function createSlider(images) {
+        console.log('Creating slider with images:', images); // Debug log
         images.forEach(image => {
             const thumbContainer = document.createElement('div');
             thumbContainer.className = 'thumbnail-container';
@@ -374,18 +371,8 @@
             }
 
             thumb.addEventListener('click', () => {
-                mainImage.src = `${imagesPath}${image}`;
-                updateTitle(image);
-
-                // Dim the main image if it is sold
-                if (image.includes('_sold')) {
-                    mainImage.classList.add('sold');
-                } else {
-                    mainImage.classList.remove('sold');
-                }
-
-                // Update modal image
-                modalImage.src = `${imagesPath}${image}`;
+                console.log('Thumbnail clicked:', image); // Debug log
+                updateMainImage(image);
             });
 
             thumbContainer.appendChild(thumb);
@@ -395,13 +382,20 @@
 
     // Fetch the JSON data and populate the slider
     fetch(imagesDataUrl)
-        .then(response => response.json())
-        .then(images => createSlider(images))
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch JSON');
+            return response.json();
+        })
+        .then(images => {
+            console.log('Fetched images from JSON:', images); // Debug log
+            createSlider(images);
+        })
         .catch(error => console.error('Error fetching JSON:', error));
 
     // Unified search functionality
     function handleSearch() {
         const query = searchBox.value.trim().toLowerCase();
+        console.log('Search query:', query); // Debug log
         if (!query) {
             alert('Please enter a page number or a keyword.');
             return;
@@ -415,34 +409,20 @@
         }
     }
 
-   // Handle number-based search
+    // Handle number-based search
     function handleNumberSearch(query) {
         const paddedQuery = query.length === 1 ? `0${query}` : query;
+        console.log('Number-based search for:', paddedQuery); // Debug log
 
         fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(images => {
+                console.log('Images from JSON (number search):', images); // Debug log
                 const matchingImage = images.find(image => image.startsWith(paddedQuery));
+                console.log('Matching image (number search):', matchingImage); // Debug log
 
                 if (matchingImage) {
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
-
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => {
-                        return decodeURIComponent(thumb.src).includes(matchingImage);
-                    });
-
-                    if (matchingThumbnail) {
-                        setTimeout(() => {
-                            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 0);
-                    } else {
-                        alert('Matching thumbnail not found.');
-                    }
+                    updateMainImage(matchingImage);
                 } else {
                     alert('No image found for the entered page number.');
                 }
@@ -452,29 +432,23 @@
 
     // Handle word-based search
     function handleWordSearch(query) {
+        console.log('Word-based search for:', query); // Debug log
+
         fetch(imagesDataUrl)
-            .then(response => {
-                if (!response.ok) throw new Error('Failed to fetch JSON');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(images => {
+                console.log('Images from JSON (word search):', images); // Debug log
                 currentMatches = images.filter(image => {
                     const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
                     return title.includes(query);
                 });
+                console.log('Matching images (word search):', currentMatches); // Debug log
 
                 if (currentMatches.length > 0) {
                     currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
                     const matchingImage = currentMatches[currentSearchIndex];
-
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
-
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.src.includes(matchingImage));
-                    if (matchingThumbnail) {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
+                    console.log('Current search index:', currentSearchIndex); // Debug log
+                    updateMainImage(matchingImage);
                 } else {
                     alert('No images found with the entered keyword.');
                 }
@@ -482,30 +456,29 @@
             .catch(error => console.error('Error during word search:', error));
     }
 
-    // Enable swiping on the slider
-    // Enable swiping on the slider
-// Update the main image and modal
-function updateMainImage(image) {
-    mainImage.src = `${imagesPath}${image}`;
-    updateTitle(image);
+    // Update the main image and modal
+    function updateMainImage(image) {
+        console.log('Updating main image to:', image); // Debug log
+        mainImage.src = `${imagesPath}${image}`;
+        updateTitle(image);
 
-    // Update sold styling if applicable
-    if (image.includes('_sold')) {
-        mainImage.classList.add('sold');
-    } else {
-        mainImage.classList.remove('sold');
+        // Update sold styling if applicable
+        if (image.includes('_sold')) {
+            mainImage.classList.add('sold');
+        } else {
+            mainImage.classList.remove('sold');
+        }
+
+        // Scroll the matching thumbnail into view
+        const thumbnails = sliderContainer.querySelectorAll('img');
+        const matchingThumbnail = Array.from(thumbnails).find(thumb =>
+            decodeURIComponent(thumb.src).includes(image)
+        );
+
+        if (matchingThumbnail) {
+            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
-
-    // Scroll the matching thumbnail into view
-    const thumbnails = sliderContainer.querySelectorAll('img');
-    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-        decodeURIComponent(thumb.src).includes(image)
-    );
-
-    if (matchingThumbnail) {
-        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-}
 
     // Enable swiping on the slider
     const slider = document.querySelector('.slider');
@@ -561,7 +534,15 @@ function updateMainImage(image) {
         modalImage.style.transform = `scale(${currentZoom})`;
     });
 
+    // Add event listener for the Enter key
+    searchBox.addEventListener('keypress', event => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
 
+    // Add event listener for the search button
+    searchButton.addEventListener('click', handleSearch);
 </script>
 </body>
 </html>
