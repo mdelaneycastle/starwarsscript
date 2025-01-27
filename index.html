@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -348,15 +348,28 @@
         const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
         imageTitle.textContent = title;
     }
+function createSlider(images) {
+    console.log('Creating slider with images before sorting:', images); // Debug log
 
-    function createSlider(images) {
-    console.log('Creating slider with images:', images); // Debug log
-
-    // Sort images numerically by their prefix
+    // Sort images by numbers first, then by letters
     images.sort((a, b) => {
+        // Extract the numerical prefix from each filename
         const getPrefix = (img) => parseInt(img.match(/^\d+/)?.[0] || 0, 10);
-        return getPrefix(a) - getPrefix(b);
+        const numA = getPrefix(a);
+        const numB = getPrefix(b);
+
+        // If the numbers are equal, sort alphabetically by the rest of the filename
+        if (numA === numB) {
+            const restA = a.replace(/^\d+/, '').toLowerCase(); // Remove numerical prefix
+            const restB = b.replace(/^\d+/, '').toLowerCase();
+            return restA.localeCompare(restB); // Alphabetical comparison
+        }
+
+        // Otherwise, sort by the numbers
+        return numA - numB;
     });
+
+    console.log('Sorted images:', images); // Debug log
 
     images.forEach(image => {
         const isSold = image.includes('_sold'); // Check if the image is marked as sold
