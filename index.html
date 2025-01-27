@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
     body {
         background-color: #dadada;
@@ -328,7 +328,7 @@
     <img id="modal-image" src="" alt="Modal">
 </div>
    <script>
-    const imagesDataUrl = 'images.json';
+    const imagesDataUrl = 'newimages.json';
     const thumbnailsPath = 'Thumbnails/';
     const imagesPath = 'Images/';
 
@@ -348,211 +348,180 @@
     let currentMatches = [];
     let currentZoom = 1;
 
-    // Function to update the title text based on the filename
+    // Update title text based on the filename
     function updateTitle(filename) {
-        const title = filename.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+        const title = filename.replace('_1.jpg', '').replace(/_/g, ' ');
         imageTitle.textContent = title;
     }
-function createSlider(images) {
-    console.log('Creating slider with images in JSON order:', images); // Debug log
 
-    images.forEach(image => {
-        const isSold = image.includes('_sold'); // Check if the image is marked as sold
-        const originalImage = image.replace('_sold', ''); // Remove '_sold' for file path
+    // Update the main image and modal
+    function updateMainImage(image, pageNumber) {
+        const isSold = image.includes('_sold');
+        const originalImage = image.replace('_sold', ''); // Remove '_sold' for path
 
-        const thumbContainer = document.createElement('div');
-        thumbContainer.className = 'thumbnail-container';
+        mainImage.src = `${imagesPath}${originalImage}`;
+        updateTitle(originalImage);
 
-        const thumb = document.createElement('img');
-        thumb.src = `${thumbnailsPath}${originalImage}`;
-        thumb.alt = originalImage;
-
-        // Add "Sold" badge and dim opacity if the image is sold
+        // Add "Sold" styling if applicable
         if (isSold) {
-            const soldBadge = document.createElement('div');
-            soldBadge.className = 'sold-badge';
-            soldBadge.textContent = 'Sold';
-            thumbContainer.appendChild(soldBadge);
-
-            thumb.classList.add('sold'); // Add styling for sold thumbnails
+            mainImage.classList.add('sold');
+        } else {
+            mainImage.classList.remove('sold');
         }
 
-        thumb.addEventListener('click', () => {
-            console.log('Thumbnail clicked:', image); // Debug log
-            updateMainImage(image);
+        // Scroll the corresponding thumbnail into view
+        const thumbnails = sliderContainer.querySelectorAll('.thumbnail-container img');
+        const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.alt === originalImage);
+
+        if (matchingThumbnail) {
+            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    // Create slider dynamically based on JSON order
+    function createSlider(images) {
+        sliderContainer.innerHTML = ''; // Clear previous thumbnails
+        images.forEach((image, index) => {
+            const pageNumber = index + 1;
+            const isSold = image.includes('_sold');
+            const originalImage = image.replace('_sold', ''); // For file paths
+
+            const thumbContainer = document.createElement('div');
+            thumbContainer.className = 'thumbnail-container';
+
+            const thumb = document.createElement('img');
+            thumb.src = `${thumbnailsPath}${originalImage}`;
+            thumb.alt = originalImage;
+
+            // Add "Sold" badge
+            if (isSold) {
+                const soldBadge = document.createElement('div');
+                soldBadge.className = 'sold-badge';
+                soldBadge.textContent = 'Sold';
+                thumbContainer.appendChild(soldBadge);
+                thumb.classList.add('sold');
+            }
+
+            thumb.addEventListener('click', () => {
+                updateMainImage(image, pageNumber);
+            });
+
+            thumbContainer.appendChild(thumb);
+            sliderContainer.appendChild(thumbContainer);
         });
 
-        thumbContainer.appendChild(thumb);
-        sliderContainer.appendChild(thumbContainer);
-    });
-}
+        // Set the first image as default
+        if (images.length > 0) {
+            updateMainImage(images[0], 1);
+        }
+    }
 
-    // Fetch the JSON data and populate the slider
+    // Fetch JSON and initialize the slider
     fetch(imagesDataUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch JSON');
-            return response.json();
-        })
+        .then(response => response.json())
         .then(images => {
-            console.log('Fetched images from JSON:', images); // Debug log
             createSlider(images);
         })
         .catch(error => console.error('Error fetching JSON:', error));
 
-    // Unified search functionality
+    // Search functionality
     function handleSearch() {
         const query = searchBox.value.trim().toLowerCase();
-        console.log('Search query:', query); // Debug log
         if (!query) {
             alert('Please enter a page number or a keyword.');
             return;
         }
 
-        const isNumber = /^\d+$/.test(query);
-        if (isNumber) {
-            handleNumberSearch(query);
-        } else {
-            handleWordSearch(query);
-        }
-    }
-
-    // Handle number-based search
-    function handleNumberSearch(query) {
-        const paddedQuery = query.length === 1 ? `0${query}` : query;
-        console.log('Number-based search for:', paddedQuery); // Debug log
-
         fetch(imagesDataUrl)
             .then(response => response.json())
             .then(images => {
-                console.log('Images from JSON (number search):', images); // Debug log
-                const matchingImage = images.find(image => image.startsWith(paddedQuery));
-                console.log('Matching image (number search):', matchingImage); // Debug log
-
-                if (matchingImage) {
-                    updateMainImage(matchingImage);
+                const isNumber = /^\d+$/.test(query);
+                if (isNumber) {
+                    const pageIndex = parseInt(query, 10) - 1;
+                    if (pageIndex >= 0 && pageIndex < images.length) {
+                        updateMainImage(images[pageIndex], pageIndex + 1);
+                    } else {
+                        alert('Page number out of range.');
+                    }
                 } else {
-                    alert('No image found for the entered page number.');
+                    currentMatches = images.filter(image => {
+                        const title = image.replace('_1.jpg', '').replace(/_/g, ' ').toLowerCase();
+                        return title.includes(query);
+                    });
+
+                    if (currentMatches.length > 0) {
+                        currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
+                        const matchingImage = currentMatches[currentSearchIndex];
+                        const matchingIndex = images.indexOf(matchingImage);
+                        updateMainImage(matchingImage, matchingIndex + 1);
+                    } else {
+                        alert('No matches found.');
+                    }
                 }
             })
-            .catch(error => console.error('Error during number search:', error));
+            .catch(error => console.error('Error during search:', error));
     }
 
-    // Handle word-based search
-    function handleWordSearch(query) {
-        console.log('Word-based search for:', query); // Debug log
+    // Modal zoom functionality
+    function setupModal() {
+        mainImage.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modalImage.src = mainImage.src;
+            currentZoom = 1; // Reset zoom
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
 
-        fetch(imagesDataUrl)
-            .then(response => response.json())
-            .then(images => {
-                console.log('Images from JSON (word search):', images); // Debug log
-                currentMatches = images.filter(image => {
-                    const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-                    return title.includes(query);
-                });
-                console.log('Matching images (word search):', currentMatches); // Debug log
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
 
-                if (currentMatches.length > 0) {
-                    currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
-                    const matchingImage = currentMatches[currentSearchIndex];
-                    console.log('Current search index:', currentSearchIndex); // Debug log
-                    updateMainImage(matchingImage);
-                } else {
-                    alert('No images found with the entered keyword.');
-                }
-            })
-            .catch(error => console.error('Error during word search:', error));
+        zoomIn.addEventListener('click', () => {
+            currentZoom += 0.1;
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+
+        zoomOut.addEventListener('click', () => {
+            currentZoom = Math.max(0.1, currentZoom - 0.1);
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
     }
 
-    // Update the main image and modal
-    function updateMainImage(image) {
-    console.log('Updating main image to:', image); // Debug log
-    const isSold = image.includes('_sold');
-    const originalImage = image.replace('_sold', ''); // Remove '_sold' for file path
-
-    mainImage.src = `${imagesPath}${originalImage}`;
-    updateTitle(originalImage);
-
-    // Update sold styling if applicable
-    if (isSold) {
-        mainImage.classList.add('sold');
-    } else {
-        mainImage.classList.remove('sold');
-    }
-
-    // Scroll the matching thumbnail into view
-    const thumbnails = sliderContainer.querySelectorAll('img');
-    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-        decodeURIComponent(thumb.src).includes(originalImage)
-    );
-
-    if (matchingThumbnail) {
-        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-}
-
-    // Enable swiping on the slider
-    const slider = document.querySelector('.slider');
+    // Slider swiping functionality
     let isDown = false;
     let startX;
     let scrollLeft;
 
-    slider.addEventListener('mousedown', e => {
-        e.preventDefault();
+    sliderContainer.addEventListener('mousedown', e => {
         isDown = true;
-        startX = e.pageX - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
+        startX = e.pageX - sliderContainer.offsetLeft;
+        scrollLeft = sliderContainer.scrollLeft;
     });
 
-    slider.addEventListener('mouseleave', () => {
+    sliderContainer.addEventListener('mouseleave', () => {
         isDown = false;
     });
 
-    slider.addEventListener('mouseup', () => {
+    sliderContainer.addEventListener('mouseup', () => {
         isDown = false;
     });
 
-    slider.addEventListener('mousemove', e => {
+    sliderContainer.addEventListener('mousemove', e => {
         if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - slider.offsetLeft;
+        const x = e.pageX - sliderContainer.offsetLeft;
         const walk = (x - startX) * 2; // Scroll speed multiplier
-        slider.scrollLeft = scrollLeft - walk;
+        sliderContainer.scrollLeft = scrollLeft - walk;
     });
 
-    // Open the modal and display the clicked image
-    mainImage.addEventListener('click', () => {
-        modal.style.display = 'flex';
-        modalImage.src = mainImage.src;
-        currentZoom = 1;
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
-
-    // Close the modal
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // Zoom in functionality
-    zoomIn.addEventListener('click', () => {
-        currentZoom += 0.1;
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
-
-    // Zoom out functionality
-    zoomOut.addEventListener('click', () => {
-        currentZoom = Math.max(0.1, currentZoom - 0.1);
-        modalImage.style.transform = `scale(${currentZoom})`;
-    });
-
-    // Add event listener for the Enter key
+    // Event listeners for search
+    searchButton.addEventListener('click', handleSearch);
     searchBox.addEventListener('keypress', event => {
         if (event.key === 'Enter') {
             handleSearch();
         }
     });
 
-    // Add event listener for the search button
-    searchButton.addEventListener('click', handleSearch);
+    // Initialize modal zoom functionality
+    setupModal();
 </script>
 </body>
 </html>
