@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -359,23 +359,33 @@
         const isSold = image.includes('_sold');
         const originalImage = image.replace('_sold', ''); // Remove '_sold' for path
 
-        mainImage.src = `${imagesPath}${originalImage}`;
-        updateTitle(originalImage);
+        const imgPath = `${imagesPath}${originalImage}`;
+        const img = new Image();
+        img.src = imgPath;
 
-        // Add "Sold" styling if applicable
-        if (isSold) {
-            mainImage.classList.add('sold');
-        } else {
-            mainImage.classList.remove('sold');
-        }
+        img.onload = () => {
+            mainImage.src = imgPath;
+            updateTitle(originalImage);
 
-        // Scroll the corresponding thumbnail into view
-        const thumbnails = sliderContainer.querySelectorAll('.thumbnail-container img');
-        const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.alt === originalImage);
+            // Add "Sold" styling if applicable
+            if (isSold) {
+                mainImage.classList.add('sold');
+            } else {
+                mainImage.classList.remove('sold');
+            }
 
-        if (matchingThumbnail) {
-            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+            // Scroll the corresponding thumbnail into view
+            const thumbnails = sliderContainer.querySelectorAll('.thumbnail-container img');
+            const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.alt === originalImage);
+
+            if (matchingThumbnail) {
+                matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        img.onerror = () => {
+            console.warn(`Main image not found: ${imgPath}`);
+        };
     }
 
     // Create slider dynamically based on JSON order
@@ -386,33 +396,55 @@
             const isSold = image.includes('_sold');
             const originalImage = image.replace('_sold', ''); // For file paths
 
-            const thumbContainer = document.createElement('div');
-            thumbContainer.className = 'thumbnail-container';
+            // Check if thumbnail exists
+            const thumbSrc = `${thumbnailsPath}${originalImage}`;
+            const thumbImg = new Image();
+            thumbImg.src = thumbSrc;
 
-            const thumb = document.createElement('img');
-            thumb.src = `${thumbnailsPath}${originalImage}`;
-            thumb.alt = originalImage;
+            thumbImg.onload = () => {
+                const thumbContainer = document.createElement('div');
+                thumbContainer.className = 'thumbnail-container';
 
-            // Add "Sold" badge
-            if (isSold) {
-                const soldBadge = document.createElement('div');
-                soldBadge.className = 'sold-badge';
-                soldBadge.textContent = 'Sold';
-                thumbContainer.appendChild(soldBadge);
-                thumb.classList.add('sold');
-            }
+                const thumb = document.createElement('img');
+                thumb.src = thumbSrc;
+                thumb.alt = originalImage;
 
-            thumb.addEventListener('click', () => {
-                updateMainImage(image, pageNumber);
-            });
+                // Add "Sold" badge
+                if (isSold) {
+                    const soldBadge = document.createElement('div');
+                    soldBadge.className = 'sold-badge';
+                    soldBadge.textContent = 'Sold';
+                    thumbContainer.appendChild(soldBadge);
+                    thumb.classList.add('sold');
+                }
 
-            thumbContainer.appendChild(thumb);
-            sliderContainer.appendChild(thumbContainer);
+                thumb.addEventListener('click', () => {
+                    updateMainImage(image, pageNumber);
+                });
+
+                thumbContainer.appendChild(thumb);
+                sliderContainer.appendChild(thumbContainer);
+            };
+
+            thumbImg.onerror = () => {
+                console.warn(`Thumbnail not found: ${thumbSrc}`);
+            };
         });
 
-        // Set the first image as default
+        // Set the first image as default if it exists
         if (images.length > 0) {
-            updateMainImage(images[0], 1);
+            const firstImage = images[0].replace('_sold', ''); // For file paths
+            const firstImagePath = `${imagesPath}${firstImage}`;
+
+            const mainImg = new Image();
+            mainImg.src = firstImagePath;
+            mainImg.onload = () => {
+                updateMainImage(images[0], 1);
+            };
+
+            mainImg.onerror = () => {
+                console.warn(`Default main image not found: ${firstImagePath}`);
+            };
         }
     }
 
