@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -415,81 +415,66 @@
         }
     }
 
-    // Handle number-based search
-    function handleNumberSearch(query) {
-        const paddedQuery = query.length === 1 ? `0${query}` : query;
+   // Handle number-based search
+function handleNumberSearch(query) {
+    const paddedQuery = query.padStart(2, '0'); // Always ensure a 2-digit padded query
 
-        fetch(imagesDataUrl)
-            .then(response => response.json())
-            .then(images => {
-                const matchingImage = images.find(image => image.startsWith(paddedQuery));
+    fetch(imagesDataUrl)
+        .then(response => response.json())
+        .then(images => {
+            const matchingImage = images.find(image => image.startsWith(paddedQuery));
+            if (matchingImage) {
+                updateMainImage(matchingImage);
+            } else {
+                alert('No image found for the entered page number.');
+            }
+        })
+        .catch(error => console.error('Error during number search:', error));
+}
 
-                if (matchingImage) {
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
+// Handle word-based search
+function handleWordSearch(query) {
+    fetch(imagesDataUrl)
+        .then(response => response.json())
+        .then(images => {
+            currentMatches = images.filter(image => {
+                const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
+                return title.includes(query);
+            });
 
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-                        decodeURIComponent(thumb.src).includes(matchingImage)
-                    );
+            if (currentMatches.length > 0) {
+                currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
+                const matchingImage = currentMatches[currentSearchIndex];
+                updateMainImage(matchingImage);
+            } else {
+                alert('No images found with the entered keyword.');
+            }
+        })
+        .catch(error => console.error('Error during word search:', error));
+}
 
-                    if (matchingThumbnail) {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    } else {
-                        alert('Matching thumbnail not found.');
-                    }
+// Update the main image and modal
+function updateMainImage(image) {
+    mainImage.src = `${imagesPath}${image}`;
+    updateTitle(image);
 
-                    // Apply sold styling if applicable
-                    if (matchingImage.includes('_sold')) {
-                        mainImage.classList.add('sold');
-                    } else {
-                        mainImage.classList.remove('sold');
-                    }
-                } else {
-                    alert('No image found for the entered page number.');
-                }
-            })
-            .catch(error => console.error('Error during number search:', error));
+    // Update sold styling if applicable
+    if (image.includes('_sold')) {
+        mainImage.classList.add('sold');
+    } else {
+        mainImage.classList.remove('sold');
     }
 
-    // Handle word-based search
-    function handleWordSearch(query) {
-        fetch(imagesDataUrl)
-            .then(response => response.json())
-            .then(images => {
-                currentMatches = images.filter(image => {
-                    const title = image.replace(/^..|_1\.jpg$/g, '').replace(/_/g, ' ').toLowerCase();
-                    return title.includes(query);
-                });
+    // Scroll the matching thumbnail into view
+    const thumbnails = sliderContainer.querySelectorAll('img');
+    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
+        decodeURIComponent(thumb.src).includes(image)
+    );
 
-                if (currentMatches.length > 0) {
-                    currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
-                    const matchingImage = currentMatches[currentSearchIndex];
-
-                    mainImage.src = `${imagesPath}${matchingImage}`;
-                    updateTitle(matchingImage);
-
-                    const thumbnails = sliderContainer.querySelectorAll('img');
-                    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-                        decodeURIComponent(thumb.src).includes(matchingImage)
-                    );
-
-                    if (matchingThumbnail) {
-                        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-
-                    // Apply sold styling if applicable
-                    if (matchingImage.includes('_sold')) {
-                        mainImage.classList.add('sold');
-                    } else {
-                        mainImage.classList.remove('sold');
-                    }
-                } else {
-                    alert('No images found with the entered keyword.');
-                }
-            })
-            .catch(error => console.error('Error during word search:', error));
+    if (matchingThumbnail) {
+        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+}
 
     // Enable swiping on the slider
     const slider = document.querySelector('.slider');
