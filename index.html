@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
     body {
         background-color: #dadada;
@@ -353,15 +353,18 @@
     function createSlider(images) {
         console.log('Creating slider with images:', images); // Debug log
         images.forEach(image => {
+            const isSold = image.includes('_sold'); // Check if the image is marked as sold
+            const originalImage = isSold ? image.replace('_sold', '') : image; // Remove '_sold' for file path
+
             const thumbContainer = document.createElement('div');
             thumbContainer.className = 'thumbnail-container';
 
             const thumb = document.createElement('img');
-            thumb.src = `${thumbnailsPath}${image}`;
-            thumb.alt = image;
+            thumb.src = `${thumbnailsPath}${originalImage}`;
+            thumb.alt = originalImage;
 
             // Add "Sold" badge and dim opacity if the image is sold
-            if (image.includes('_sold')) {
+            if (isSold) {
                 const soldBadge = document.createElement('div');
                 soldBadge.className = 'sold-badge';
                 soldBadge.textContent = 'Sold';
@@ -459,11 +462,14 @@
     // Update the main image and modal
     function updateMainImage(image) {
         console.log('Updating main image to:', image); // Debug log
-        mainImage.src = `${imagesPath}${image}`;
-        updateTitle(image);
+        const isSold = image.includes('_sold');
+        const originalImage = isSold ? image.replace('_sold', '') : image;
+
+        mainImage.src = `${imagesPath}${originalImage}`;
+        updateTitle(originalImage);
 
         // Update sold styling if applicable
-        if (image.includes('_sold')) {
+        if (isSold) {
             mainImage.classList.add('sold');
         } else {
             mainImage.classList.remove('sold');
@@ -472,7 +478,7 @@
         // Scroll the matching thumbnail into view
         const thumbnails = sliderContainer.querySelectorAll('img');
         const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-            decodeURIComponent(thumb.src).includes(image)
+            decodeURIComponent(thumb.src).includes(originalImage)
         );
 
         if (matchingThumbnail) {
