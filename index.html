@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
     body {
         background-color: #dadada;
@@ -292,9 +292,7 @@
 </style>
 </head>
 <body>
-    <audio id="audio-player" src="saber.mp3" preload="auto"></audio>
 
-<div class="instructions" id="instructions">Swipe/Scroll to view more. Tap to Zoom.</div>
 
 <div class="main-content">
     <!-- Search Box -->
@@ -340,10 +338,9 @@
     const closeModal = document.getElementById('close-modal');
     const zoomIn = document.getElementById('zoom-in');
     const zoomOut = document.getElementById('zoom-out');
-    const audioPlayer = document.getElementById('audio-player');
 
-    const instructions = document.getElementById('instructions');
 
+    
     let currentSearchIndex = -1;
     let currentMatches = [];
     let currentZoom = 1;
@@ -548,37 +545,7 @@
         modalImage.style.transform = `scale(${currentZoom})`;
     });
 
-    // Show instructions and hide them after 5 seconds
-    function showInstructions() {
-        instructions.classList.remove('hidden');
-        setTimeout(() => instructions.classList.add('hidden'), 5000);
-    }
 
-    // Reset the idle timer and show instructions after 15 seconds of inactivity
-    function resetIdleTimer() {
-        clearTimeout(idleTimeout);
-        idleTimeout = setTimeout(() => {
-            instructions.classList.remove('hidden');
-        }, 15000); // 15 seconds
-    }
-
-    instructions.addEventListener('click', () => {
-        instructions.classList.add('hidden');
-        clearTimeout(idleTimeout);
-    });
-
-    // Start the idle timer and show instructions on load
-    window.onload = () => {
-        showInstructions();
-        resetIdleTimer();
-    };
-
-    document.body.addEventListener('click', () => {
-        if (!audioPlayed) {
-            audioPlayer.play();
-            audioPlayed = true;
-        }
-    }, { once: true });
 </script>
 </body>
 </html>
