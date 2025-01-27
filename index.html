@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
     <style>
     body {
         background-color: #dadada;
@@ -351,6 +351,13 @@
 
     function createSlider(images) {
     console.log('Creating slider with images:', images); // Debug log
+
+    // Sort images numerically by their prefix
+    images.sort((a, b) => {
+        const getPrefix = (img) => parseInt(img.match(/^\d+/)?.[0] || 0, 10);
+        return getPrefix(a) - getPrefix(b);
+    });
+
     images.forEach(image => {
         const isSold = image.includes('_sold'); // Check if the image is marked as sold
         const originalImage = image.replace('_sold', ''); // Remove '_sold' for file path
