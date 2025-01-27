@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -349,39 +349,38 @@
         imageTitle.textContent = title;
     }
 
-    // Function to create the slider images dynamically
     function createSlider(images) {
-        console.log('Creating slider with images:', images); // Debug log
-        images.forEach(image => {
-            const isSold = image.includes('_sold'); // Check if the image is marked as sold
-            const originalImage = isSold ? image.replace('_sold', '') : image; // Remove '_sold' for file path
+    console.log('Creating slider with images:', images); // Debug log
+    images.forEach(image => {
+        const isSold = image.includes('_sold'); // Check if the image is marked as sold
+        const originalImage = image.replace('_sold', ''); // Remove '_sold' for file path
 
-            const thumbContainer = document.createElement('div');
-            thumbContainer.className = 'thumbnail-container';
+        const thumbContainer = document.createElement('div');
+        thumbContainer.className = 'thumbnail-container';
 
-            const thumb = document.createElement('img');
-            thumb.src = `${thumbnailsPath}${originalImage}`;
-            thumb.alt = originalImage;
+        const thumb = document.createElement('img');
+        thumb.src = `${thumbnailsPath}${originalImage}`;
+        thumb.alt = originalImage;
 
-            // Add "Sold" badge and dim opacity if the image is sold
-            if (isSold) {
-                const soldBadge = document.createElement('div');
-                soldBadge.className = 'sold-badge';
-                soldBadge.textContent = 'Sold';
-                thumbContainer.appendChild(soldBadge);
+        // Add "Sold" badge and dim opacity if the image is sold
+        if (isSold) {
+            const soldBadge = document.createElement('div');
+            soldBadge.className = 'sold-badge';
+            soldBadge.textContent = 'Sold';
+            thumbContainer.appendChild(soldBadge);
 
-                thumb.classList.add('sold'); // Add styling for sold thumbnails
-            }
+            thumb.classList.add('sold'); // Add styling for sold thumbnails
+        }
 
-            thumb.addEventListener('click', () => {
-                console.log('Thumbnail clicked:', image); // Debug log
-                updateMainImage(image);
-            });
-
-            thumbContainer.appendChild(thumb);
-            sliderContainer.appendChild(thumbContainer);
+        thumb.addEventListener('click', () => {
+            console.log('Thumbnail clicked:', image); // Debug log
+            updateMainImage(image);
         });
-    }
+
+        thumbContainer.appendChild(thumb);
+        sliderContainer.appendChild(thumbContainer);
+    });
+}
 
     // Fetch the JSON data and populate the slider
     fetch(imagesDataUrl)
@@ -461,30 +460,30 @@
 
     // Update the main image and modal
     function updateMainImage(image) {
-        console.log('Updating main image to:', image); // Debug log
-        const isSold = image.includes('_sold');
-        const originalImage = isSold ? image.replace('_sold', '') : image;
+    console.log('Updating main image to:', image); // Debug log
+    const isSold = image.includes('_sold');
+    const originalImage = image.replace('_sold', ''); // Remove '_sold' for file path
 
-        mainImage.src = `${imagesPath}${originalImage}`;
-        updateTitle(originalImage);
+    mainImage.src = `${imagesPath}${originalImage}`;
+    updateTitle(originalImage);
 
-        // Update sold styling if applicable
-        if (isSold) {
-            mainImage.classList.add('sold');
-        } else {
-            mainImage.classList.remove('sold');
-        }
-
-        // Scroll the matching thumbnail into view
-        const thumbnails = sliderContainer.querySelectorAll('img');
-        const matchingThumbnail = Array.from(thumbnails).find(thumb =>
-            decodeURIComponent(thumb.src).includes(originalImage)
-        );
-
-        if (matchingThumbnail) {
-            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+    // Update sold styling if applicable
+    if (isSold) {
+        mainImage.classList.add('sold');
+    } else {
+        mainImage.classList.remove('sold');
     }
+
+    // Scroll the matching thumbnail into view
+    const thumbnails = sliderContainer.querySelectorAll('img');
+    const matchingThumbnail = Array.from(thumbnails).find(thumb =>
+        decodeURIComponent(thumb.src).includes(originalImage)
+    );
+
+    if (matchingThumbnail) {
+        matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
 
     // Enable swiping on the slider
     const slider = document.querySelector('.slider');
