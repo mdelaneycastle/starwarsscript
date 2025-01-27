@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -83,17 +83,22 @@
 
     /* Title styling */
     .title {
-        position: absolute; /* Keep it absolute for placement control */
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Center based on width */
-        top: 60px; /* Adjust positioning */
-        text-align: center;
-        font-family: 'Starjedi', sans-serif;
-        font-size: 20px;
-        text-transform: lowercase;
-        z-index: 10;
-        white-space: nowrap; /* Prevent wrapping */
-    }
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 60px;
+    text-align: center;
+    font-family: 'Starjedi', sans-serif;
+    font-size: 20px;
+    z-index: 10;
+    white-space: nowrap; /* Prevent wrapping */
+    padding: 5px 10px; /* Padding for better separation */
+    text-shadow: 
+        -1px -1px 1px #dadada, /* Top-left */
+        1px -1px 1px #dadada, /* Top-right */
+        -1px 1px 1px #dadada, /* Bottom-left */
+        1px 1px 1px #dadada; /* Bottom-right */
+}
 
     .search-container {
         position: fixed;
