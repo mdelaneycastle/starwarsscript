@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
    
-    <style>
+   <style>
          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
     body {
         background-color: #dadada;
@@ -124,23 +124,22 @@
     padding: 10px 20px;
     border-radius: 25px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    width: 400px; /* Fixed width */
-    height: 40px; /* Fixed height */
+    width: auto; /* Adjust width automatically based on content */
 }
 
 
 
-   /* Search Input Box */
-.search-box {
+    .search-box {
     border: none;
     outline: none;
-    padding: 8px;
+    padding: 10px;
     border-radius: 15px;
     font-size: 18px;
-    font-family: 'Montserrat', sans-serif !important;
-    width: 100%; /* Ensures full width inside container */
-    height: 100%;
+    font-family: 'Montserrat', sans-serif !important; /* Ensure Montserrat */
+    width: 400px; /* Fixed width */
+    height: 20px; /* Fixed height */
 }
+
 
     .search-box::placeholder {
         font-family: Arial, sans-serif;
@@ -229,132 +228,82 @@
         }
     }
 
+    /* Mobile-specific styling */
     @media (max-width: 600px) {
-    body {
-        overflow: auto; /* Prevents hidden content on small screens */
+        .search-container {
+            bottom: 130px;
+            width: 90%; /* Fit better on mobile */
+        }
+
+        .search-box {
+            font-size: 14px;
+        }
+
+        .search-button {
+            font-size: 14px;
+        }
+
+        .title {
+            font-size: 20px; /* Keep the font size small */
+            white-space: normal; /* Allow wrapping */
+            word-wrap: break-word; /* Ensure long words break */
+            width: 90%; /* Limit width to fit within screen */
+            text-align: center; /* Ensure text stays centered */
+        }
+
+        .slider-container {
+            bottom: 10px; /* Keep at the bottom */
+            width: 100%; /* Full width on mobile */
+        }
     }
 
-    /* Logo: Centered & 80% of Screen Width */
-    .logo {
-        position: relative;
-        width: 80%;
-        max-width: 500px;
-        height: auto;
-        margin: 10px auto; /* Centers it */
-        display: block;
-    }
-
-    /* Main Content: Stacked Layout */
-    .main-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-    }
-
-    /* Title: Centered Under Image */
-    .title {
-        font-size: 24px; /* Adjusted for smaller screens */
-        text-align: center;
-        margin-top: 10px;
-        padding: 5px;
-        width: 90%;
-    }
-
-    /* Slider: Positioned Under Title */
-    .slider-container {
-        position: relative;
-        width: 100%;
-        bottom: auto;
-        margin-top: 10px;
-    }
-
-    .slider {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .slider img {
-        height: 80px; /* Slightly smaller thumbnails for mobile */
-    }
-
-    /* Search Box: Full Width Below Everything */
-    .search-container {
-        position: relative;
-        width: 90%;
-        max-width: 400px;
-        margin: 20px auto;
-        display: flex;
-        justify-content: center;
-        padding: 10px;
-    }
-
-    .search-box {
-        width: 100%;
-        height: 40px;
-        font-size: 16px;
-    }
-
-    .search-button {
-        font-size: 16px;
-        padding: 10px 15px;
-    }
-}
-
-    .search-box {
-        width: 100%;
-        height: 40px;
-        font-size: 16px;
-    }
-
-    .search-button {
-        font-size: 16px;
-        padding: 10px 15px;
-    }
-}
     .modal {
-    display: none; /* Hide modal by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
 
     .modal img {
         max-width: 90%;
         max-height: 90%;
     }
 
-    .modal-controls,
-.modal-zoom {
-    display: none; /* Hide modal controls until modal is opened */
-    position: absolute;
-    color: white;
-    font-size: 48px;
-    cursor: pointer;
-    z-index: 1100;
-    top: 20px;
-    left: 20px;
-    display: flex;
-    gap: 20px; /* Adjusts spacing between zoom in (+) and zoom out (-) */
-}
+    .modal-controls {
+        position: absolute;
+        top: 20px; /* Move it further down */
+        right: 20px; /* Move it further in from the right */
+        color: white;
+        font-size: 48px; /* Increase font size */
+        cursor: pointer;
+        z-index: 1100;
+    }
 
-/* Button Styling for Zoom Controls */
-.modal-zoom button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 36px;
-}
+    .modal-zoom {
+        position: absolute;
+        top: 20px; /* Move it further down */
+        left: 20px; /* Move it further in from the left */
+        color: white;
+        font-size: 48px; /* Increase font size */
+        cursor: pointer;
+        display: flex;
+        gap: 20px; /* Adjust spacing between + and - */
+        z-index: 1100;
+    }
+
+    .modal-zoom button {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 36px;
+    }
 </style>
 </head>
 <body>
