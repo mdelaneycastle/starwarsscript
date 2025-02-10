@@ -472,12 +472,7 @@ function createSlider(images) {
 }
 
 // Fetch JSON and initialize the slider
-fetch(imagesDataUrl)
-    .then(response => response.json())
-    .then(images => {
-        createSlider(images);
-    })
-    .catch(error => console.error('Error fetching JSON:', error));
+
 
     // Fetch JSON and initialize the slider
     fetch(imagesDataUrl)
