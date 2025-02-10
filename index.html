@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection</title>
+    <title>Star Wars Collection.</title>
    
    <style>
          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -231,9 +231,10 @@
     /* Mobile-specific styling */
     @media (max-width: 600px) {
 
-        .search-title-container {
+        /* Stack the search bar & title properly */
+    .search-title-container {
         display: flex;
-        flex-direction: column; /* Stacks items instead of row */
+        flex-direction: column; /* Stack them vertically */
         align-items: center;
         width: 100%;
     }
@@ -266,10 +267,24 @@
         width: 90%;
     }
 
-        .slider-container {
-            bottom: 10px; /* Keep at the bottom */
-            width: 100%; /* Full width on mobile */
-        }
+        /* Make sure the slider is above the search box */
+    .slider-container {
+        position: relative; /* Removes absolute positioning issues */
+        width: 100%;
+        bottom: auto; /* Prevents it from being forced down */
+        margin-top: 10px;
+    }
+
+        .logo {
+        position: relative; /* Ensure it's in the normal flow */
+        width: 80%;
+        max-width: 500px;
+        height: auto;
+        margin: 10px auto; /* Centers it */
+        display: block;
+        z-index: 20; /* Ensure it's above other elements */
+    }
+}
     }
 
     .modal {
