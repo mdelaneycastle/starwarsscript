@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -15,7 +15,12 @@
         height: 100vh;
         overflow: hidden;
     }
-    
+
+    @font-face {
+        font-family: 'Death Star';
+        src: url('./Death Star.otf');
+    }
+
     .main-content {
         flex: 1;
         display: flex;
@@ -23,88 +28,297 @@
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        position: relative; /* Necessary for absolute positioning of children */
     }
-    
-    .logo {
-        width: 150px;
-        margin-bottom: 20px;
-    }
-    
+
+    /* Main image styling */
     .main-image {
-        width: 98%;
+        width: 98%; /* Default mobile width */
         max-height: 80vh;
         margin: 5px auto 0;
         object-fit: contain;
+        z-index: 5;
+        transition: opacity 0.3s; /* Smooth transition for opacity changes */
     }
-    
+
+    .main-image.sold {
+        opacity: 0.5; /* Dim the main image if it is marked as sold */
+    }
+
+    /* Slider container for mobile */
     .slider-container {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
+        position: absolute; /* Take it out of normal flow */
+        bottom: 10px; /* Position it at the bottom */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Adjust for the element's width */
+        width: 100%; /* Full width on mobile */
+        z-index: 10; /* Ensure it's above other elements if necessary */
     }
-    
+
+    /* Slider for mobile */
     .slider {
         display: flex;
         overflow-x: auto;
         padding: 5px;
         gap: 10px;
         white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
     }
-    
+
     .slider img {
         height: 100px;
         cursor: pointer;
         border: 2px solid transparent;
-        transition: border 0.3s;
+        transition: border 0.3s, opacity 0.3s; /* Add smooth transition for border and opacity */
+        flex-shrink: 0;
     }
-    
+
     .slider img:hover {
         border: 2px solid #000;
     }
-    
+
+    .slider img.sold {
+        opacity: 0.5; /* Dim thumbnails marked as sold */
+    }
+
+    /* Title styling */
+    .title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 60px;
+    text-align: center;
+    font-family: 'Death Star', sans-serif;
+    font-size: 40px;
+    z-index: 10;
+    white-space: nowrap; /* Prevent wrapping */
+    padding: 5px 10px; /* Padding for better separation */
+    text-shadow: 
+        -1px -1px 1px #dadada, /* Top-left */
+        1px -1px 1px #dadada, /* Top-right */
+        -1px 1px 1px #dadada, /* Bottom-left */
+        1px 1px 1px #dadada; /* Bottom-right */
+}
+
+    .search-container {
+        position: fixed;
+        bottom: 40px; /* Slightly above the slider */
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #fff;
+        padding: 10px 15px;
+        border-radius: 25px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        z-index: 15;
+    }
+
+    .search-box {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 10px;
+        border-radius: 15px;
+        font-size: 16px;
+        font-family: Arial, sans-serif;
+    }
+
+    .search-box::placeholder {
+        font-family: Arial, sans-serif;
+        color: #999;
+    }
+
+    .search-button {
+        border: none;
+        outline: none;
+        background-color: #000;
+        color: #fff;
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-button:hover {
+        background-color: #333;
+    }
+
+    /* Sold badge styling */
+    .thumbnail-container {
+        position: relative;
+    }
+
+    .thumbnail-container .sold-badge {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background-color: red;
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 5;
+    }
+
+    /* Desktop-specific styling */
+    @media (min-width: 1024px) {
+        .search-container {
+            width: 15%; /* Adjust container width for desktop */
+        }
+
+        .search-box {
+            width: 100%; /* Ensure the search box stretches within the container */
+        }
+
+        .main-content {
+            flex-direction: row; /* Keep horizontal layout */
+            margin-left: 140px; /* Adjust the left margin for the slider */
+            margin-right: 40px; /* Reduce right margin to make the image larger */
+        }
+
+        .main-image {
+            width: 75%; /* Increase the size of the image */
+            max-height: none; /* Allow the image to grow unrestricted */
+            margin: 0 auto; /* Center the image */
+        }
+
+        .slider-container {
+            position: fixed; /* Fix position to the left */
+            top: 0;
+            left: 0;
+            height: 100%; /* Full height */
+            width: 140px; /* Keep width consistent */
+            background-color: #dadada; /* Slider container background */
+            overflow-y: auto; /* Enable scrolling for thumbnails */
+            padding: 0; /* Ensure no extra padding */
+            z-index: 10; /* Ensure it's above other elements */
+            margin-left: 80px;
+        }
+
+        .slider {
+            display: flex;
+            flex-direction: column; /* Stack thumbnails vertically */
+            gap: 15px; /* Add spacing between thumbnails */
+            align-items: center; /* Center thumbnails */
+            padding: 10px 0; /* Padding for vertical alignment */
+            width: 100%; /* Ensure thumbnails fit within the container */
+            margin: 0; /* Remove extra margins */
+        }
+
+        .slider img {
+            width: 120px; /* Keep thumbnail size consistent */
+            height: auto; /* Maintain aspect ratio */
+            margin: 0; /* Remove any margins */
+            padding: 0; /* Ensure no extra padding */
+            display: block; /* Align thumbnails properly */
+        }
+    }
+
+    /* Mobile-specific styling */
     @media (max-width: 600px) {
         .search-container {
             bottom: 130px;
-            width: 90%;
+            width: 90%; /* Fit better on mobile */
         }
+
         .search-box {
             font-size: 14px;
         }
+
         .search-button {
             font-size: 14px;
         }
+
         .title {
-            font-size: 20px;
-            white-space: normal;
-            word-wrap: break-word;
-            width: 90%;
-            text-align: center;
+            font-size: 20px; /* Keep the font size small */
+            white-space: normal; /* Allow wrapping */
+            word-wrap: break-word; /* Ensure long words break */
+            width: 90%; /* Limit width to fit within screen */
+            text-align: center; /* Ensure text stays centered */
         }
+
         .slider-container {
-            bottom: 10px;
-            width: 100%;
+            bottom: 10px; /* Keep at the bottom */
+            width: 100%; /* Full width on mobile */
         }
     }
-    </style>
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal img {
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    .modal-controls {
+        position: absolute;
+        top: 20px; /* Move it further down */
+        right: 20px; /* Move it further in from the right */
+        color: white;
+        font-size: 48px; /* Increase font size */
+        cursor: pointer;
+        z-index: 1100;
+    }
+
+    .modal-zoom {
+        position: absolute;
+        top: 20px; /* Move it further down */
+        left: 20px; /* Move it further in from the left */
+        color: white;
+        font-size: 48px; /* Increase font size */
+        cursor: pointer;
+        display: flex;
+        gap: 20px; /* Adjust spacing between + and - */
+        z-index: 1100;
+    }
+
+    .modal-zoom button {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 36px;
+    }
+</style>
 </head>
 <body>
 
+
 <div class="main-content">
-    <img src="logo.png" alt="Logo" class="logo">
+    <!-- Search Box -->
     <div class="search-container">
         <input type="text" class="search-box" placeholder="Search for a page number...">
         <button class="search-button">Search</button>
     </div>
+
+    <!-- Main Image -->
     <div class="title" id="image-title">the star wars</div>
     <img id="main-image" class="main-image" src="Images/The Star Wars_1.jpg" alt="Main">
 </div>
 
+<!-- Slider Thumbnails -->
 <div class="slider-container">
-    <div class="slider" id="slider-container"></div>
+    <div class="slider" id="slider-container">
+        <!-- Thumbnails are dynamically generated via JavaScript -->
+    </div>
 </div>
 
+<!-- Modal for Zoom -->
 <div class="modal" id="image-modal">
     <div class="modal-zoom">
         <button id="zoom-in">+</button>
@@ -113,8 +327,7 @@
     <span class="modal-controls" id="close-modal">&times;</span>
     <img id="modal-image" src="" alt="Modal">
 </div>
-
-<script>
+   <script>
     const imagesDataUrl = 'newimages.json';
     const thumbnailsPath = 'Thumbnails/';
     const imagesPath = 'Images/';
@@ -124,66 +337,223 @@
     const sliderContainer = document.getElementById('slider-container');
     const searchBox = document.querySelector('.search-box');
     const searchButton = document.querySelector('.search-button');
+
     const modal = document.getElementById('image-modal');
     const modalImage = document.getElementById('modal-image');
     const closeModal = document.getElementById('close-modal');
     const zoomIn = document.getElementById('zoom-in');
     const zoomOut = document.getElementById('zoom-out');
-    let currentZoom = 1;
+
     let currentSearchIndex = -1;
     let currentMatches = [];
+    let currentZoom = 1;
 
+    // Update title text based on the filename
     function updateTitle(filename) {
         const title = filename.replace('_1.jpg', '').replace(/_/g, ' ');
         imageTitle.textContent = title;
     }
 
-    function updateMainImage(image) {
-        const imgPath = `${imagesPath}${image}`;
-        mainImage.src = imgPath;
-        updateTitle(image);
+    // Update the main image and modal
+    function updateMainImage(image, pageNumber) {
+        const isSold = image.includes('_sold');
+        const originalImage = image.replace('_sold', ''); // Remove '_sold' for path
+
+        const imgPath = `${imagesPath}${originalImage}`;
+        const img = new Image();
+        img.src = imgPath;
+
+        img.onload = () => {
+            mainImage.src = imgPath;
+            updateTitle(originalImage);
+
+            // Add "Sold" styling if applicable
+            if (isSold) {
+                mainImage.classList.add('sold');
+            } else {
+                mainImage.classList.remove('sold');
+            }
+
+            // Scroll the corresponding thumbnail into view
+            const thumbnails = sliderContainer.querySelectorAll('.thumbnail-container img');
+            const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.alt === originalImage);
+
+            if (matchingThumbnail) {
+                matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        img.onerror = () => {
+            console.warn(`Main image not found: ${imgPath}`);
+        };
     }
 
+    // Create slider dynamically based on JSON order
     function createSlider(images) {
-        sliderContainer.innerHTML = '';
-        const filteredImages = images.filter(image => !image.includes('_sold'));
+        sliderContainer.innerHTML = ''; // Clear previous thumbnails
+        images.forEach((image, index) => {
+            const pageNumber = index + 1;
+            const isSold = image.includes('_sold');
+            const originalImage = image.replace('_sold', ''); // For file paths
 
-        filteredImages.forEach(image => {
-            const thumb = document.createElement('img');
-            thumb.src = `${thumbnailsPath}${image}`;
-            thumb.alt = image;
-            thumb.addEventListener('click', () => updateMainImage(image));
-            sliderContainer.appendChild(thumb);
+            // Check if thumbnail exists
+            const thumbSrc = `${thumbnailsPath}${originalImage}`;
+            const thumbImg = new Image();
+            thumbImg.src = thumbSrc;
+
+            thumbImg.onload = () => {
+                const thumbContainer = document.createElement('div');
+                thumbContainer.className = 'thumbnail-container';
+
+                const thumb = document.createElement('img');
+                thumb.src = thumbSrc;
+                thumb.alt = originalImage;
+
+                // Add "Sold" badge
+                if (isSold) {
+                    const soldBadge = document.createElement('div');
+                    soldBadge.className = 'sold-badge';
+                    soldBadge.textContent = 'Sold';
+                    thumbContainer.appendChild(soldBadge);
+                    thumb.classList.add('sold');
+                }
+
+                thumb.addEventListener('click', () => {
+                    updateMainImage(image, pageNumber);
+                });
+
+                thumbContainer.appendChild(thumb);
+                sliderContainer.appendChild(thumbContainer);
+            };
+
+            thumbImg.onerror = () => {
+                console.warn(`Thumbnail not found: ${thumbSrc}`);
+            };
         });
 
-        if (filteredImages.length > 0) updateMainImage(filteredImages[0]);
+        // Set the first image as default if it exists
+        if (images.length > 0) {
+            const firstImage = images[0].replace('_sold', ''); // For file paths
+            const firstImagePath = `${imagesPath}${firstImage}`;
+
+            const mainImg = new Image();
+            mainImg.src = firstImagePath;
+            mainImg.onload = () => {
+                updateMainImage(images[0], 1);
+            };
+
+            mainImg.onerror = () => {
+                console.warn(`Default main image not found: ${firstImagePath}`);
+            };
+        }
     }
 
+    // Fetch JSON and initialize the slider
     fetch(imagesDataUrl)
         .then(response => response.json())
-        .then(images => createSlider(images))
+        .then(images => {
+            createSlider(images);
+        })
         .catch(error => console.error('Error fetching JSON:', error));
 
-    searchButton.addEventListener('click', handleSearch);
-    searchBox.addEventListener('keypress', event => {
-        if (event.key === 'Enter') handleSearch();
-    });
-
+    // Search functionality
     function handleSearch() {
         const query = searchBox.value.trim().toLowerCase();
         if (!query) {
             alert('Please enter a page number or a keyword.');
             return;
         }
+
         fetch(imagesDataUrl)
             .then(response => response.json())
             .then(images => {
-                const filteredImages = images.filter(image => !image.includes('_sold'));
-                const matches = filteredImages.filter(image => image.toLowerCase().includes(query));
-                if (matches.length > 0) updateMainImage(matches[0]);
-                else alert('No matches found.');
-            });
+                const isNumber = /^\d+$/.test(query);
+                if (isNumber) {
+                    const pageIndex = parseInt(query, 10) - 1;
+                    if (pageIndex >= 0 && pageIndex < images.length) {
+                        updateMainImage(images[pageIndex], pageIndex + 1);
+                    } else {
+                        alert('Page number out of range.');
+                    }
+                } else {
+                    currentMatches = images.filter(image => {
+                        const title = image.replace('_1.jpg', '').replace(/_/g, ' ').toLowerCase();
+                        return title.includes(query);
+                    });
+
+                    if (currentMatches.length > 0) {
+                        currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
+                        const matchingImage = currentMatches[currentSearchIndex];
+                        const matchingIndex = images.indexOf(matchingImage);
+                        updateMainImage(matchingImage, matchingIndex + 1);
+                    } else {
+                        alert('No matches found.');
+                    }
+                }
+            })
+            .catch(error => console.error('Error during search:', error));
     }
+
+    // Modal zoom functionality
+    function setupModal() {
+        mainImage.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            modalImage.src = mainImage.src;
+            currentZoom = 1; // Reset zoom
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        zoomIn.addEventListener('click', () => {
+            currentZoom += 0.1;
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+
+        zoomOut.addEventListener('click', () => {
+            currentZoom = Math.max(0.1, currentZoom - 0.1);
+            modalImage.style.transform = `scale(${currentZoom})`;
+        });
+    }
+
+    // Slider swiping functionality
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    sliderContainer.addEventListener('mousedown', e => {
+        isDown = true;
+        startX = e.pageX - sliderContainer.offsetLeft;
+        scrollLeft = sliderContainer.scrollLeft;
+    });
+
+    sliderContainer.addEventListener('mouseleave', () => {
+        isDown = false;
+    });
+
+    sliderContainer.addEventListener('mouseup', () => {
+        isDown = false;
+    });
+
+    sliderContainer.addEventListener('mousemove', e => {
+        if (!isDown) return;
+        const x = e.pageX - sliderContainer.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll speed multiplier
+        sliderContainer.scrollLeft = scrollLeft - walk;
+    });
+
+    // Event listeners for search
+    searchButton.addEventListener('click', handleSearch);
+    searchBox.addEventListener('keypress', event => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
+
+    // Initialize modal zoom functionality
+    setupModal();
 </script>
 </body>
 </html>
