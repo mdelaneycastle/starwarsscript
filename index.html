@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -460,41 +460,44 @@ fetch(imagesDataUrl)
 
     // Search functionality
     function handleSearch() {
-        const query = searchBox.value.trim().toLowerCase();
-        if (!query) {
-            alert('Please enter a page number or a keyword.');
-            return;
-        }
-
-        fetch(imagesDataUrl)
-            .then(response => response.json())
-            .then(images => {
-                const isNumber = /^\d+$/.test(query);
-                if (isNumber) {
-                    const pageIndex = parseInt(query, 10) - 1;
-                    if (pageIndex >= 0 && pageIndex < images.length) {
-                        updateMainImage(images[pageIndex], pageIndex + 1);
-                    } else {
-                        alert('Page number out of range.');
-                    }
-                } else {
-                    currentMatches = images.filter(image => {
-                        const title = image.replace('_1.jpg', '').replace(/_/g, ' ').toLowerCase();
-                        return title.includes(query);
-                    });
-
-                    if (currentMatches.length > 0) {
-                        currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
-                        const matchingImage = currentMatches[currentSearchIndex];
-                        const matchingIndex = images.indexOf(matchingImage);
-                        updateMainImage(matchingImage, matchingIndex + 1);
-                    } else {
-                        alert('No matches found.');
-                    }
-                }
-            })
-            .catch(error => console.error('Error during search:', error));
+    const query = searchBox.value.trim().toLowerCase();
+    if (!query) {
+        alert('Please enter a page number or a keyword.');
+        return;
     }
+
+    fetch(imagesDataUrl)
+        .then(response => response.json())
+        .then(images => {
+            // Filter out sold images
+            const availableImages = images.filter(image => !image.includes('_sold'));
+
+            const isNumber = /^\d+$/.test(query);
+            if (isNumber) {
+                const pageIndex = parseInt(query, 10) - 1;
+                if (pageIndex >= 0 && pageIndex < availableImages.length) {
+                    updateMainImage(availableImages[pageIndex], pageIndex + 1);
+                } else {
+                    alert('Page number out of range.');
+                }
+            } else {
+                currentMatches = availableImages.filter(image => {
+                    const title = image.replace('_1.jpg', '').replace(/_/g, ' ').toLowerCase();
+                    return title.includes(query);
+                });
+
+                if (currentMatches.length > 0) {
+                    currentSearchIndex = (currentSearchIndex + 1) % currentMatches.length;
+                    const matchingImage = currentMatches[currentSearchIndex];
+                    const matchingIndex = availableImages.indexOf(matchingImage);
+                    updateMainImage(matchingImage, matchingIndex + 1);
+                } else {
+                    alert('No matches found.');
+                }
+            }
+        })
+        .catch(error => console.error('Error during search:', error));
+}
 
     // Modal zoom functionality
     function setupModal() {
