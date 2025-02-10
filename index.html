@@ -192,7 +192,7 @@
     <span class="modal-controls" id="close-modal">&times;</span>
     <img id="modal-image" src="" alt="Modal">
 </div>
-   <script>
+  <script>
     const imagesDataUrl = 'newimages.json';
     const thumbnailsPath = 'Thumbnails/';
     const imagesPath = 'Images/';
@@ -309,7 +309,9 @@
         modalImage.style.transform = `scale(${currentZoom})`;
     });
 
-    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
 
     zoomIn.addEventListener('click', () => {
         currentZoom += 0.1;
@@ -328,5 +330,6 @@
         }
     });
 </script>
+
 </body>
 </html>
