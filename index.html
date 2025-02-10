@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
    
     <style>
          @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -229,7 +229,6 @@
         }
     }
 
-    /* Mobile-specific styling */
     @media (max-width: 600px) {
     body {
         overflow: auto; /* Prevents hidden content on small screens */
@@ -256,7 +255,7 @@
 
     /* Title: Centered Under Image */
     .title {
-        font-size: 24px;
+        font-size: 24px; /* Adjusted for smaller screens */
         text-align: center;
         margin-top: 10px;
         padding: 5px;
@@ -280,22 +279,27 @@
     .slider img {
         height: 80px; /* Slightly smaller thumbnails for mobile */
     }
-.search-title-container {
-        display: flex;
-        flex-direction: column; /* Stacks items instead of row */
-        align-items: center;
-        width: 100%;
-    }
 
     /* Search Box: Full Width Below Everything */
     .search-container {
         position: relative;
         width: 90%;
         max-width: 400px;
-        margin-top: 10px;
+        margin: 20px auto;
         display: flex;
         justify-content: center;
         padding: 10px;
+    }
+
+    .search-box {
+        width: 100%;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .search-button {
+        font-size: 16px;
+        padding: 10px 15px;
     }
 }
 
