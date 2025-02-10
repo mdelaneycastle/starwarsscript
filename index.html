@@ -222,6 +222,13 @@
         const imgPath = `${imagesPath}${image}`;
         mainImage.src = imgPath;
         updateTitle(image);
+
+        const thumbnails = sliderContainer.querySelectorAll('img');
+        const matchingThumbnail = Array.from(thumbnails).find(thumb => thumb.alt === image);
+
+        if (matchingThumbnail) {
+            matchingThumbnail.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     }
 
     function createSlider(images) {
