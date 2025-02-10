@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
     background-color: #dadada;
@@ -54,6 +54,15 @@
         width: 100%; /* Full width on mobile */
         z-index: 10; /* Ensure it's above other elements if necessary */
     }
+
+        .logo {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    z-index: 20;
+}
 
     /* Slider for mobile */
     .slider {
@@ -301,6 +310,7 @@
 
 
 <div class="main-content">
+    <img src="logo.png" alt="Logo" class="logo">
     <!-- Search Box -->
     <div class="search-container">
         <input type="text" class="search-box" placeholder="Search for a page number...">
