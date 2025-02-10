@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Star Wars Collection.</title>
+    <title>Star Wars Collection</title>
     <style>
     body {
         background-color: #dadada;
@@ -93,15 +93,16 @@
     /* Title styling */
     .title {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 60px;
-    text-align: center;
+    bottom: 20px; /* Adjusted position under the image */
+    right: 0;
+    transform: none;
+    text-align: right;
     font-family: 'Death Star', sans-serif;
     font-size: 40px;
     z-index: 10;
     white-space: nowrap; /* Prevent wrapping */
-    padding: 5px 10px; /* Padding for better separation */
+    padding: 5px 10px;
+    margin-right: 20px; /* Adds spacing from the right edge */
     text-shadow: 
         -1px -1px 1px #dadada, /* Top-left */
         1px -1px 1px #dadada, /* Top-right */
@@ -110,19 +111,20 @@
 }
 
     .search-container {
-        position: fixed;
-        bottom: 40px; /* Slightly above the slider */
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background-color: #fff;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        z-index: 15;
-    }
+    position: absolute;
+    bottom: 20px; /* Adjusted position under the image */
+    left: 0;
+    transform: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #fff;
+    padding: 10px 15px;
+    border-radius: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 15;
+    margin-left: 20px; /* Adds spacing from the left edge */
+}
 
     .search-box {
         flex: 1;
